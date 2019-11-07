@@ -1,0 +1,159 @@
+<form id="speaker"
+                          onSubmit={this.onSubmit}
+                    >
+                        <h3>Select speaker:</h3>
+
+                        <span>
+                            <label>
+
+                                <select
+                                    value={this.state.selected_char}
+                                    onChange={this.handleCharChange}
+                                >
+                                    {options}
+                                </select>
+
+                            </label>
+                        </span>
+
+                        <span>
+                            <input type="submit" value="Submit" id="speaker"/>
+                        </span>
+
+                    </form>
+
+
+ --------------------------------------------------------------------------------------------------------------------
+ if (this.state.speaker_done === false) {
+
+             return (
+                 <div id="quote-options">
+                     <SelectSpeaker
+                         value={this.state.speaker}
+                         done={this.state.speaker_done}
+                         charList={testChars}
+                         onChange={(event) => this.onInput(event)}
+                         onSubmit={(event, arg) => this.onSubmit(event, arg)}
+                     />
+                 </div>
+             )
+
+         }
+         // else {
+         //     return (
+         //         <div id='temp'>
+         //             <h3>Speaker Done</h3>
+         //         </div>
+         //     )
+         // }
+
+         else if (this.state.speakee_done === false) {
+
+             return (
+                 <div id="quote-option">
+                     <SelectSpeaker
+                         value={this.state.speaker}
+                         done={this.state.speaker_done}
+                         charList={testChars}
+                         onChange={(event) => this.onInput(event)}
+                         onSubmit={(event, arg) => this.onSubmit(event, arg)}
+                     />
+                     <SelectSpeakee
+                         value={this.state.speakee}
+                         done={this.state.speakee_done}
+                         charList={testChars}
+                         onChange={(event) => this.onInput(event)}
+                         onSubmit={(event, arg) => this.onSubmit(event, arg)}
+                     />
+                 </div>
+             )
+         }
+
+         else if (this.state.ref_exp_done === false) {
+
+             return (
+                 <div id="quote-options">
+                     <SelectSpeaker
+                         value={this.state.speaker}
+                         done={this.state.speaker_done}
+                         charList={testChars}
+                         onChange={(event) => this.onInput(event)}
+                         onSubmit={(event, arg) => this.onSubmit(event, arg)}
+                     />
+                     <SelectSpeakee
+                         value={this.state.speakee}
+                         done={this.state.speakee_done}
+                         charList={testChars}
+                         onChange={(event) => this.onInput(event)}
+                         onSubmit={(event, arg) => this.onSubmit(event, arg)}
+                     />
+                     <SelectRefExp
+                         value={this.state.ref_exp}
+                         done={this.state.ref_exp_done}
+                         onChange={(event) => this.onInput(event)}
+                         onSubmit={(event, arg) => this.onSubmit(event, arg)}
+                     />
+                 </div>
+
+             )
+         }
+
+         if (this.state.quoteDone === false) {
+
+             return (
+                 <div id="quote-options">
+                     <SelectSpeaker
+                         value={this.state.speaker}
+                         done={this.state.speaker_done}
+                         charList={testChars}
+                         onChange={(event) => this.onInput(event)}
+                         onSubmit={(event, arg) => this.onSubmit(event, arg)}
+                     />
+                     <SelectSpeakee
+                         value={this.state.speakee}
+                         done={this.state.speakee_done}
+                         charList={testChars}
+                         onChange={(event) => this.onInput(event)}
+                         onSubmit={(event, arg) => this.onSubmit(event, arg)}
+                     />
+                     <SelectRefExp
+                         value={this.state.ref_exp}
+                         done={this.state.ref_exp_done}
+                         charList={testChars}
+                         onChange={(event) => this.onInput(event)}
+                         onSubmit={(event, arg) => this.onSubmit(event, arg)}
+                     />
+                     <QuoteSubmit
+                         done={this.state.ref_exp_done}
+                         onSubmit={(event) => this.onQuoteSubmit(event)}
+                     />
+                 </div>
+             )
+         }
+
+
+
+<SelectSpeakee
+                                value={this.state.speaker}
+                                done={this.state.speaker_done}
+                                charList={testChars}
+                                onChange={(event) => this.onInput(event)}
+                                onSubmit={(event, arg) => this.onSubmit(event, arg)}
+
+                            />
+                            <QuoteSubmit
+                                onSubmit={(event) => this.onQuoteSubmit(event)}
+                            />
+                        </div>
+
+
+                        <SelectRefExp
+                                                        value={this.state.ref_exp}
+                                                        done={this.state.ref_exp_done}
+                                                        charList={testChars}
+                                                        onChange={(event) => this.onInput(event)}
+                                                        onSubmit={(event, arg) => this.onSubmit(event, arg)}
+                                                    />
+                                                    <QuoteSubmit
+                                                        onSubmit={(event) => this.onQuoteSubmit(event)}
+                                                    />
