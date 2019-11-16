@@ -23,7 +23,7 @@ def parseTxt(text):
             else:
                 end = i
                 quotes.append(cur_str)
-                positions.append([start, end])
+                positions.append([[start, end]])
                 begin = False
         else:
             if begin == True:
@@ -38,9 +38,10 @@ def getJsonObjects(quotes, positions):
     for quote in quotes:
         quote_infos.append({
             'speaker': '',
-            'speakee': '',
+            'speakee': [],
             'quote_type': '',
-            'ref_ex': ''
+            'ref_exp': '',
+            'sel_type': 'quote'
         })
 
     return (positions, quote_infos)
@@ -82,6 +83,7 @@ def getCharacters(root):
             })
 
         charList.append({
+            'id': i,
             'name': name,
             'expand': expand
         })

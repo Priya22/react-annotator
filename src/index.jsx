@@ -23,117 +23,59 @@ import myData from './quotes.json';
 import testChars from './chars.json'
 
 //console.log(myData);
-console.log(testChars);
-const useStyles = makeStyles({
-    root: {
-        '&:hover': {
-            backgroundColor: 'transparent',
-        },
-    },
-    icon: {
-        borderRadius: '50%',
-        width: 16,
-        height: 16,
-        boxShadow: 'inset 0 0 0 1px rgba(16,22,26,.2), inset 0 -1px 0 rgba(16,22,26,.1)',
-        backgroundColor: '#f5f8fa',
-        backgroundImage: 'linear-gradient(180deg,hsla(0,0%,100%,.8),hsla(0,0%,100%,0))',
-        '$root.Mui-focusVisible &': {
-            outline: '2px auto rgba(19,124,189,.6)',
-            outlineOffset: 2,
-        },
-        'input:hover ~ &': {
-            backgroundColor: '#ebf1f5',
-        },
-        'input:disabled ~ &': {
-            boxShadow: 'none',
-            background: 'rgba(206,217,224,.5)',
-        },
-    },
-    checkedIcon: {
-        backgroundColor: '#137cbd',
-        backgroundImage: 'linear-gradient(180deg,hsla(0,0%,100%,.1),hsla(0,0%,100%,0))',
-        '&:before': {
-            display: 'block',
-            width: 16,
-            height: 16,
-            backgroundImage: 'radial-gradient(#fff,#fff 28%,transparent 32%)',
-            content: '""',
-        },
-        'input:hover ~ &': {
-            backgroundColor: '#106ba3',
-        },
-    },
-});
+//console.log(testChars);
+// const useStyles = makeStyles({
+//     root: {
+//         '&:hover': {
+//             backgroundColor: 'transparent',
+//         },
+//     },
+//     icon: {
+//         borderRadius: '50%',
+//         width: 16,
+//         height: 16,
+//         boxShadow: 'inset 0 0 0 1px rgba(16,22,26,.2), inset 0 -1px 0 rgba(16,22,26,.1)',
+//         backgroundColor: '#f5f8fa',
+//         backgroundImage: 'linear-gradient(180deg,hsla(0,0%,100%,.8),hsla(0,0%,100%,0))',
+//         '$root.Mui-focusVisible &': {
+//             outline: '2px auto rgba(19,124,189,.6)',
+//             outlineOffset: 2,
+//         },
+//         'input:hover ~ &': {
+//             backgroundColor: '#ebf1f5',
+//         },
+//         'input:disabled ~ &': {
+//             boxShadow: 'none',
+//             background: 'rgba(206,217,224,.5)',
+//         },
+//     },
+//     checkedIcon: {
+//         backgroundColor: '#137cbd',
+//         backgroundImage: 'linear-gradient(180deg,hsla(0,0%,100%,.1),hsla(0,0%,100%,0))',
+//         '&:before': {
+//             display: 'block',
+//             width: 16,
+//             height: 16,
+//             backgroundImage: 'radial-gradient(#fff,#fff 28%,transparent 32%)',
+//             content: '""',
+//         },
+//         'input:hover ~ &': {
+//             backgroundColor: '#106ba3',
+//         },
+//     },
+// });
 
-// const testChars =
-//     [
-//         {
-//             id: 1,
-//             name: 'A',
-//             expand: [
-//                 {
-//                     id: 2,
-//                     name: 'aa',
-//                 },
-//                 {
-//                     id: 3,
-//                     name: 'aaA',
-//                 }],
-//         },
-//         {
-//             id: 4,
-//             name: 'B',
-//             expand: [{
-//                 id: 5,
-//                 name: 'bb',
-//             }]
-//         },
-//         {
-//             id: 6,
-//             name:'C',
-//             expand: []
-//         },
-//         {
-//             id: 7,
-//             name:'D',
-//             expand:[{
-//                 id: 8,
-//                 name:'Dd',
-//             }]
-//         },
-//         {
-//             id: 9,
-//             name:'E',
-//             expand: [{
-//                 id: 10,
-//                 name:'eeee',
-//             }]
-//
-//         },
-//     ];
 
-const columns = [{
-    dataField: 'name',
-    text: 'Name'
-}];
-
-// function XmlToHtml(props) {
-//     //parse the xml file and return a html <span> with highlights.
-// }
-//
-// function HtmlToXml(props) {
-//     //parse the innerHTML with <span>s and return an xml to write to file.
-// }
 
 class Tool extends React.Component {
 
-    constructor(props) {
-        super(props);
-        this.state = {
-            file_loaded: true,
-
-        };
-    }
+    // constructor(props) {
+    //     super(props);
+    //     this.state = {
+    //         file_loaded: true,
+    //
+    //     };
+    // }
 
     render() {
         return (
@@ -221,6 +163,8 @@ function TextHeading(props) {
 
 class ContentBox extends React.Component {
 
+    //The mitochondria of this application.
+
     constructor(props) {
         super(props);
         //console.log("Constructor called");
@@ -228,12 +172,16 @@ class ContentBox extends React.Component {
             charList: testChars,
             ranges: myData.ranges,
             current_sel: '',
+            sel_type: '',
             cur_start: Number.POSITIVE_INFINITY,
             cur_end: Number.POSITIVE_INFINITY,
             locked: false,
             confirmed: false,
             quote_infos: myData.quote_infos,
-            cur_info: {}
+            cur_info: {},
+            selectedRows: [],
+            cur_mode: 'normal',
+            cur_ref_exp: '',
         }
         ;
 
@@ -245,44 +193,46 @@ class ContentBox extends React.Component {
         this.infoSubmit = this.infoSubmit.bind(this);
         this.onPrevClick = this.onPrevClick.bind(this);
         this.confirmSelection = this.confirmSelection.bind(this);
+        this.setField = this.setField.bind(this);
+        this.updateSelectedRows = this.updateSelectedRows.bind(this);
+        this.updateMode = this.updateMode.bind(this);
+        this.setSelectionType = this.setSelectionType.bind(this);
 
     }
+
 
     onPrevClick(event) {
-        console.log("Span clicked: " + event.currentTarget.id);
+        if (this.state.cur_start === Number.POSITIVE_INFINITY) {
+            console.log("Span clicked: " + event.currentTarget.id);
 
-        const span_id = event.currentTarget.id;
-        const span_info = this.state.quote_infos[span_id];
-        const span_range = this.state.ranges[span_id];
-        const text = this.props.value;
-        //const selected_text = this.props.value
-        //event.stopPropagation();
-        //alert("The following span ID was clicked: " + event.currentTarget.id);
-        const selected_text = text.substring(span_range[0], span_range[1]);
+            const span_id = event.currentTarget.id;
+            const span_info = this.state.quote_infos[span_id];
+            const span_range = this.state.ranges[span_id];
+            const text = this.props.value;
+            //const selected_text = this.props.value
+            //event.stopPropagation();
+            //alert("The following span ID was clicked: " + event.currentTarget.id);
+            const selected_text = text.substring(span_range[0], span_range[1]);
 
-        const cur_ranges = this.state.ranges;
-        cur_ranges.splice(span_id, 1);
+            const cur_ranges = this.state.ranges;
+            cur_ranges.splice(span_id, 1);
 
-        const cur_infos = this.state.quote_infos;
-        cur_infos.splice(span_id, 1);
+            const cur_infos = this.state.quote_infos;
+            cur_infos.splice(span_id, 1);
 
-        this.setState({
-            ranges: cur_ranges, quote_infos: cur_infos,
-            current_sel: selected_text,
-            cur_start: span_range[0],
-            cur_end: span_range[1],
-            locked: true,
-            confirmed: true,
-            cur_info: span_info
-        })
+            this.setState({
+                ranges: cur_ranges, quote_infos: cur_infos,
+                current_sel: selected_text,
+                cur_start: span_range[0],
+                cur_end: span_range[1],
+                locked: true,
+                confirmed: true,
+                cur_info: span_info
+            })
 
+        }
 
     }
-
-    // onEditPrevious() {
-    //
-    // }
-
 
     processSelection() {
 
@@ -312,7 +262,7 @@ class ContentBox extends React.Component {
 
         const last = Math.min(text.length, last_end);
         let cur = begin;
-        let subs = '';
+
         let i = 0;
 
         let cur_done = false;
@@ -324,8 +274,8 @@ class ContentBox extends React.Component {
 
             if (len !== 0 && i<len) {
                 let element = cur_ranges[i];
-                console.log("Element: ", element);
-                console.log("Cur: ", cur);
+                //console.log("Element: ", element);
+                //console.log("Cur: ", cur);
                 min_is_element = true;
                 min_start = element[0];
                 min_end = element[1];
@@ -335,9 +285,9 @@ class ContentBox extends React.Component {
                     min_is_element = false;
                 }
             }
-            console.log("min_start: " + String(min_start)+ " Cur: " + String(cur));
+            //console.log("min_start: " + String(min_start)+ " Cur: " + String(cur));
             if (cur < min_start) {
-                console.log("Normal text.");
+                //console.log("Normal text.");
                 //subs = '<span class = '+normal_class+'>' + text.substring(cur, min_start) + '</span>';
                 //cur_html += subs;
                 texts.push(text.substring(cur, min_start));
@@ -354,16 +304,25 @@ class ContentBox extends React.Component {
                         min_class = 'highlight-yellow-border';
                     }
 
+                    if (cur_infos[i].sel_type === 'Mention') {
+                        if (cur_infos[i].speakee.length === 0){
+                            min_class = 'mention';
+                        }
+                        else {
+                            min_class = 'mention-resolved';
+                        }
+                    }
+
                     id = i;
                     i = i + 1;
                 }
                 else {
                     cur_done = true;
                 }
-                console.log("Found a selection! Color: " + min_class);
+                //console.log("Found a selection! Color: " + min_class);
 
                 //subs = '<span class = '+min_class+'>' + text.substring(min_start, min_end) + '</span>';
-                if (min_class === 'highlight-yellow' || min_class === 'highlight-yellow-border') {
+                if (min_class === 'highlight-yellow' || min_class === 'highlight-yellow-border' || min_class === 'mention' || min_class === 'mention-resolved') {
                     //subs = this.clickableSpan(text.substring(min_start, min_end), min_class, String(i-1));
                     texts.push(text.substring(min_start, min_end));
                     classes.push(min_class);
@@ -418,7 +377,7 @@ class ContentBox extends React.Component {
 
         this.setState({ranges: cur_ranges, quote_infos: new_infos, cur_info: {},
             cur_start: Number.POSITIVE_INFINITY, cur_end: Number.POSITIVE_INFINITY,
-            locked:false, current_sel:'', confirmed: false});
+            locked:false, current_sel:'', confirmed: false, cur_mode:'normal'});
     }
 
     confirmSelection(event) {
@@ -428,49 +387,140 @@ class ContentBox extends React.Component {
         event.preventDefault();
     }
 
+    // addToSelection(start, end) {
+    //
+    // }
+
     setSelection(start, end) {
         //console.log(selection, before, after);
         const text = this.props.value;
 
         const cur_sel = text.substring(start, end);
 
-        this.setState({current_sel: cur_sel, cur_start: start, cur_end: end, locked: true});
+        if (this.state.cur_mode !== 'ref_exp') {
+            const cur_info = {
+                quote_type: '',
+                speaker: '',
+                speakee: [],
+                ref_exp: '',
+            };
+
+            this.setState({current_sel: cur_sel, cur_start: start, cur_end: end, locked: true, cur_info: cur_info});
+        }
+
+        else {
+            this.setState({cur_ref_exp: cur_sel});
+        }
+
+
     }
 
     clearSel(event) {
-        let cur_ranges = this.state.ranges;
-        let new_ranges = [];
-        let modified =false;
-        for (let i=0; i< cur_ranges.length; i = i+1) {
-            let element = cur_ranges[i];
-            if (element[0] === this.state.cur_start && element[1] === this.state.cur_end) {
-                modified = true;
-            }
-            else {
-                new_ranges.push([element[0], element[1]]);
-            }
-        }
 
-        if (modified === true) {
-            cur_ranges = new_ranges;
-            cur_ranges.sort(function(a,b) {
-                    return a[0] - b[0]
-                }
-            );
+        // let cur_ranges = this.state.ranges;
+        //
+        // let new_ranges = [];
+        // let modified =false;
+        //
+        // let index_found = -1;
+        //
+        // for (let i=0; i< cur_ranges.length; i = i+1) {
+        //     let element = cur_ranges[i];
+        //     if (element[0] === this.state.cur_start && element[1] === this.state.cur_end) {
+        //         modified = true;
+        //         index_found = i;
+        //     }
+        //     else {
+        //         new_ranges.push([element[0], element[1]]);
+        //     }
+        // }
+        //
+        // if (modified === true) {
+        //     cur_ranges = new_ranges;
+        //     cur_ranges.sort(function(a,b) {
+        //             return a[0] - b[0]
+        //         }
+        //     );
+        //
+        //
+        //
+        // }
 
-        }
-
-        this.setState({ranges: cur_ranges, locked: false, current_sel: '', cur_start:Number.POSITIVE_INFINITY, cur_end: Number.POSITIVE_INFINITY, confirmed: false});
+        this.setState({locked: false, current_sel: '', cur_start:Number.POSITIVE_INFINITY, cur_end: Number.POSITIVE_INFINITY, confirmed: false, cur_info:{}});
         event.preventDefault();
     }
 
-    infoSubmit(info) {
+    infoSubmit() {
         alert("Info submitted!");
-        this.addToRanges(info);
+        this.addToRanges(this.state.cur_info);
+    }
+
+    updateSelectedRows(newRows) {
+        this.setState({selectedRows: newRows});
+    }
+
+    setField(field, value) {
+        //for speaker and speakee -- take selected boxes from character list
+        let cur_info = this.state.cur_info;
+
+        if (field === 'speaker') {
+            cur_info.speaker = this.state.selectedRows;
+            this.setState({cur_info: cur_info, cur_mode: 'normal', selectedRows: []});
+        }
+
+        else if (field === 'speakee') {
+            cur_info.speakee = this.state.selectedRows;
+            this.setState({cur_info: cur_info, cur_mode: 'normal', selectedRows: []});
+        }
+
+        else if (field === 'ref_exp') {
+            cur_info.ref_exp = this.state.cur_ref_exp;
+            this.setState({locked: true, cur_mode: 'normal', cur_info: cur_info, cur_ref_exp: ''});
+            window.getSelection().empty();
+        }
+
+        else if (field === 'quote_type') {
+            cur_info.quote_type = value;
+            if (value === 'Implicit') {
+                cur_info.ref_exp = '';
+            }
+            this.setState({cur_info: cur_info, cur_mode: 'normal'});
+        }
+
+    }
+
+    updateMode(mode) {
+        let selectedRows = this.state.selectedRows;
+        if (mode === 'speaker') {
+            selectedRows = this.state.cur_info.speaker;
+            this.setState({cur_mode: mode, selectedRows: selectedRows});
+        }
+        else if (mode === 'speakee') {
+            selectedRows = this.state.cur_info.speakee;
+            this.setState({cur_mode: mode, selectedRows: selectedRows});
+        }
+        else {
+            selectedRows = [];
+            if (mode === 'ref_exp') {
+                this.setState({cur_mode: mode, selectedRows: selectedRows, locked: false, cur_ref_exp: ''});
+            }
+            else {
+                this.setState({cur_mode: mode, selectedRows: selectedRows});
+            }
+        }
     }
 
     updateChars(new_chars) {
+        console.log("Updating charList in ContentBox.");
+        //console.log(new_chars);
         this.setState({charList: new_chars});
+    }
+
+    setSelectionType(event) {
+        const type = event.target.value;
+        let cur_info = this.state.cur_info;
+        cur_info.sel_type = type;
+        this.setState({cur_info: cur_info})
     }
 
     render() {
@@ -483,7 +533,6 @@ class ContentBox extends React.Component {
                             {this.props.value}
                         </pre>
                     </div>
-
                 </div>
             )
         }
@@ -496,36 +545,31 @@ class ContentBox extends React.Component {
 
                     <div id="annotationareacontainer">
 
-                        <div id="charnames">
-                            <h3>Characters</h3>
-                            <CharacterList
-                                charList={this.state.charList}
-                                updateChars={this.updateChars}
-                            />
-                        </div>
+                        <Collect
+                            updateChars={this.updateChars}
+                            charList={this.state.charList}
+                            selectedRows={this.state.selectedRows}
+                            updateSelectedRows={this.updateSelectedRows}
 
-                        <div id="current-selection">
-                            <h3>Current Selection</h3>
-                            <CurrentSel value={this.state.current_sel}
-                                        lockSel={this.confirmSelection}
-                                        clearSel={this.clearSel}
-                                        confirmed={this.state.confirmed}
-                                        charList={this.state.charList}
-                                        infoSubmit={this.infoSubmit}
-                                        cur_info={this.state.cur_info}
-                                //text = {{'before': this.state.before,'after': this.state.after, 'selection': this.state.current_sel}}
-                            />
-                        </div>
+                            setSelectionType={this.setSelectionType}
+
+                            selected_text={this.state.current_sel}
+                            clearSel={this.clearSel}
+                            confirmSelection={this.confirmSelection}
+                            confirmed={this.state.confirmed}
+                            cur_info={this.state.cur_info}
+                            infoSubmit={this.infoSubmit}
+                            setField={this.setField}
+                            cur_mode={this.state.cur_mode}
+                            updateMode={this.updateMode}
+                        />
 
                         <TextArea
                             value={display_obj}
-                            // selection={this.state.current_sel}
-                            // before={this.state.before}
-                            // after={this.state.after}
                             locked={this.state.locked}
                             setSelection={(start, end) => this.setSelection(start, end)}
                             onPrevClick={this.onPrevClick}
-                            //mouseUp={(event) => this.getSelection(event)}
+                            clickEnabled = {this.state.cur_start === Number.POSITIVE_INFINITY}
                         />
 
                     </div>
@@ -533,7 +577,7 @@ class ContentBox extends React.Component {
                     <div id={'save-button'}>
                         <button type={'submit'} name={'save-current'}
                                 disabled={save_dis}
-                                onClick={this.saveCurrent}
+                                //onClick={this.saveCurrent}
                                 >
                             Save Progress
                         </button>
@@ -541,6 +585,184 @@ class ContentBox extends React.Component {
                 </div>
             )
         }
+    }
+}
+
+class Collect extends React.Component{
+
+    render() {
+        console.log("Collect: ");
+        console.log(this.props.cur_info);
+        if (Object.keys(this.props.cur_info).length !== 0) {
+            if (this.props.cur_info.sel_type === 'Quote') {
+                return (
+                    <div id={'collect'}>
+                        <div id="charnames">
+                            <h3>Characters</h3>
+                            <CharacterList
+                                charList={this.props.charList}
+                                updateChars={this.props.updateChars}
+                                mode={this.props.cur_mode}
+                                selectedRows={this.props.selectedRows}
+                                updateSelectedRows={this.props.updateSelectedRows}
+                            />
+                        </div>
+                        <div id={'middle-disp'}>
+                            <div id="current-selection">
+                                <h3>Current Selection</h3>
+                                <SelectedText value={this.props.selected_text}
+                                              lockSel={this.props.confirmSelection}
+                                              clearSel={this.props.clearSel}
+                                              confirmed={this.props.confirmed}
+                                />
+                            </div>
+
+                            <div id={'collect-information'}>
+
+                                <CollectInfo
+                                    cur_info={this.props.cur_info}
+                                    infoSubmit={this.props.infoSubmit}
+                                    cur_mode={this.props.cur_mode}
+                                    updateMode={this.props.updateMode}
+                                    setField={this.props.setField}
+                                />
+                            </div>
+                        </div>
+                    </div>
+                )
+            }
+
+            else if (this.props.cur_info.sel_type === 'Mention') {
+                return (
+                    <div id={'collect'}>
+                        <div id="charnames">
+                            <h3>Characters</h3>
+                            <CharacterList
+                                charList={this.props.charList}
+                                updateChars={this.props.updateChars}
+                                mode={this.props.cur_mode}
+                                selectedRows={this.props.selectedRows}
+                                updateSelectedRows={this.props.updateSelectedRows}
+                            />
+                        </div>
+                        <div id={'middle-disp'}>
+                            <div id="current-selection">
+                                <h3>Current Selection</h3>
+                                <SelectedText value={this.props.selected_text}
+                                              lockSel={this.props.confirmSelection}
+                                              clearSel={this.props.clearSel}
+                                              confirmed={this.props.confirmed}
+                                />
+                            </div>
+
+                            <div id={'collect-information'}>
+
+                                <CollectMentionInfo
+                                    cur_info={this.props.cur_info}
+                                    infoSubmit={this.props.infoSubmit}
+                                    cur_mode={this.props.cur_mode}
+                                    updateMode={this.props.updateMode}
+                                    setField={this.props.setField}
+                                />
+                            </div>
+                        </div>
+                    </div>
+                )
+            }
+
+            else {
+                return (
+                    <div id={'collect'}>
+                        <div id="charnames">
+                            <h3>Characters</h3>
+                            <CharacterList
+                                charList={this.props.charList}
+                                updateChars={this.props.updateChars}
+                                mode={this.props.cur_mode}
+                                selectedRows={this.props.selectedRows}
+                                updateSelectedRows={this.props.updateSelectedRows}
+                            />
+                        </div>
+                        <div id={'middle-disp'}>
+                            <div id="current-selection">
+                                <h3>Current Selection</h3>
+                                <SelectedText value={this.props.selected_text}
+                                              lockSel={this.props.confirmSelection}
+                                              clearSel={this.props.clearSel}
+                                              confirmed={this.props.confirmed}
+                                />
+                            </div>
+
+                            <div id={'collect-information'}>
+                                <SelectionType
+                                    setSelectionType={this.props.setSelectionType}
+                                />
+                            </div>
+                        </div>
+                    </div>
+
+                )
+            }
+
+        }
+
+        else {
+            return (
+                <div id={'collect'}>
+                    <div id="charnames">
+                        <h3>Characters</h3>
+                        <CharacterList
+                            charList={this.props.charList}
+                            updateChars={this.props.updateChars}
+                            mode={this.props.cur_mode}
+                            selectedRows={this.props.selectedRows}
+                            updateSelectedRows={this.props.updateSelectedRows}
+                        />
+                    </div>
+                    <div id={'middle-disp'}>
+                    </div>
+                </div>
+            )
+        }
+
+
+    }
+}
+
+class SelectionType extends React.Component {
+
+    render() {
+
+        return (
+            <div id={'selection-type'}>
+                <h3>
+                    Select the type of the selection:
+                </h3>
+                <FormControl  id={'selection-type'}
+                              m={-2}
+                >
+                    <RadioGroup aria-label="position" name="position" value={this.props.value} row
+                                onChange={(event) => this.props.setSelectionType(event)}
+                                fontSize={'fontSize'}
+                    >
+                        <FormControlLabel
+                            value="Quote"
+                            control={<Radio color="primary" />}
+                            label="Quote"
+                            labelPlacement="start"
+                        />
+                        <FormControlLabel
+                            value="Mention"
+                            control={<Radio color="primary" />}
+                            label="Mention"
+                            labelPlacement="start"
+                        />
+                    </RadioGroup>
+
+                </FormControl>
+            </div>
+        )
+
     }
 }
 
@@ -570,7 +792,7 @@ class TextArea extends React.Component {
                     preCaretRange.setEnd(range.endContainer, range.endOffset);
                     end = preCaretRange.toString().length;
                 }
-            } else if ( (sel = doc.selection) && sel.type != "Control") {
+            } else if ( (sel = doc.selection) && sel.type !== "Control") {
                 var textRange = sel.createRange();
                 var preCaretTextRange = doc.body.createTextRange();
                 preCaretTextRange.moveToElementText(element);
@@ -646,361 +868,279 @@ class CharacterList extends React.Component {
     constructor(props) {
         super(props);
 
-        const chars = this.props.charList;
         this.state = {
-            charList: chars,
-            insertMode: false,
-            deleteMode: false,
+            expandedRows: [],
         };
-        this.handleInsertButtonClick = this.handleInsertButtonClick.bind(this);
-        //this.handleDeleteButtonClick = this.handleDeleteButtonClick.bind(this);
-        this.closeModal = this.closeModal.bind(this);
-        this.onAddChar = this.onAddChar.bind(this);
-        //this.onAfterDeleteRow = this.onAfterDeleteRow.bind(this);
-        this.isExpandableRow = this.isExpandableRow.bind(this);
+
+        this.handleRowClick = this.handleRowClick.bind(this);
+        this.renderItem = this.renderItem.bind(this);
         this.deleteIcon = this.deleteIcon.bind(this);
-        this.deleteChar = this.deleteChar.bind(this);
-        this.deleteAlias = this.deleteAlias.bind(this);
-        this.expandComponent = this.expandComponent.bind(this);
-        this.addAlias = this.addAlias.bind(this);
+        this.handleDeleteIcon = this.handleDeleteIcon.bind(this);
+        this.checkBox = this.checkBox.bind(this);
+        this.handleCheckBox = this.handleCheckBox.bind(this);
+        this.radioBox = this.radioBox.bind(this);
+        this.handleRadioBox = this.handleRadioBox.bind(this);
+        this.addButton = this.addButton.bind(this);
+        this.handleAddChar = this.handleAddChar.bind(this);
+        this.handleDeleteAlias = this.handleDeleteAlias.bind(this);
+        this.addAliasButton = this.addAliasButton.bind(this);
+        this.handleAddAlias = this.handleAddAlias.bind(this);
     }
 
-    isExpandableRow(row) {
-        // if ('expand' in row) return true;
-        // else return false;
-        return true;
+    handleRowClick(rowId) {
+        const currentExpandedRows = this.state.expandedRows;
+        const isRowCurrentlyExpanded = currentExpandedRows.includes(rowId);
+
+        const newExpandedRows = isRowCurrentlyExpanded ?
+            currentExpandedRows.filter(id => id !== rowId) :
+            currentExpandedRows.concat(rowId);
+
+        this.setState({expandedRows : newExpandedRows});
     }
 
-    expandComponent(row) {
-        return (
-            <SubTable
-                parentRow={row}
-                data={ row.expand }
-                deleteAlias={this.deleteAlias}
-                addAlias={this.addAlias}
-            />
-        );
-    }
+    handleDeleteIcon(name) {
 
-    deleteAlias(parentRow, aliasRow) {
-        let confirm = window.confirm('The following alias for ' + parentRow.name + ' will be deleted: ' + aliasRow.name);
+        const confirm = window.confirm("Deleting the following character with all aliases: "+name);
+
         if (confirm === true) {
-            const charList = this.state.charList;
-            loop1:
-                for (let i=0; i<charList.length; i=i+1) {
-                    //console.log(this.state.charList[i] === row);
-                    if (charList[i] === parentRow) {
-                        //new_chars.push(this.state.charList[i]);
-                        loop2:
-                            for (let j = 0; j < charList[i].expand.length; j=j+1) {
-                                if (charList[i].expand[j] === aliasRow) {
-                                    charList[i].expand.splice(j, 1);
-                                    break loop1;
-                                }
-                            }
-                    }
-                }
-            this.setState({charList: charList});
-            this.props.updateChars(this.state.charList);
-        }
+            const oldChars = this.props.charList;
 
+            const newChars = oldChars.filter((el) => {
+                return el.name !== name;
+            });
+            //this.setState({charList: newChars});
+            this.props.updateChars(newChars);
+        }
     }
 
-    addAlias(parentRow, alias) {
-        //alert("Adding alias triggered: ")
-        let new_alias = {
-            'name': alias,
-        };
-
-        let charList = this.state.charList;
-
-        for (let i=0; i<charList.length; i=i+1) {
-            //console.log(this.state.charList[i] === row);
-            if (charList[i] === parentRow) {
-                charList[i].expand.push(new_alias);
-                break;
-            }
-        }
-
-        this.setState({charList: charList});
-        this.props.updateChars(this.state.charList);
-
-    }
-
-    expandColumnComponent({ isExpandableRow, isExpanded }) {
-        let content = '';
-
-        if (isExpandableRow) {
-            content = (isExpanded ? '(-)' : '(+)' );
-        } else {
-            content = ' ';
-        }
+    deleteIcon(name) {
         return (
-            <div className={'clickable'}> { content } </div>
-        );
-    }
-
-    createCustomInsertButton = (onClick) => {
-        return (
-            <InsertButton
-                btnText='Add'
-                btnContextual='btn-warning'
-                className='clickable'
-                btnGlyphicon='glyphicon-edit'
-                onClick={ () => this.handleInsertButtonClick(onClick) }/>
-        );
-    };
-
-    handleInsertButtonClick = (event) => {
-        // Custom your onClick event here,
-        // it's not necessary to implement this function if you have no any process before onClick
-        // console.log('This is my custom function for InserButton click event');
-        // this.setState({insertMode: true});
-        let name = window.prompt("Enter new character name:  ");
-        //let test = window.prompt("Testing multiple fields: ");
-        if (name !== null) {
-            this.onAddChar(name);
-        }
-
-    };
-
-    closeModal() {
-        this.setState({insertMode: false});
-    }
-
-    onAddChar(name) {
-        //console.log(event.target);
-        //const name = event.target.value;
-        let old_chars = this.state.charList;
-        const new_char = {
-            name: name,
-            expand: []
-        };
-        old_chars.splice(0, 0, new_char);
-        this.setState({charList: old_chars, insertMode: false});
-        this.props.updateChars(this.state.charList);
-    }
-
-
-    deleteIcon(cell, row) {
-        //console.log(row === this.state.charList[0]);
-        //const cur_row = row;
-        return (
-            <button name={'D'} value='D' onClick={() => this.deleteChar(row)}>Del</button>
+            <span id={'delete-button-' + name}>
+                <button name={'D'} onClick={() => this.handleDeleteIcon(name)}>Del</button>
+            </span>
         )
     }
 
-    deleteChar(row) {
+    handleCheckBox(name) {
+        const currentSelectedRows = this.props.selectedRows;
+        const isRowCurrentlySelected = currentSelectedRows.includes(name);
 
-        alert("The following character and all aliases are being deleted: " + String(row.name));
-        let new_chars = [];
-        console.log(row);
-        for (let i=0; i<this.state.charList.length; i=i+1) {
-            console.log(this.state.charList[i] === row);
-            if (this.state.charList[i] !== row) {
-                new_chars.push(this.state.charList[i]);
-            }
+        if (isRowCurrentlySelected === true) {
+            console.log("Handle checkBox " + name);
         }
-        this.setState({charList: new_chars});
-        this.props.updateChars(this.state.charList);
+
+        const newSelectedRows = isRowCurrentlySelected ?
+            currentSelectedRows.filter((el) => el !== name) :
+            currentSelectedRows.concat(name);
+        console.log("New selected rows: " + newSelectedRows);
+        this.props.updateSelectedRows(newSelectedRows);
     }
 
+    checkBox(name) {
+        let disabled = false;
+        let checked = this.props.selectedRows.includes(name);
+
+        if (checked === true) {
+            console.log(name);
+        }
+
+        if (this.props.mode === 'normal' || this.props.mode == 'ref_exp') {
+            disabled = true;
+            checked = false;
+        }
+        //console.log(this.props.selectedRows);
+
+
+        return (
+            <input type={'checkbox'} disabled={disabled}
+                   checked={checked} onClick={() => this.handleCheckBox(name)} />
+        )
+    }
+
+    handleRadioBox(name) {
+        const currentSelectedRows = [];
+        //const isRowCurrentlySelected = (currentSelectedRows.length > 0);
+
+        const newSelectedRows = currentSelectedRows.concat(name);
+
+        this.props.updateSelectedRows(newSelectedRows);
+    }
+
+    radioBox(name) {
+        const checked = this.props.selectedRows.includes(name);
+
+        return (
+            <input type={'radio'}
+                   checked={checked} onClick={() => this.handleRadioBox(name)} />
+        )
+    }
+
+    handleDeleteAlias(item, aliasName) {
+
+        const old_chars = this.props.charList;
+
+        const old_expand = item.expand;
+        const new_expand = old_expand.filter((el) => el.name !== aliasName);
+
+        old_chars.forEach((el) => {
+            if (el.name === item.name) {
+                el.expand = new_expand;
+            }
+        });
+
+        this.props.updateChars(old_chars);
+    }
+
+    addAliasButton(item) {
+        return (
+            <span>
+                <button name={'add-alias'} onClick={() => this.handleAddAlias(item)}>New</button>
+            </span>
+        )
+    }
+
+    handleAddAlias(item) {
+        const aliasName = window.prompt("Enter new alias name for "+item.name+" : ");
+
+        const old_chars = this.props.charList;
+        old_chars.forEach((el) => {
+            if (el.name === item.name) {
+                item.expand.push({
+                    name: aliasName,
+                });
+            }
+        });
+
+        this.props.updateChars(old_chars);
+    }
+
+    renderItem(item) {
+        const clickCallback = () => this.handleRowClick(item.name);
+        const deleteIcon = this.deleteIcon(item.name);
+
+        let icon = null;
+
+        if (this.props.mode !== 'speaker') {
+            icon = this.checkBox(item.name)
+        }
+        else {
+            icon = this.radioBox(item.name)
+        }
+
+
+        const itemRows = [
+            <tr key={"row-data-" + item.name}>
+                <td className={'td-normal'}>{icon}</td>
+                <td onClick={clickCallback} className={'td-normal row-name'}>{item.name}</td>
+                <td className={'td-normal'}>{deleteIcon}</td>
+            </tr>
+        ];
+
+        if (this.state.expandedRows.includes(item.name)) {
+            itemRows.push(
+                <tr>
+                    <td></td>
+                    <td><b>Aliases</b></td>
+                    <td>{this.addAliasButton(item)}</td>
+                </tr>
+            );
+            item.expand.forEach((el) => {
+                itemRows.push(
+                    <SubTable
+                        item={item}
+                        alias={el}
+                        handleDeleteAlias={this.handleDeleteAlias}
+
+                    />
+                );
+            });
+            }
+
+        return itemRows;
+    }
+
+    handleAddChar() {
+        const name = window.prompt("Enter character name: ");
+
+        const old_chars = this.props.charList;
+        old_chars.push({
+            name: name,
+            expand: []
+        });
+        //this.setState({charList: old_chars}); //is this needed?? Just use props.
+        this.props.updateChars(old_chars);
+    }
+
+    addButton() {
+        return (
+            <span>
+                <button name={'Add-char'} onClick={this.handleAddChar}>Add</button>
+            </span>
+        )
+    }
 
     render() {
-        const options = {
-            //expandRowBgColor: 'rgb(242, 255, 163)',
-            insertBtn: this.createCustomInsertButton,
-            //deleteBtn: this.createCustomDeleteButton,
-            //afterDeleteRow: this.onAfterDeleteRow,
-            expandBy: 'column'
-        };
 
-        const selectRowProp = {
-            mode: 'radio'
-        };
+        console.log("Rendering character list with: " + this.props.selectedRows);
+        let allItemRows = [];
+
+        this.props.charList.forEach(item => {
+            const perItemRows = this.renderItem(item);
+            allItemRows = allItemRows.concat(perItemRows);
+        });
 
         return (
             <div id={'character-list'}>
-                <BootstrapTable data={ this.state.charList} condensed
-                                class={'bts-table'}
-                                insertRow={true}
-                                //deleteRow={true}
-                                //selectRow={ selectRowProp }
-                                options={ options }
-                                height={400}
-                                scrollTop={'bottom'}
-                                expandableRow={ this.isExpandableRow }
-                                expandComponent={ this.expandComponent }
-                                expandColumnOptions={ {
-                                    expandColumnVisible: true,
-                                    expandColumnComponent: this.expandColumnComponent,
-                                    columnWidth: 50
-                                } }>
-                    <TableHeaderColumn class='bts-table' dataField='name' isKey={true}>Name</TableHeaderColumn>
-                    <TableHeaderColumn dataField={'delete'} dataFormat={this.deleteIcon} expandable={false}></TableHeaderColumn>
-
-                </BootstrapTable>
-                <Modal show={this.state.insertMode} handleClose={this.closeModal} onSubmit={(event)=> this.onAddChar(event)}>
-                    <p>Insert Data Here</p>
-                </Modal>
-
-
+                <table>
+                    <thead>
+                        <tr>
+                            <td>
+                                Characters
+                            </td>
+                            <td>
+                                {this.addButton()}
+                            </td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {allItemRows}
+                    </tbody>
+                </table>
             </div>
         );
     }
+
 }
 
 class SubTable extends React.Component {
 
     constructor(props) {
         super(props);
-        this.deleteIcon = this.deleteIcon.bind(this);
-        this.deleteAlias = this.props.deleteAlias;
-        this.addAlias = this.addAlias.bind(this);
-        this.createCustomInsertButton = this.createCustomInsertButton.bind(this);
 
     }
 
-    createCustomInsertButton = (onClick) => {
+    deleteAliasIcon(item, aliasName) {
         return (
-            <InsertButton
-                btnText='Add'
-                btnContextual='btn-warning'
-                className='clickable'
-                btnGlyphicon='glyphicon-edit'
-                onClick={ () => this.addAlias(onClick) }/>
-        );
-    };
-
-    deleteIcon(cell, row) {
-        //console.log(row);
-        //const cur_row = row;
-        return (
-            <button name={'D'} value='D'
-                    onClick={() => this.deleteAlias(this.props.parentRow, row)}
-            >
-                Del
-            </button>
+            <span id={'delete-button-' + aliasName}>
+                <button name={'D'} onClick={() => this.props.handleDeleteAlias(item, aliasName)}>Del</button>
+            </span>
         )
     }
 
-    addAlias(event) {
-
-        let alias = window.prompt("Enter new alias for " + this.props.parentRow.name);
-        //let test = window.prompt("Testing multiple fields: ");
-        if (alias !== null) {
-            this.props.addAlias(this.props.parentRow, alias);
-        }
-
-    }
-
     render() {
-
-
-        const options = {
-            insertBtn: this.createCustomInsertButton
-        };
-
+        //console.log(this.props.item.expand);
+        const el = this.props.alias;
         return (
-            <BootstrapTable data={ this.props.data }
-                            class={'bts-table'}
-                            insertRow={true}
-                            options={options}
-              >
-                <TableHeaderColumn dataField='name' isKey={true}>Aliases</TableHeaderColumn>
-                <TableHeaderColumn dataField={'delete'} dataFormat={this.deleteIcon}></TableHeaderColumn>
-            </BootstrapTable>
+            <tr key={el.name}>
+                <td></td>
+                <td className={'td-alias'}>
+                    {el.name}
+                </td>
+                <td>
+                    {this.deleteAliasIcon(this.props.item, el.name)}
+                </td>
+            </tr>
         )
-    }
-
-}
-
-class Modal extends React.Component {
-
-    constructor(props) {
-        super(props);
-        this.state = {
-            char_name: '',
-        };
-        this.onSubmit = this.onSubmit.bind(this);
-        this.onChange = this.onChange.bind(this);
-    }
-
-    onSubmit(event) {
-        //console.log(event.target.value);
-        //event.preventDefault();
-        this.props.onSubmit(this.state.char_name);
-        event.preventDefault();
-    }
-
-    onChange(event) {
-
-        this.setState({char_name: event.target.value});
-    }
-
-
-    render() {
-        const showHideClassName = this.props.show ? "modal display-block" : "modal display-none";
-        return (
-            <div className={showHideClassName}>
-
-                <div>
-                    <button className='close-button' onClick={this.props.handleClose}>X</button>
-                </div>
-
-                <div>
-                    <form onSubmit={this.onSubmit}
-                          id = 'add-char-modal'
-                    >
-                        <div id={'name-input'}>
-                            <label className={'input-label'}>
-                                Name:
-                            </label>
-
-                            <input type={'text'} name={'name'} onChange={this.onChange}/>
-                        </div>
-
-                        <div>
-                            <input type={'submit'} name={'submit'} value={'Add'} />
-                        </div>
-                    </form>
-                </div>
-            </div>
-        );
-    }
-}
-
-class CurrentSel extends React.Component {
-    render() {
-        if (this.props.confirmed === false) {
-            return (
-                <SelectedText
-                    value={this.props.value}
-                    lockSel={this.props.lockSel}
-                    clearSel={this.props.clearSel}
-                />
-            )
-        }
-
-        else {
-            return (
-                <div id={'select-data'}>
-
-                    <SelectedText
-                        value={this.props.value}
-                        lockSel={this.props.lockSel}
-                        clearSel={this.props.clearSel}
-                    />
-
-                    <CollectInfo
-                        charList={this.props.charList}
-                        onSubmit={this.props.infoSubmit}
-                        cur_info={this.props.cur_info}
-                    />
-
-                </div>
-                )
-        }
     }
 }
 
@@ -1008,205 +1148,155 @@ class CollectInfo extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = {
-            quote_type: '',
-            speaker: '',
-            speakee: '',
-            speakers_done: false,
-            ref_exp: '',
-            ref_exp_done: false
-        };
         this.setQuoteType = this.setQuoteType.bind(this);
-        this.setSpeakerInfo = this.setSpeakerInfo.bind(this);
-        this.onRefExpChange = this.onRefExpChange.bind(this);
         this.onRefExpSubmit = this.onRefExpSubmit.bind(this);
+        this.onSubmit = this.onSubmit.bind(this);
         this.onConfirm = this.onConfirm.bind(this);
         this.onReviewEdit = this.onReviewEdit.bind(this);
     }
 
-    onConfirm() {
-        const info = {
-            quote_type: this.state.quote_type,
-            speaker: this.state.speaker,
-            speakee: this.state.speakee,
-            ref_exp: this.state.ref_exp,
-        };
-        this.props.onSubmit(info);
-        this.setState({quote_type: '',
-            speaker: '',
-            speakee: '',
-            speakers_done: false,
-            ref_exp: '',
-            ref_exp_done: false
-        });
-    }
-
     setQuoteType(event) {
         const quote_type = event.target.value;
-        if (quote_type === 'Implicit'){
-            this.setState({quote_type: quote_type, ref_exp: ''});
-        }
-        else {
-            this.setState({quote_type: quote_type})
-        }
-
+        this.props.setField('quote_type', quote_type);
     }
 
-    onReviewEdit(event) {
-
-        this.setState({speakers_done: false, ref_exp_done: false});
-        event.preventDefault();
-
-    }
-
-    setSpeakerInfo(speaker, speakee) {
-        console.log("Setting speaker Info in CollectInfo: ");
-        this.setState({speaker: speaker, speakee: speakee, speakers_done: true});
-        // if (this.state.quote_type === 'Implicit') {
-        //     this.props.onSubmit();
-        // }
-    }
-
-    onRefExpChange(event) {
-        this.setState({ref_exp: event.target.value});
-    }
 
     onRefExpSubmit() {
+        this.props.setField('ref_exp', this.state.ref_exp);
+    }
+
+    onSubmit() {
         //this.props.onSubmit();
-        console.log("Ref exp submitted");
-        this.setState({ref_exp_done: true});
+        console.log("Info submitted");
+        this.props.updateMode('done');
     }
 
-    componentDidMount() {
-        if ('speaker' in this.props.cur_info) {
-            console.log("Component did mount with: ");
-            console.log(this.props.cur_info);
-            this.setState({
-                quote_type: this.props.cur_info.quote_type,
-                speaker: this.props.cur_info.speaker,
-                speakee: this.props.cur_info.speakee,
-                ref_exp: this.props.cur_info.ref_exp,
-                speakers_done: false,
-                ref_exp_done: false
-
-            })
-        }
-
-        else {
-            this.setState({
-                quote_type: '',
-                speaker: '',
-                speakee: '',
-                ref_exp: '',
-                speakers_done: false,
-                ref_exp_done: false
-
-            })
-        }
+    onConfirm() {
+        this.props.infoSubmit();
     }
+
+    onReviewEdit() {
+        this.props.updateMode('normal');
+    }
+
+
+
 
     render() {
 
-        if (this.state.quote_type === '') {
+        const ref_disable = (this.props.cur_info.quote_type === 'Implicit') || (this.props.cur_info.quote_type === '');
+
+        //console.log("CollectInfo");
+        //console.log(this.props.cur_info);
+        if (this.props.cur_mode !== 'done') {
+
             return (
-                <div id={'implicit-info'}>
+                <div id={'quote-info'}>
                     <QuoteType
                         setQuoteType={this.setQuoteType}
-                        value={this.state.quote_type}
+                        value={this.props.cur_info.quote_type}
+                        mode={this.props.cur_mode}
                     />
+
+                    <SpeakerInfo
+                        updateMode={this.props.updateMode}
+                        value={this.props.cur_info.speaker}
+                        mode={this.props.cur_mode}
+                        setField={this.props.setField}
+                    />
+
+                    <SpeakeeInfo
+                        updateMode={this.props.updateMode}
+                        value={this.props.cur_info.speakee}
+                        mode={this.props.cur_mode}
+                        setField={this.props.setField}
+                        message={"Select Addressee"}
+                    />
+
+                    <RefExpInfo
+                        updateMode={this.props.updateMode}
+                        value={this.props.cur_info.ref_exp}
+                        mode={this.props.cur_mode}
+                        setField={this.props.setField}
+                        active={ref_disable}
+                        />
+
+                    <SubmitInfoButton
+                        onSubmit={this.onSubmit}
+                        />
+                </div>
+            )
+
+
+        }
+
+
+        else {
+            return (
+                <DisplayInfo speaker={this.props.cur_info.speaker}
+                             speakee={this.props.cur_info.speakee}
+                             ref_exp={this.props.cur_info.ref_exp}
+                             onConfirm={this.onConfirm}
+                             onBack={this.onReviewEdit}
+                />
+            )
+        }
+    }
+}
+
+class CollectMentionInfo extends React.Component {
+
+    constructor(props) {
+        super(props);
+        this.onReviewEdit = this.onReviewEdit.bind(this);
+        this.onConfirm = this.onConfirm.bind(this);
+        this.onSubmit = this.onSubmit.bind(this);
+    }
+
+    onConfirm() {
+        this.props.infoSubmit();
+    }
+
+    onReviewEdit() {
+        this.props.updateMode('normal');
+    }
+
+    onSubmit() {
+        //this.props.onSubmit();
+        console.log("Info submitted");
+        this.props.updateMode('done');
+    }
+
+
+    render() {
+
+        if (this.props.cur_mode != 'done') {
+            return (
+                <div id={'collect-mention'}>
+                    <SpeakeeInfo
+                        updateMode={this.props.updateMode}
+                        value={this.props.cur_info.speakee}
+                        mode={this.props.cur_mode}
+                        setField={this.props.setField}
+                        message={"Select Entity being referred to "}
+                    />
+                    <SubmitInfoButton
+                        onSubmit={this.onSubmit}
+                />
                 </div>
             )
         }
 
-
-        else if (this.state.quote_type === 'Implicit') {
-            if (this.state.speakers_done === false) {
-                // console.log("Dog!");
-                // console.log(this.state);
-                return (
-                    <div id={'implicit-info'}>
-                        <QuoteType
-                            setQuoteType={this.setQuoteType}
-                            value={this.state.quote_type}
-                        />
-                        <SpeakerData
-                            charList={this.props.charList}
-                            onSubmit={this.setSpeakerInfo}
-                            speaker={this.state.speaker}
-                            speakee={this.state.speakee}
-                        />
-                    </div>
-
-                )
-            }
-
-            else {
-                return (
-                    <DisplayInfo
-                        speaker={this.state.speaker}
-                        speakee={this.state.speakee}
-                        onConfirm={this.onConfirm}
-                        onBack={this.onReviewEdit}
-                        />
-                )
-            }
-
-
-        }
-
         else {
-            if (this.state.speakee === '' || this.state.speaker === '') {
-                return (
-                    <div id={'explicit-speaker-info'}>
-                        <QuoteType
-                            setQuoteType={this.setQuoteType}
-                            value={this.state.quote_type}
-                        />
-                        <SpeakerData charList={this.props.charList}
-                                     onSubmit={this.setSpeakerInfo}
-                                     speaker={this.state.speaker}
-                                     speakee={this.state.speakee}
-                        />
-
-                    </div>
-                )
-            }
-
-            else if (this.state.ref_exp_done === false) {
-                return (
-                    <div id={'explicit-ref-exp-info'}>
-                        <QuoteType
-                            setQuoteType={this.setQuoteType}
-                            value={this.state.quote_type}
-                        />
-                        <SpeakerData charList={this.props.charList}
-                                     onSubmit={this.setSpeakerInfo}
-                                     speaker={this.state.speaker}
-                                     speakee={this.state.speakee}
-                        />
-                        <SelectRefExp
-                            onChange={this.onRefExpChange}
-                            value={this.state.ref_exp}
-                        />
-                        <button name={'ref-submit'}
-                                type='submit' onClick={this.onRefExpSubmit}>
-                            Submit
-                        </button>
-                    </div>
-                )
-            }
-
-            else {
-                return (
-                    <DisplayInfo speaker={this.state.speaker}
-                                 speakee={this.state.speakee}
-                                 ref_exp={this.state.ref_exp}
-                                 onConfirm={this.onConfirm}
-                                 onBack={this.onReviewEdit}
-                    />
-                )
-            }
+            return (
+                <DisplayInfo
+                             speakee={this.props.cur_info.speakee}
+                             onConfirm={this.onConfirm}
+                             onBack={this.onReviewEdit}
+                />
+            )
         }
+
     }
 }
 
@@ -1242,141 +1332,80 @@ class QuoteType extends React.Component {
                             fontSize={'fontSize'}
                         />
                     </RadioGroup>
+
                     <FormHelperText>Select Quote Type</FormHelperText>
+
                 </FormControl>
             </div>
         )
     }
 }
 
-class SpeakerData extends React.Component {
+class SpeakerInfo extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = {
-            speaker: '',
-            speakee: ''
-        };
-        this.onSpeakeeChange = this.onSpeakeeChange.bind(this);
-        this.onSpeakerChange = this.onSpeakerChange.bind(this);
+        this.onEdit = this.onEdit.bind(this);
         this.onSubmit = this.onSubmit.bind(this);
     }
 
-    componentDidMount() {
-        console.log("SpeakerData props arrive: ");
-        console.log(this.props);
-
-        this.setState({
-            speaker: this.props.speaker,
-            speakee: this.props.speakee,
-        });
+    onEdit() {
+        this.props.updateMode('speaker');
     }
-
 
     onSubmit() {
-        console.log("Submitting to parent from SpeakerData: ");
-        this.props.onSubmit(this.state.speaker, this.state.speakee);
-    }
-
-    onSpeakerChange(event) {
-        this.setState({speaker: event.target.value});
-    }
-
-    onSpeakeeChange(event) {
-        this.setState({speakee: event.target.value});
+        this.props.setField('speaker');
     }
 
     render() {
-
-        let char_names = [];
-        for (let i=0; i<this.props.charList.length; i=i+1) {
-            char_names.push(this.props.charList[i].name);
-        }
+        const display_message = (this.props.value === '') ? "None set." : this.props.value;
 
         return (
-            <div id={'people-info'}>
-                <SelectSpeaker
-                    charList={char_names}
-                    value={this.state.speaker}
-                    onChange={this.onSpeakerChange}
-                />
-                <SelectSpeakee
-                    charList={char_names}
-                    value={this.state.speakee}
-                    onChange={this.onSpeakeeChange}
-                />
-                <button name={'speaker-submit'}
-                        type='submit' onClick={this.onSubmit}>
-                    OK
-                </button>
+            <div id={'select-speaker'}>
+                <div>Select the speaker from the character list on the left, and press Submit when done.</div>
+                <span>Speaker: {display_message} </span>
+                <span>
+                    <button type={'submit'} name={'speaker-edit'} onClick={this.onEdit}>Edit</button>
+                </span>
+                <span>
+                    <button type={'submit'} name={'speaker-ok'} onClick={this.onSubmit}>Submit</button>
+                </span>
             </div>
         )
-    }
-}
-
-class SelectSpeaker extends React.Component {
-    render() {
-
-        const options = this.props.charList.map((value, i) => {
-            return (
-                <option value={value} key={value}>{value}</option>
-            )
-        });
-
-        return (
-        <div id={'select-speaker'}>
-            <FormControl id='speaker'
-                         margin={'dense'}
-                         m={-2}
-                //onSubmit={this.props.onSubmit}
-            >
-                <InputLabel id="demo-simple-select-label">Speaker</InputLabel>
-                <Select
-                    name='speaker'
-                    labelId="demo-simple-select-placeholder-label-label"
-                    id="demo-simple-select-placeholder-label"
-                    value={this.props.value}
-                    onChange={this.props.onChange}
-                >
-                    <option value={''} key={''} />
-                    {options}
-                </Select>
-                <FormHelperText>Select the speaker of the quotation</FormHelperText>
-            </FormControl>
-        </div>
-        )
 
     }
 }
 
-class SelectSpeakee extends React.Component {
+class SpeakeeInfo extends React.Component {
+
+    constructor(props) {
+        super(props);
+        this.onEdit = this.onEdit.bind(this);
+        this.onSubmit = this.onSubmit.bind(this);
+    }
+
+    onEdit() {
+        this.props.updateMode('speakee');
+    }
+
+    onSubmit() {
+        this.props.setField('speakee');
+    }
 
     render() {
-        const options = this.props.charList.map((value, i) => {
-            return (
-                <option value={value} key={value}>{value}</option>
-            )
-        });
+        // console.log("Speakee: ");
+        // console.log(this.props.value);
+        const message = (this.props.value === '') ? 'None set' : this.props.value.join('; ');
         return (
             <div id={'select-speakee'}>
-                <FormControl id='speakee'
-                    //onSubmit={this.props.onSubmit}
-                             m={-2}
-                             fontSize={'fontSize'}
-                >
-                    <InputLabel id="demo-simple-select-label">Addresee</InputLabel>
-                    <Select
-                        name='speakee'
-                        labelId="demo-simple-select-label"
-                        id="demo-simple-select"
-                        value={this.props.value}
-                        onChange={this.props.onChange}
-                    >
-                        <option value={''} key={''} />
-                        {options}
-                    </Select>
-                    <FormHelperText>Select the character who is being spoken to</FormHelperText>
-                </FormControl>
+                <div>{this.props.message} from the character list on the left, and press Submit when done. If there are multiple, select all possible ones.</div>
+                <span>Addressee(s): {message} </span>
+                <span>
+                    <button type={'submit'} name={'speakee-edit'} onClick={this.onEdit}>Edit</button>
+                </span>
+                <span>
+                    <button type={'submit'} name={'speakee-ok'} onClick={this.onSubmit}>Submit</button>
+                </span>
             </div>
         )
 
@@ -1425,26 +1454,60 @@ class SelectedText extends React.Component {
     }
 }
 
-class SelectRefExp extends React.Component {
+class RefExpInfo extends React.Component {
 
+    constructor(props) {
+        super(props);
+        this.onEdit = this.onEdit.bind(this);
+        this.onSubmit = this.onSubmit.bind(this);
+    }
+
+    onEdit() {
+        this.props.updateMode('ref_exp');
+    }
+
+    onSubmit() {
+        this.props.setField('ref_exp');
+    }
+
+    render() {
+        // console.log("Speakee: ");
+        // console.log(this.props.value);
+        const message = (this.props.value === '') ? 'None set' : this.props.value;
+
+        if (this.props.active) {
+            return null
+        }
+        else {
+            return (
+
+                <div id={'select-ref_exp'}
+                >
+                    <div>Select the referring expression from the text area on the right.</div>
+                    <span>Referring Expression: {message} </span>
+                    <span>
+                    <button type={'submit'} name={'speakee-edit'}
+                            onClick={this.onEdit}>Edit</button>
+                </span>
+                    <span>
+                    <button type={'submit'} name={'speakee-ok'}
+                            onClick={this.onSubmit}>Submit</button>
+                </span>
+                </div>
+            )
+        }
+
+    }
+}
+
+class SubmitInfoButton extends React.Component {
     render() {
         return (
             <div>
-                <form id={'ref-exp'}>
-                    <div>
-                        <TextField id="outlined-basic"
-                                   className={'ref-exp-text'}
-                                   label="Referring Expression"
-                                   margin="normal"
-                                   variant="outlined"
-                                   helperText={'Enter in the expression that indicates the speaker, addressee and speaking verb.'}
-                                   value={this.props.value}
-                                   onChange={(event) => this.props.onChange(event)}
-                        />
-                    </div>
-                </form>
+                <button type="submit" value="Submit-info" onClick={this.props.onSubmit}>Submit Info </button>
             </div>
-        )
+            )
+
     }
 }
 
@@ -1459,34 +1522,71 @@ class DisplayInfo extends React.Component {
         if ('ref_exp' in this.props) {
             ref_exp = this.props.ref_exp;
         }
-        return (
-            <div id={'display-info'}>
-                <div id={'info'}>
 
-                    <h3>Review Quote Information: </h3>
-                    <ul>
-                        <li>Speaker: {this.props.speaker}</li>
-                        <li>Addressee: {this.props.speakee}</li>
-                        <li>Referring Expression: {ref_exp}</li>
-                    </ul>
-                </div>
+        if ('speaker' in this.props.speaker) {
+            return (
+                <div id={'display-info'}>
+                    <div id={'info'}>
 
-                <div>
+                        <h3>Review Quote Information: </h3>
+                        <ul>
+                            <li>Speaker: {this.props.speaker}</li>
+                            <li>Addressee: {this.props.speakee}</li>
+                            <li>Referring Expression: {ref_exp}</li>
+                        </ul>
+                    </div>
+
+                    <div>
                     <span>
                         <button type={'submit'} name={'confirm-info'}
-                                onClick={this.props.onConfirm}>
+                                onClick={this.props.onConfirm}
+                        >
                             Confirm
                         </button>
                     </span>
-                    <span>
+                        <span>
                         <button type={'submit'} name={'edit-info'}
-                                onClick={this.props.onBack}>
+                                onClick={this.props.onBack}
+                        >
                             Back
                         </button>
                     </span>
+                    </div>
                 </div>
-            </div>
-        )
+            )
+        }
+
+        else {
+            return (
+                <div id={'display-info'}>
+                    <div id={'info'}>
+
+                        <h3>Review Mention Information: </h3>
+                        <ul>
+                            <li>Entity: {'; '.join(this.props.speakee)}</li>
+                        </ul>
+                    </div>
+
+                    <div>
+                    <span>
+                        <button type={'submit'} name={'confirm-info'}
+                                onClick={this.props.onConfirm}
+                        >
+                            Confirm
+                        </button>
+                    </span>
+                        <span>
+                        <button type={'submit'} name={'edit-info'}
+                                onClick={this.props.onBack}
+                        >
+                            Back
+                        </button>
+                    </span>
+                    </div>
+                </div>
+            )
+        }
+
     }
 
 }

@@ -12,9 +12,35 @@
     width: 90%;
     border: 1px solid black;
     margin: 5px;
-    grid-template-columns: 2fr 3fr 7fr;
+    grid-template-columns: 5fr 7fr;
     /*grid-template-columns: 1fr;*/
 }
+
+#collect {
+    display: grid;
+    overflow: hidden;
+    border: 1px solid red;
+    margin: 2px;
+    grid-template-columns: 2fr 3fr;
+}
+
+#middle-disp {
+    height: 500px;
+    display: inline-grid;
+    overflow: scroll;
+    grid-template-rows: 1fr 3fr;
+    border: 1px solid green;
+}
+
+.mention {
+    background-color: dodgerblue;
+}
+.mention-resolved {
+    background-color: dodgerblue;
+    border: 1px dashed red;
+    cursor: pointer;
+}
+
 
 .quote-options {
     display: grid;
@@ -26,7 +52,6 @@
 #current-selection {
     border: 1px solid red;
     padding: 2px;
-    overflow: scroll;
 }
 
 #annotationarea {
@@ -37,7 +62,7 @@
     border: 1px solid green;
 }
 
-#linenums, #annotationarea, #current-selection {
+#linenums, #annotationarea {
     height: 500px;
 
 }
@@ -105,10 +130,10 @@ span {
     user-select: none;
 }
 
-.character-list {
-    height: 400px;
-    overflow-y: auto;
-    overflow-x: hidden;
+#charnames {
+    height: 500px;
+    position: relative;
+    overflow: scroll;
 }
 
 .char-btn {
@@ -171,11 +196,29 @@ span {
     margin-top: 2px;
 }
 
-#charnames {
-    overflow: scroll;
-}
-
 #save-button {
     margin-top: 10px;
     text-align: center;
+}
+
+table{
+    border: 1px solid #333;
+}
+
+.td-normal {
+    border-top: 1px dashed black;
+}
+
+.td-alias {
+    border: 1px solid black;
+}
+
+.row-name {
+    cursor: pointer;
+}
+
+thead,
+tfoot {
+    background-color: #333;
+    color: #fff;
 }
