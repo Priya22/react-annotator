@@ -157,3 +157,80 @@
                                                     <QuoteSubmit
                                                         onSubmit={(event) => this.onQuoteSubmit(event)}
                                                     />
+
+
+
+
+while ((cur < last) && ((i <= len) || (len === 0))) {
+            let min_is_element = false;
+            let min_start = start;
+            let min_end = end;
+
+            if (len !== 0 && i<len) {
+                let element = cur_ranges[i];
+                //console.log("Element: ", element);
+                //console.log("Cur: ", cur);
+                min_is_element = true;
+                min_start = element[0];
+                min_end = element[1];
+                if ((start < min_start) && cur_done === false) {
+                    min_start = start;
+                    min_end = end;
+                    min_is_element = false;
+                }
+            }
+            //console.log("min_start: " + String(min_start)+ " Cur: " + String(cur));
+            if (cur < min_start) {
+                //console.log("Normal text.");
+                //subs = '<span class = '+normal_class+'>' + text.substring(cur, min_start) + '</span>';
+                //cur_html += subs;
+                texts.push(text.substring(cur, min_start));
+                classes.push(normal_class);
+                ids.push('');
+                cur = min_start;
+            }
+            else if (cur === min_start) {
+                let id = '';
+                let min_class = current_color;
+                if (min_is_element === true) {
+                    min_class = 'highlight-yellow';
+                    if (cur_infos[i].speaker !== '') {
+                        min_class = 'highlight-yellow-border';
+                    }
+
+                    if (cur_infos[i].sel_type === 'Mention') {
+                        if (cur_infos[i].speakee.length === 0){
+                            min_class = 'mention';
+                        }
+                        else {
+                            min_class = 'mention-resolved';
+                        }
+                    }
+
+                    id = i;
+                    i = i + 1;
+                }
+                else {
+                    cur_done = true;
+                }
+                //console.log("Found a selection! Color: " + min_class);
+
+                //subs = '<span class = '+min_class+'>' + text.substring(min_start, min_end) + '</span>';
+                if (min_class === 'highlight-yellow' || min_class === 'highlight-yellow-border' || min_class === 'mention' || min_class === 'mention-resolved') {
+                    //subs = this.clickableSpan(text.substring(min_start, min_end), min_class, String(i-1));
+                    texts.push(text.substring(min_start, min_end));
+                    classes.push(min_class);
+                    ids.push(i-1);
+                    //console.log(subs);
+                }
+                else {
+                    texts.push(text.substring(min_start, min_end));
+                    classes.push(min_class);
+                    ids.push('');
+                }
+                //cur_html += subs;
+                //console.log("Adding highlights: ", subs);
+                cur = min_end;
+
+            }
+        }

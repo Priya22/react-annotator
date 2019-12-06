@@ -13,6 +13,7 @@
     border: 1px solid black;
     margin: 5px;
     grid-template-columns: 5fr 7fr;
+    height: 600px;
     /*grid-template-columns: 1fr;*/
 }
 
@@ -25,7 +26,7 @@
 }
 
 #middle-disp {
-    height: 500px;
+    height: 100%;
     display: inline-grid;
     overflow: scroll;
     grid-template-rows: 1fr 3fr;
@@ -58,14 +59,14 @@
     float: right;
     overflow-y: scroll;
    /* width: calc(100% - 70px);   experimental - can do calc in javascript */
-    padding-left: 5px;
+    /*padding-left: 5px;*/
     border: 1px solid green;
 }
 
-#linenums, #annotationarea {
-    height: 500px;
+/*#linenums, #annotationarea {*/
+/*    height: 600px ;*/
 
-}
+/*}*/
 
 .selection-type {
     display: inline;
@@ -89,27 +90,29 @@ p {
     background-color: lightgray;
 }
 
-.highlight {
+.selected-quote {
     background-color: lightgray;
+    cursor: pointer;
 }
 
-.highlight-yellow {
+.identified-quote {
     background-color: yellow;
     cursor: pointer;
 }
 
-.highlight-green {
+.confirmed-quote {
     background-color: green;
+    cursor: pointer;
 }
 
-.highlight-yellow-border {
+.annotated-quote {
     background-color: lightcyan;
     cursor: pointer;
     border: 0.5px dashed red;
 }
 
 .input-text {
-    font-family: "Courier New", monospace;
+    font-family: "DejaVu Serif";
     white-space: pre;
 }
 
@@ -117,6 +120,14 @@ div {
     margin: 5px;
 }
 
+.init-heading {
+    display: inline;
+    font-family: "Droid Sans Mono";
+}
+
+#load {
+    text-align: center;
+}
 span {
     margin: 2px;
 }
@@ -131,9 +142,10 @@ span {
 }
 
 #charnames {
-    height: 500px;
+    height: 600px;
     position: relative;
     overflow: scroll;
+    font-family: "DejaVu Serif";
 }
 
 .char-btn {
@@ -142,7 +154,7 @@ span {
 
 .bts-table {
     font-size: 10px;
-    font-family: sans-serif;
+    font-family: "DejaVu Serif";
     display: none;
 }
 
@@ -221,4 +233,60 @@ thead,
 tfoot {
     background-color: #333;
     color: #fff;
+}
+
+#context-switch {
+    margin: 5px;
+
+    width: 90%;
+}
+.side-button {
+    background-color: white;
+    border: 1px solid black;
+    color: black;
+    padding: 16px 32px;
+    text-align: center;
+
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    -webkit-transition-duration: 0.4s; /* Safari */
+    transition-duration: 0.4s;
+    cursor: pointer;
+    float: right;
+}
+
+.side-button-selected {
+    background-color: lightgreen;
+    border: 1px solid black;
+    color: black;
+    padding: 16px 32px;
+    text-align: center;
+
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    -webkit-transition-duration: 0.4s; /* Safari */
+    transition-duration: 0.4s;
+    cursor: pointer;
+    float: right;
+}
+
+.css-button {
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 10px;
+    cursor: pointer;
+}
+
+.border {
+    /*border: 1px solid black;*/
+    border-bottom: 1px solid black;
+}
+
+a {
+    font-size: 16pt;
 }

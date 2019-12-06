@@ -1,72 +1,22 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './grid.css';
-import Button from '@material-ui/core/Button';
-import Select from '@material-ui/core/Select';
-import { makeStyles } from '@material-ui/core/styles';
-import InputLabel from '@material-ui/core/InputLabel';
-import MenuItem from '@material-ui/core/MenuItem';
+
 import FormHelperText from '@material-ui/core/FormHelperText';
 import FormControl from '@material-ui/core/FormControl';
-import ReactHtmlParser, { processNodes, convertNodeToElement, htmlparser2 } from 'react-html-parser';
-import {BootstrapTable, TableHeaderColumn, InsertButton, DeleteButton} from 'react-bootstrap-table';
+
 //import 'react-bootstrap-table/dist/react-bootstrap-table-all.min.css';
 import ReactModal from 'react-modal';
 import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
-import FormLabel from '@material-ui/core/FormLabel';
-import TextField from '@material-ui/core/TextField';
-import { renderToString } from 'react-dom/server'
+import axios from 'axios';
 
-import myData from './quotes.json';
-import testChars from './chars.json'
+//import myData from './quotes.json';
+//import testChars from './chars.json'
 
-//console.log(myData);
-//console.log(testChars);
-// const useStyles = makeStyles({
-//     root: {
-//         '&:hover': {
-//             backgroundColor: 'transparent',
-//         },
-//     },
-//     icon: {
-//         borderRadius: '50%',
-//         width: 16,
-//         height: 16,
-//         boxShadow: 'inset 0 0 0 1px rgba(16,22,26,.2), inset 0 -1px 0 rgba(16,22,26,.1)',
-//         backgroundColor: '#f5f8fa',
-//         backgroundImage: 'linear-gradient(180deg,hsla(0,0%,100%,.8),hsla(0,0%,100%,0))',
-//         '$root.Mui-focusVisible &': {
-//             outline: '2px auto rgba(19,124,189,.6)',
-//             outlineOffset: 2,
-//         },
-//         'input:hover ~ &': {
-//             backgroundColor: '#ebf1f5',
-//         },
-//         'input:disabled ~ &': {
-//             boxShadow: 'none',
-//             background: 'rgba(206,217,224,.5)',
-//         },
-//     },
-//     checkedIcon: {
-//         backgroundColor: '#137cbd',
-//         backgroundImage: 'linear-gradient(180deg,hsla(0,0%,100%,.1),hsla(0,0%,100%,0))',
-//         '&:before': {
-//             display: 'block',
-//             width: 16,
-//             height: 16,
-//             backgroundImage: 'radial-gradient(#fff,#fff 28%,transparent 32%)',
-//             content: '""',
-//         },
-//         'input:hover ~ &': {
-//             backgroundColor: '#106ba3',
-//         },
-//     },
-// });
-
-
-
+//const title = JSON.parse('{{ title | tojson | safe}}');
+//console.log(title);
 class Tool extends React.Component {
 
     // constructor(props) {
@@ -98,24 +48,57 @@ class TextLoader extends React.Component {
         super(props);
         this.state = {
             cur_file: '',
-            file_ext: '',
+            //file_ext: '',
             content: '',
+            data: '',
+            charList: ''
         };
         this.handleUpload = this.handleUpload.bind(this);
+        this.reloadState = this.reloadState.bind(this);
+    }
+
+    reloadState(event) {
+        const confirm = window.confirm("Please save before you proceed, otherwise all annotations will be lost!");
+
+        if (confirm === true) {
+            this.setState({
+                cur_file: '',
+                content: '',
+                data: '',
+                charList: ''
+            })
+        }
     }
 
     handleUpload(event) {
         const file_reader = new FileReader();
         let self = this;
         const file_name = event.target.files[0].name;
-        this.setState({cur_file: file_name});
-        file_reader.onloadend = function () {
-            const content = file_reader.result;
-            //console.log(content);
-            self.setState({file_ext: '.txt', content: content});
-            //console.log(this.state);
-        };
-        file_reader.readAsText(event.target.files[0]);
+
+        //let json_req = {'file_name': file_name}
+        axios.get('http://127.0.0.1:8080/data',
+            {
+               params: {
+                   file_name: file_name,
+               }
+            }).then(res => {
+                console.log(res.data);
+                this.setState({
+                    cur_file: res.data.title,
+                    content: res.data.content,
+                    data: res.data.data,
+                    charList: res.data.charList,
+
+                })
+        });
+        // this.setState({cur_file: file_name});
+        // file_reader.onloadend = function () {
+        //     const content = file_reader.result;
+        //     //console.log(content);
+        //     self.setState({file_ext: '.txt', content: content});
+        //     //console.log(this.state);
+        // };
+        // file_reader.readAsText(event.target.files[0]);
     }
 
     render() {
@@ -131,7 +114,11 @@ class TextLoader extends React.Component {
             return (
                 <div className="content">
                     <TextHeading value={this.state.cur_file}/>
-                    <ContentBox value={this.state.content}
+                    <ContentBox
+                        value={this.state.content}
+                        data={this.state.data}
+                        charList={this.state.charList}
+                        reloadState={this.reloadState}
                     />
                 </div>
             )
@@ -143,7 +130,7 @@ class TextLoader extends React.Component {
 function LoadButton(props) {
     return (
         <div id="load" className="default">
-            Load a text file:
+            <h3 className={'init-heading'}> Load a text file: </h3>
             <input type="file" id="loadfiles"
                    accept=".txt"
                    onChange={props.handleUpload}
@@ -153,6 +140,7 @@ function LoadButton(props) {
 }
 
 function TextHeading(props) {
+
     return (
         <div id="text-heading">
             <h1>{props.value}</h1>
@@ -168,20 +156,32 @@ class ContentBox extends React.Component {
     constructor(props) {
         super(props);
         //console.log("Constructor called");
+        const myData = this.props.data;
+        const charList = this.props.charList;
+
+
         this.state = {
-            charList: testChars,
-            ranges: myData.ranges,
+            charList: charList,
+            // ranges: myData.ranges,
             current_sel: '',
-            sel_type: '',
-            cur_start: Number.POSITIVE_INFINITY,
-            cur_end: Number.POSITIVE_INFINITY,
+            sel_type: 'quotes',
             locked: false,
             confirmed: false,
-            quote_infos: myData.quote_infos,
+            // quote_infos: myData.quote_infos,
+            // span_ids: init_span_ids,
             cur_info: {},
             selectedRows: [],
+            selectedSpanIds: [],
             cur_mode: 'normal',
             cur_ref_exp: '',
+
+            men_ranges: myData.men_ranges,
+            men_infos: myData.men_infos,
+            men_span_ids: myData.men_span_ids,
+
+            quote_ranges: myData.quote_ranges,
+            quote_infos: myData.quote_infos,
+            quote_span_ids: myData.quote_span_ids,
         }
         ;
 
@@ -191,163 +191,168 @@ class ContentBox extends React.Component {
         this.processSelection = this.processSelection.bind(this);
         this.updateChars = this.updateChars.bind(this);
         this.infoSubmit = this.infoSubmit.bind(this);
-        this.onPrevClick = this.onPrevClick.bind(this);
+        this.onSpanClick = this.onSpanClick.bind(this);
         this.confirmSelection = this.confirmSelection.bind(this);
         this.setField = this.setField.bind(this);
         this.updateSelectedRows = this.updateSelectedRows.bind(this);
         this.updateMode = this.updateMode.bind(this);
         this.setSelectionType = this.setSelectionType.bind(this);
+        this.handleSelChange = this.handleSelChange.bind(this);
+        this.saveCurrent = this.saveCurrent.bind(this);
 
     }
 
 
-    onPrevClick(event) {
-        if (this.state.cur_start === Number.POSITIVE_INFINITY) {
-            console.log("Span clicked: " + event.currentTarget.id);
+    // onPrevClick(event) {
+    //     if (this.state.cur_start === Number.POSITIVE_INFINITY) {
+    //         console.log("Span clicked: " + event.currentTarget.id);
+    //
+    //         const span_id = event.currentTarget.id;
+    //         const span_info = this.state.quote_infos[span_id];
+    //         const span_range = this.state.ranges[span_id];
+    //         const text = this.props.value;
+    //         //const selected_text = this.props.value
+    //         //event.stopPropagation();
+    //         //alert("The following span ID was clicked: " + event.currentTarget.id);
+    //         const selected_text = text.substring(span_range[0], span_range[1]);
+    //
+    //         const cur_ranges = this.state.ranges;
+    //         cur_ranges.splice(span_id, 1);
+    //
+    //         const cur_infos = this.state.quote_infos;
+    //         cur_infos.splice(span_id, 1);
+    //
+    //         this.setState({
+    //             ranges: cur_ranges, quote_infos: cur_infos,
+    //             current_sel: selected_text,
+    //             cur_start: span_range[0],
+    //             cur_end: span_range[1],
+    //             locked: true,
+    //             confirmed: true,
+    //             cur_info: span_info
+    //         })
+    //
+    //     }
+    //
+    // }
 
-            const span_id = event.currentTarget.id;
-            const span_info = this.state.quote_infos[span_id];
-            const span_range = this.state.ranges[span_id];
-            const text = this.props.value;
-            //const selected_text = this.props.value
-            //event.stopPropagation();
-            //alert("The following span ID was clicked: " + event.currentTarget.id);
-            const selected_text = text.substring(span_range[0], span_range[1]);
+    onSpanClick(event) {
+        const span_id = event.target.id;
+        const exceprt = this.props.value;
+        const infos = (this.state.sel_type === 'quotes') ? this.state.quote_infos : this.state.men_infos;
+        const ranges = (this.state.sel_type === 'quotes') ? this.state.quote_ranges : this.state.men_ranges;
 
-            const cur_ranges = this.state.ranges;
-            cur_ranges.splice(span_id, 1);
+        console.log("Span clicked");
+        console.log(span_id, typeof(span_id));
+        console.log(exceprt.substring(ranges[span_id].start, ranges[span_id].end));
 
-            const cur_infos = this.state.quote_infos;
-            cur_infos.splice(span_id, 1);
-
-            this.setState({
-                ranges: cur_ranges, quote_infos: cur_infos,
-                current_sel: selected_text,
-                cur_start: span_range[0],
-                cur_end: span_range[1],
-                locked: true,
-                confirmed: true,
-                cur_info: span_info
-            })
-
+        let selectedIds = this.state.selectedSpanIds;
+        //const span_info = this.state.quote_infos[span_id];
+        //const span_range = this.state.ranges[span_id];
+        //console.log(selectedIds);
+        if (selectedIds.includes(span_id)) {
+            //console.log("Removing");
+            selectedIds = selectedIds.filter((x) => x !== span_id);
         }
+        else {
+            console.log("Pushing");
+            selectedIds.push(span_id);
+        }
+        //console.log(selectedIds);
+        let text = '';
+
+        for (const spanid of selectedIds){
+            let cur_sub = exceprt.substring(ranges[spanid].start, ranges[spanid].end);
+            console.log(spanid, cur_sub);
+            text += cur_sub;
+            text += '; ';
+        }
+        let last_info = {};
+        let confirmed = this.state.confirmed;
+
+        if (selectedIds.length > 0) {
+            last_info = infos[selectedIds[selectedIds.length - 1]];
+            if (last_info.speakee.length !== 0) {
+                confirmed = true;
+            }
+        }
+
+        this.setState({selectedSpanIds: selectedIds, current_sel: text, cur_info: last_info, confirmed: confirmed});
 
     }
 
     processSelection() {
-
+        console.log("Processing selections");
         let texts = [];
         let classes = [];
         let ids = [];
 
-        const cur_ranges = this.state.ranges;
-        const cur_infos = this.state.quote_infos;
+        const ranges = (this.state.sel_type === 'quotes') ? this.state.quote_ranges : this.state.men_ranges;
+        const infos = (this.state.sel_type === 'quotes') ? this.state.quote_infos : this.state.men_infos;
+        const span_ids = (this.state.sel_type === 'quotes') ? this.state.quote_span_ids : this.state.men_span_ids;
 
-        //let cur_html = '<span>';
+        const span_ends = Object.keys(ranges).map((key) => ranges[key].end);
+        //console.log(span_ends);
         const text = this.props.value;
-        const normal_class = 'normal-text';
-        let current_color = 'highlight';
-        if(this.state.confirmed === true) {
-            current_color = 'highlight-green';
-        }
 
-        const start = this.state.cur_start;
-        const end = this.state.cur_end;
-
-        const len = cur_ranges.length;
-
-        const last_end = (len > 0) ? Math.max(cur_ranges[len-1][1], end) : end;
+        const last_end = Math.max.apply(null, span_ends);
 
         const begin = 0;
 
         const last = Math.min(text.length, last_end);
-        let cur = begin;
+        let current = begin;
 
-        let i = 0;
+        let cur_span_index = 0;
+        //console.log(last);
+        while (current < last) {
+            const cur_span_id = span_ids[cur_span_index];
+            //console.log(cur_span_id, typeof(cur_span_id));
+            //console.log(ranges[cur_span_id]);
+            //console.log(current);
+            if (current < ranges[cur_span_id].start) {
+                //console.log("Normal range");
+                let substr = text.substring(current, ranges[cur_span_id].start);
 
-        let cur_done = false;
-
-        while ((cur < last) && ((i <= len) || (len === 0))) {
-            let min_is_element = false;
-            let min_start = start;
-            let min_end = end;
-
-            if (len !== 0 && i<len) {
-                let element = cur_ranges[i];
-                //console.log("Element: ", element);
-                //console.log("Cur: ", cur);
-                min_is_element = true;
-                min_start = element[0];
-                min_end = element[1];
-                if ((start < min_start) && cur_done === false) {
-                    min_start = start;
-                    min_end = end;
-                    min_is_element = false;
-                }
-            }
-            //console.log("min_start: " + String(min_start)+ " Cur: " + String(cur));
-            if (cur < min_start) {
-                //console.log("Normal text.");
-                //subs = '<span class = '+normal_class+'>' + text.substring(cur, min_start) + '</span>';
-                //cur_html += subs;
-                texts.push(text.substring(cur, min_start));
-                classes.push(normal_class);
+                let cur_class = "normal-text";
+                texts.push(substr);
+                classes.push(cur_class);
                 ids.push('');
-                cur = min_start;
+                current = ranges[cur_span_id].start;
             }
-            else if (cur === min_start) {
-                let id = '';
-                let min_class = current_color;
-                if (min_is_element === true) {
-                    min_class = 'highlight-yellow';
-                    if (cur_infos[i].speaker !== '') {
-                        min_class = 'highlight-yellow-border';
-                    }
 
-                    if (cur_infos[i].sel_type === 'Mention') {
-                        if (cur_infos[i].speakee.length === 0){
-                            min_class = 'mention';
-                        }
-                        else {
-                            min_class = 'mention-resolved';
-                        }
-                    }
+            else if (current === ranges[cur_span_id].start) {
+                //console.log("Special range");
+                let cur_class = '';
+                let substr = text.substring(ranges[cur_span_id].start, ranges[cur_span_id].end);
 
-                    id = i;
-                    i = i + 1;
+                if (this.state.selectedSpanIds.includes(String(cur_span_id))) {
+                    this.state.confirmed ? cur_class = 'confirmed-quote' : cur_class = 'selected-quote';
+                }
+                else if (infos[cur_span_id].speakee.length === 0) {
+                    cur_class = 'identified-quote';
                 }
                 else {
-                    cur_done = true;
+                    cur_class = 'annotated-quote';
                 }
-                //console.log("Found a selection! Color: " + min_class);
-
-                //subs = '<span class = '+min_class+'>' + text.substring(min_start, min_end) + '</span>';
-                if (min_class === 'highlight-yellow' || min_class === 'highlight-yellow-border' || min_class === 'mention' || min_class === 'mention-resolved') {
-                    //subs = this.clickableSpan(text.substring(min_start, min_end), min_class, String(i-1));
-                    texts.push(text.substring(min_start, min_end));
-                    classes.push(min_class);
-                    ids.push(i-1);
-                    //console.log(subs);
-                }
-                else {
-                    texts.push(text.substring(min_start, min_end));
-                    classes.push(min_class);
-                    ids.push('');
-                }
-                //cur_html += subs;
-                //console.log("Adding highlights: ", subs);
-                cur = min_end;
+                //process mentions here
+                texts.push(substr);
+                classes.push(cur_class);
+                ids.push(cur_span_id);
+                current = ranges[cur_span_id].end;
+                cur_span_index += 1;
 
             }
         }
-        if (cur < text.length) {
+
+
+        if (current < text.length) {
             //subs = subs = '<span class = '+normal_class+'>' + text.substring(cur, text.length) + '</span>';
             //cur_html+=subs;
-            texts.push(text.substring(cur, text.length));
-            classes.push(normal_class);
+            texts.push(text.substring(current, text.length));
+            classes.push("normal-text");
             ids.push('');
         }
-        //cur_html += '</span>';
+
         return {
             texts: texts,
             classes: classes,
@@ -355,34 +360,73 @@ class ContentBox extends React.Component {
         }
     }
 
-    addToRanges(info) {
-        console.log("Adding selection to ranges: ");
-        let cur_ranges = this.state.ranges;
-        let cur_infos = this.state.quote_infos;
-
-        cur_ranges.push([this.state.cur_start, this.state.cur_end]);
-        cur_infos.push(info);
-
-        let indices = new Array(cur_ranges.length);
-        for (var i = 0; i < cur_ranges.length; ++i) indices[i] = i;
-
-        indices.sort(function (a, b) { return cur_ranges[a][0] < cur_ranges[b][0] ? -1 : cur_ranges[a] > cur_ranges[b] ? 1 : 0; });
-
-        cur_ranges.sort(function(a,b) {
-                return a[0] - b[0]
+    handleSelChange(event) {
+        console.log(event.target.id);
+        if (this.state.selectedSpanIds.length !== 0) {
+            alert("Please finish current annotation to switch tabs!");
+            event.preventDefault();
+        }
+        else {
+            const target_class = event.target.id;
+            if (target_class === this.state.sel_type) {
+                event.preventDefault();
             }
-        );
+            else {
+                //this.setState({quote_infos: , span_ids: , ranges: , sel_type: });
+                alert("Changing tab to: " + target_class);
+                this.setState({sel_type: target_class});
+                event.preventDefault();
+            }
+        }
+    }
 
-        const new_infos = indices.map((value, i) => {return cur_infos[value]});
 
-        this.setState({ranges: cur_ranges, quote_infos: new_infos, cur_info: {},
-            cur_start: Number.POSITIVE_INFINITY, cur_end: Number.POSITIVE_INFINITY,
-            locked:false, current_sel:'', confirmed: false, cur_mode:'normal'});
+    addToRanges(start, end) {
+        console.log("Adding selection to ranges: ");
+        let cur_ranges = (this.state.sel_type === 'quotes') ? this.state.quote_ranges : this.state.men_ranges;
+        let cur_infos = (this.state.sel_type === 'quotes') ? this.state.quote_infos : this.state.men_infos;
+        let span_ids = (this.state.sel_type === 'quotes') ? this.state.quote_span_ids : this.state.men_span_ids;
+        const text = this.props.value;
+
+        const susbtr = text.substring(start, end);
+
+        const new_span_id = Math.max.apply(null, span_ids) + 1;
+        console.log(new_span_id);
+        cur_ranges[String(new_span_id)] = {
+                                        start: start,
+                                        end: end
+                                    };
+
+        const type = (this.state.sel_type === 'quotes') ? 'Quote' : 'Mention';
+        const info = {
+            speaker: '',
+            speakee: [],
+            ref_exp: '',
+            quote_type: '',
+            sel_type: type,
+            text: susbtr
+        };
+
+        cur_infos[String(new_span_id)] = info;
+        span_ids.push(String(new_span_id));
+        span_ids.sort(function (a, b) { return cur_ranges[a].start - cur_ranges[b].start });
+
+        if (this.state.sel_type === 'quotes') {
+            this.setState({quote_ranges: cur_ranges, quote_infos: cur_infos, cur_info: {}, quote_span_ids: span_ids,
+                locked:false, current_sel:'', confirmed: false, cur_mode:'normal'});
+        }
+        else {
+            this.setState({men_ranges: cur_ranges, men_infos: cur_infos, cur_info: {}, men_span_ids: span_ids,
+                locked:false, current_sel:'', confirmed: false, cur_mode:'normal'});
+        }
+
     }
 
     confirmSelection(event) {
         if (this.state.confirmed === false) {
-            this.setState({confirmed: true});
+            const random_id = this.state.selectedSpanIds[0];
+            const cur_info = (this.state.sel_type === 'quotes') ? this.state.quote_infos[random_id] : this.state.men_infos[random_id];
+            this.setState({confirmed: true, locked: true, cur_info: cur_info});
         }
         event.preventDefault();
     }
@@ -396,16 +440,11 @@ class ContentBox extends React.Component {
         const text = this.props.value;
 
         const cur_sel = text.substring(start, end);
-
+        console.log(cur_sel);
         if (this.state.cur_mode !== 'ref_exp') {
-            const cur_info = {
-                quote_type: '',
-                speaker: '',
-                speakee: [],
-                ref_exp: '',
-            };
 
-            this.setState({current_sel: cur_sel, cur_start: start, cur_end: end, locked: true, cur_info: cur_info});
+            this.addToRanges(start, end);
+
         }
 
         else {
@@ -416,43 +455,61 @@ class ContentBox extends React.Component {
     }
 
     clearSel(event) {
+        const currentSelectedSpans = this.state.selectedSpanIds;
+        let ranges = (this.state.sel_type === 'quotes') ? this.state.quote_ranges : this.state.men_ranges;
+        let infos = (this.state.sel_type === 'quotes') ? this.state.quote_infos : this.state.men_infos;
+        let span_ids = (this.state.sel_type === 'quotes') ? this.state.quote_span_ids : this.state.men_span_ids;
 
-        // let cur_ranges = this.state.ranges;
-        //
-        // let new_ranges = [];
-        // let modified =false;
-        //
-        // let index_found = -1;
-        //
-        // for (let i=0; i< cur_ranges.length; i = i+1) {
-        //     let element = cur_ranges[i];
-        //     if (element[0] === this.state.cur_start && element[1] === this.state.cur_end) {
-        //         modified = true;
-        //         index_found = i;
-        //     }
-        //     else {
-        //         new_ranges.push([element[0], element[1]]);
-        //     }
-        // }
-        //
-        // if (modified === true) {
-        //     cur_ranges = new_ranges;
-        //     cur_ranges.sort(function(a,b) {
-        //             return a[0] - b[0]
-        //         }
-        //     );
-        //
-        //
-        //
-        // }
+        for (const spanid of currentSelectedSpans) {
+            delete ranges[spanid];
+            delete infos[spanid];
+        }
 
-        this.setState({locked: false, current_sel: '', cur_start:Number.POSITIVE_INFINITY, cur_end: Number.POSITIVE_INFINITY, confirmed: false, cur_info:{}});
-        event.preventDefault();
+        span_ids = span_ids.filter((x) => {
+            return !currentSelectedSpans.includes(x)
+        });
+        console.log("Clearing filter: ");
+        //console.log(span_ids);
+        console.log(span_ids[0]);
+        console.log(ranges[span_ids[0]]);
+        if (this.state.sel_type === 'quotes') {
+            this.setState({quote_ranges: ranges, quote_infos: infos, quote_span_ids: span_ids, selectedSpanIds: [], current_sel: '', cur_info: {},
+                locked: false, cur_mode: 'normal'
+            });
+            event.preventDefault();
+        }
+        else {
+            this.setState({men_ranges: ranges, men_infos: infos, men_span_ids: span_ids, selectedSpanIds: [], current_sel: '', cur_info: {},
+                locked: false, cur_mode: 'normal'
+            });
+            event.preventDefault();
+        }
+
+
     }
 
     infoSubmit() {
         alert("Info submitted!");
-        this.addToRanges(this.state.cur_info);
+        //this.addToRanges(this.state.cur_info);
+        const currentSpanIDs  = this.state.selectedSpanIds;
+        let infos = (this.state.sel_type === 'quotes') ? this.state.quote_infos : this.state.men_infos;
+
+        const info = this.state.cur_info;
+        for (const spanID of currentSpanIDs) {
+            infos[spanID] = info;
+        }
+        if (this.state.sel_type === 'quotes') {
+            this.setState({selectedSpanIds: [], quote_infos: infos, cur_info: {}, confirmed: false,
+                locked: false, cur_mode: 'normal', current_sel: ''
+            });
+        }
+        else {
+            this.setState({selectedSpanIds: [], men_infos: infos, cur_info: {}, confirmed: false,
+                locked: false, cur_mode: 'normal', current_sel: ''
+            });
+        }
+
+
     }
 
     updateSelectedRows(newRows) {
@@ -523,6 +580,31 @@ class ContentBox extends React.Component {
         this.setState({cur_info: cur_info})
     }
 
+    saveCurrent(event) {
+        //send state to backend and clear state.
+        const data_to_save = {
+            charList: this.state.charList,
+            men_ranges: this.state.men_ranges,
+            men_infos: this.state.men_infos,
+            men_span_ids: this.state.men_span_ids,
+            quote_ranges: this.state.quote_ranges,
+            quote_infos: this.state.quote_infos,
+            quote_span_ids: this.state.quote_span_ids,
+        };
+
+        axios.post('http://127.0.0.1:8080/data', data_to_save)
+            .then(res => {
+                if (res.status === 200) {
+                    alert('Saved!');
+                }
+                else {
+                    alert('Save failed.');
+                }
+            });
+        event.preventDefault();
+    }
+
+
     render() {
 
         if (this.props.value === '') {
@@ -538,10 +620,35 @@ class ContentBox extends React.Component {
         }
         else {
             const display_obj = this.processSelection();
-            const save_dis = (this.state.cur_start !== Number.POSITIVE_INFINITY);
-
+            const save_dis = (this.state.selectedSpanIds.length !== 0);
+            const quote_class =  (this.state.sel_type === 'mentions') ? 'side-button' : 'side-button-selected';
+            const mention_class =  (this.state.sel_type === 'quotes') ? 'side-button' : 'side-button-selected';
             return (
                 <div id={'save-option'}>
+
+                    <div id={'context-switch'}>
+                        <span id={'instructions'}>
+                            <a style={{display: "table-cell"}} href={"instructions.html"} target="_blank">Instructions</a>
+                        </span>
+
+
+                        <span id={'mentions-button'}>
+                            <button name={'switch-mentions'} id={'mentions'} className={mention_class}
+
+                                    onClick={this.handleSelChange}>
+                                Mentions
+                            </button>
+                        </span>
+                        <span id={'quotes-button'}>
+                            <button name={'switch-quotes'} id={'quotes'}  className={quote_class}
+
+                                    onClick={this.handleSelChange}>
+                                Quotes
+                            </button>
+                        </span>
+
+
+                    </div>
 
                     <div id="annotationareacontainer">
 
@@ -568,19 +675,32 @@ class ContentBox extends React.Component {
                             value={display_obj}
                             locked={this.state.locked}
                             setSelection={(start, end) => this.setSelection(start, end)}
-                            onPrevClick={this.onPrevClick}
-                            clickEnabled = {this.state.cur_start === Number.POSITIVE_INFINITY}
+                            onPrevClick={this.onSpanClick}
+                            clickEnabled = {this.state.confirmed !== true}
                         />
 
                     </div>
 
                     <div id={'save-button'}>
-                        <button type={'submit'} name={'save-current'}
-                                disabled={save_dis}
-                                //onClick={this.saveCurrent}
-                                >
+                        <span>
+                            <button className={'css-button'}
+                                type={'submit'} name={'save-current'}
+                                    disabled={save_dis}
+                                    onClick={this.saveCurrent}
+                            >
                             Save Progress
                         </button>
+                        </span>
+                        <span>
+                            <button className={'css-button'}
+                                type={'submit'} name={'clear-current'}
+                                    disabled={save_dis}
+                                    onClick={this.props.reloadState}
+                            >
+                            Reload Page
+                        </button>
+                        </span>
+
                     </div>
                 </div>
             )
@@ -593,7 +713,7 @@ class Collect extends React.Component{
     render() {
         console.log("Collect: ");
         console.log(this.props.cur_info);
-        if (Object.keys(this.props.cur_info).length !== 0) {
+        if (this.props.selected_text.length !== 0) {
             if (this.props.cur_info.sel_type === 'Quote') {
                 return (
                     <div id={'collect'}>
@@ -625,6 +745,7 @@ class Collect extends React.Component{
                                     cur_mode={this.props.cur_mode}
                                     updateMode={this.props.updateMode}
                                     setField={this.props.setField}
+                                    confirmed={this.props.confirmed}
                                 />
                             </div>
                         </div>
@@ -663,6 +784,7 @@ class Collect extends React.Component{
                                     cur_mode={this.props.cur_mode}
                                     updateMode={this.props.updateMode}
                                     setField={this.props.setField}
+                                    confirmed={this.props.confirmed}
                                 />
                             </div>
                         </div>
@@ -696,6 +818,7 @@ class Collect extends React.Component{
                             <div id={'collect-information'}>
                                 <SelectionType
                                     setSelectionType={this.props.setSelectionType}
+                                    confirmed={this.props.confirmed}
                                 />
                             </div>
                         </div>
@@ -732,36 +855,43 @@ class Collect extends React.Component{
 class SelectionType extends React.Component {
 
     render() {
-
-        return (
-            <div id={'selection-type'}>
-                <h3>
-                    Select the type of the selection:
-                </h3>
-                <FormControl  id={'selection-type'}
-                              m={-2}
-                >
-                    <RadioGroup aria-label="position" name="position" value={this.props.value} row
-                                onChange={(event) => this.props.setSelectionType(event)}
-                                fontSize={'fontSize'}
+        if (this.props.confirmed === false) {
+            return (
+                <div></div>
+            )
+        }
+        else {
+            return (
+                <div id={'selection-type'}>
+                    <h3>
+                        Select the type of the selection:
+                    </h3>
+                    <FormControl  id={'selection-type'}
+                                  m={-2}
                     >
-                        <FormControlLabel
-                            value="Quote"
-                            control={<Radio color="primary" />}
-                            label="Quote"
-                            labelPlacement="start"
-                        />
-                        <FormControlLabel
-                            value="Mention"
-                            control={<Radio color="primary" />}
-                            label="Mention"
-                            labelPlacement="start"
-                        />
-                    </RadioGroup>
+                        <RadioGroup aria-label="position" name="position" value={this.props.value} row
+                                    onChange={(event) => this.props.setSelectionType(event)}
+                                    fontSize={'fontSize'}
+                        >
+                            <FormControlLabel
+                                value="Quote"
+                                control={<Radio color="primary" />}
+                                label="Quote"
+                                labelPlacement="start"
+                            />
+                            <FormControlLabel
+                                value="Mention"
+                                control={<Radio color="primary" />}
+                                label="Mention"
+                                labelPlacement="start"
+                            />
+                        </RadioGroup>
 
-                </FormControl>
-            </div>
-        )
+                    </FormControl>
+                </div>
+            )
+        }
+
 
     }
 }
@@ -809,7 +939,7 @@ class TextArea extends React.Component {
     onMouseUp(event) {
 
         if (this.props.locked === false && event.currentTarget.className === 'input-text') {
-            //console.log("Text selected.");
+            console.log("Text selected.");
             const target = event.currentTarget;
             const offSets = this.getSelectionCharacterOffsetWithin(target);
             if (offSets.start !== offSets.end) {
@@ -819,6 +949,7 @@ class TextArea extends React.Component {
         }
     }
 
+
     convertToHtml(display_obj) {
         const texts = display_obj.texts;
         const classes = display_obj['classes'];
@@ -827,7 +958,7 @@ class TextArea extends React.Component {
         const spans = texts.map((value, i) => {
             if (ids[i] !== '') {
                 return (
-                    <span className={classes[i]} id={ids[i]} onClick={this.props.onPrevClick}>{value}</span>
+                    <span className={classes[i]} id={ids[i]} onMouseUp={this.props.onPrevClick}>{value}</span>
                 )
             }
             else {
@@ -944,7 +1075,7 @@ class CharacterList extends React.Component {
             console.log(name);
         }
 
-        if (this.props.mode === 'normal' || this.props.mode == 'ref_exp') {
+        if (this.props.mode === 'normal' || this.props.mode == 'ref_exp' || this.props.mode == 'done') {
             disabled = true;
             checked = false;
         }
@@ -1188,58 +1319,64 @@ class CollectInfo extends React.Component {
 
         //console.log("CollectInfo");
         //console.log(this.props.cur_info);
-        if (this.props.cur_mode !== 'done') {
-
+        if (this.props.confirmed === false) {
             return (
-                <div id={'quote-info'}>
-                    <QuoteType
-                        setQuoteType={this.setQuoteType}
-                        value={this.props.cur_info.quote_type}
-                        mode={this.props.cur_mode}
-                    />
+                <div>
 
-                    <SpeakerInfo
-                        updateMode={this.props.updateMode}
-                        value={this.props.cur_info.speaker}
-                        mode={this.props.cur_mode}
-                        setField={this.props.setField}
-                    />
-
-                    <SpeakeeInfo
-                        updateMode={this.props.updateMode}
-                        value={this.props.cur_info.speakee}
-                        mode={this.props.cur_mode}
-                        setField={this.props.setField}
-                        message={"Select Addressee"}
-                    />
-
-                    <RefExpInfo
-                        updateMode={this.props.updateMode}
-                        value={this.props.cur_info.ref_exp}
-                        mode={this.props.cur_mode}
-                        setField={this.props.setField}
-                        active={ref_disable}
-                        />
-
-                    <SubmitInfoButton
-                        onSubmit={this.onSubmit}
-                        />
                 </div>
             )
-
-
         }
-
-
         else {
-            return (
-                <DisplayInfo speaker={this.props.cur_info.speaker}
-                             speakee={this.props.cur_info.speakee}
-                             ref_exp={this.props.cur_info.ref_exp}
-                             onConfirm={this.onConfirm}
-                             onBack={this.onReviewEdit}
-                />
-            )
+            if (this.props.cur_mode !== 'done') {
+
+                return (
+                    <div id={'quote-info'}>
+                        <QuoteType
+                            setQuoteType={this.setQuoteType}
+                            value={this.props.cur_info.quote_type}
+                            mode={this.props.cur_mode}
+                        />
+
+                        <SpeakerInfo
+                            updateMode={this.props.updateMode}
+                            value={this.props.cur_info.speaker}
+                            mode={this.props.cur_mode}
+                            setField={this.props.setField}
+                        />
+
+                        <SpeakeeInfo
+                            updateMode={this.props.updateMode}
+                            value={this.props.cur_info.speakee}
+                            mode={this.props.cur_mode}
+                            setField={this.props.setField}
+                            message={"Select Addressee"}
+                        />
+
+                        <RefExpInfo
+                            updateMode={this.props.updateMode}
+                            value={this.props.cur_info.ref_exp}
+                            mode={this.props.cur_mode}
+                            setField={this.props.setField}
+                            active={ref_disable}
+                        />
+
+                        <SubmitInfoButton
+                            onSubmit={this.onSubmit}
+                        />
+                    </div>
+                )
+
+
+            } else {
+                return (
+                    <DisplayInfo speaker={this.props.cur_info.speaker}
+                                 speakee={this.props.cur_info.speakee}
+                                 ref_exp={this.props.cur_info.ref_exp}
+                                 onConfirm={this.onConfirm}
+                                 onBack={this.onReviewEdit}
+                    />
+                )
+            }
         }
     }
 }
@@ -1270,7 +1407,15 @@ class CollectMentionInfo extends React.Component {
 
     render() {
 
-        if (this.props.cur_mode != 'done') {
+        if (this.props.confirmed === false) {
+            return (
+                <div>
+
+                </div>
+            )
+        }
+
+        else if (this.props.cur_mode != 'done') {
             return (
                 <div id={'collect-mention'}>
                     <SpeakeeInfo
@@ -1304,10 +1449,11 @@ class QuoteType extends React.Component {
 
     render() {
         return (
-            <div>
+            <div className={'border'}>
                 <FormControl  id={'quote-type'}
                               m={-2}
                 >
+                    <h3>Select Quote Type</h3>
                     <RadioGroup aria-label="position" name="position" value={this.props.value} row
                                 onChange={(event) => this.props.setQuoteType(event)}
                                 fontSize={'fontSize'}
@@ -1333,7 +1479,7 @@ class QuoteType extends React.Component {
                         />
                     </RadioGroup>
 
-                    <FormHelperText>Select Quote Type</FormHelperText>
+                    {/*<FormHelperText>Select Quote Type</FormHelperText>*/}
 
                 </FormControl>
             </div>
@@ -1361,9 +1507,11 @@ class SpeakerInfo extends React.Component {
         const display_message = (this.props.value === '') ? "None set." : this.props.value;
 
         return (
-            <div id={'select-speaker'}>
-                <div>Select the speaker from the character list on the left, and press Submit when done.</div>
-                <span>Speaker: {display_message} </span>
+            <div className={'border'}
+                id={'select-speaker'}>
+                <h3>Select Speaker</h3>
+                <div><i>Select the speaker from the character list on the left, and press Submit when done.</i></div>
+                <span><b>Speaker:</b> {display_message} </span>
                 <span>
                     <button type={'submit'} name={'speaker-edit'} onClick={this.onEdit}>Edit</button>
                 </span>
@@ -1397,9 +1545,11 @@ class SpeakeeInfo extends React.Component {
         // console.log(this.props.value);
         const message = (this.props.value === '') ? 'None set' : this.props.value.join('; ');
         return (
-            <div id={'select-speakee'}>
-                <div>{this.props.message} from the character list on the left, and press Submit when done. If there are multiple, select all possible ones.</div>
-                <span>Addressee(s): {message} </span>
+            <div className={'border'}
+                id={'select-speakee'}>
+                <h3>Select Addressee</h3>
+                <div><i>{this.props.message} from the character list on the left, and press Submit when done. If there are multiple, select all possible ones.</i></div>
+                <span><b>Addressee(s):</b> {message} </span>
                 <span>
                     <button type={'submit'} name={'speakee-edit'} onClick={this.onEdit}>Edit</button>
                 </span>
@@ -1481,10 +1631,12 @@ class RefExpInfo extends React.Component {
         else {
             return (
 
-                <div id={'select-ref_exp'}
+                <div className={'border'}
+                    id={'select-ref_exp'}
                 >
-                    <div>Select the referring expression from the text area on the right.</div>
-                    <span>Referring Expression: {message} </span>
+                    <h3>Select Referring Expression</h3>
+                    <div><i>Select the referring expression from the text area on the right and click Submit when done.</i></div>
+                    <span><b>Referring Expression:</b> {message} </span>
                     <span>
                     <button type={'submit'} name={'speakee-edit'}
                             onClick={this.onEdit}>Edit</button>
@@ -1523,16 +1675,17 @@ class DisplayInfo extends React.Component {
             ref_exp = this.props.ref_exp;
         }
 
-        if ('speaker' in this.props.speaker) {
+        if ('speaker' in this.props) {
+            const speakee = this.props.speakee.join("; ");
             return (
                 <div id={'display-info'}>
                     <div id={'info'}>
 
                         <h3>Review Quote Information: </h3>
                         <ul>
-                            <li>Speaker: {this.props.speaker}</li>
-                            <li>Addressee: {this.props.speakee}</li>
-                            <li>Referring Expression: {ref_exp}</li>
+                            <li><b>Speaker: </b>{this.props.speaker}</li>
+                            <li><b>Addressee: </b>{speakee}</li>
+                            <li><b>Referring Expression: </b>{ref_exp}</li>
                         </ul>
                     </div>
 
@@ -1563,7 +1716,7 @@ class DisplayInfo extends React.Component {
 
                         <h3>Review Mention Information: </h3>
                         <ul>
-                            <li>Entity: {'; '.join(this.props.speakee)}</li>
+                            <li><b>Entity: </b>{this.props.speakee.join('; ')}</li>
                         </ul>
                     </div>
 
