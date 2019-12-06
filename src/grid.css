@@ -50,6 +50,11 @@
     margin: 1px;
 }
 
+#submit-info-button {
+    margin: 5px;
+    padding: 10px;
+}
+
 #current-selection {
     border: 1px solid red;
     padding: 2px;

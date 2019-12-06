@@ -628,7 +628,7 @@ class ContentBox extends React.Component {
 
                     <div id={'context-switch'}>
                         <span id={'instructions'}>
-                            <a style={{display: "table-cell"}} href={"instructions.html"} target="_blank">Instructions</a>
+                            <a style={{display: "table-cell"}} href={"/instructions"} target="_blank">Instructions</a>
                         </span>
 
 
@@ -1656,7 +1656,8 @@ class SubmitInfoButton extends React.Component {
     render() {
         return (
             <div>
-                <button type="submit" value="Submit-info" onClick={this.props.onSubmit}>Submit Info </button>
+                <button id={'submit-info-button'}
+                    type="submit" value="Submit-info" onClick={this.props.onSubmit}>Submit Info </button>
             </div>
             )
 

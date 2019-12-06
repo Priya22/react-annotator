@@ -40,6 +40,10 @@ def save_progress(chars, quote_infos, quote_ranges, quote_span_ids, men_infos, m
 def serve_index():
     return render_template('index.html')
 
+@app.route("/instructions")
+def return_page():
+    return send_from_directory('public/', 'instructions.html')
+
 @app.route("/data", methods=['GET'])
 def get_data():
     #return data extracted from file.
