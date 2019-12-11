@@ -106,7 +106,8 @@ p {
 }
 
 .confirmed-quote {
-    background-color: green;
+    background-color: lightgray;
+    border: 0.5px dashed red;
     cursor: pointer;
 }
 
