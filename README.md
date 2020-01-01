@@ -3,6 +3,7 @@
 This app was created using the React framework for the front-end and python Flask backend. You will need the 
 following libraries to run it:
 1. Make sure you have a recent version of Node installed (https://nodejs.org/en/).
+2. You also need to have Python version>=3.6 installed.
 2. Clone this repo onto your local machine. 
 
 ### Start the application
