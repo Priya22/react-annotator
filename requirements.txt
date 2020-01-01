@@ -1,0 +1,4 @@
+Flask>=1.0.1
+Flask-cors>=3.0.7
+numpy>=1.17.1
+nltk>=3.4.1

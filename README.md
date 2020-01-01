@@ -5,6 +5,7 @@ following libraries to run it:
 1. Make sure you have a recent version of Node installed (https://nodejs.org/en/).
 2. Clone this repo onto your local machine. 
 3. Open a terminal and in the project root, run `npm install` to install all the required dependencies. 
+Then run `npm run build`. This should create a `build` folder within the project root. 
 4. **Backend**: The server runs with Python 3 and uses the Flask library. Run `pip3 install -U flask` to install the latest version.
 
 ### Start the application
