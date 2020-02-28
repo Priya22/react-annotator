@@ -237,6 +237,7 @@ class ContentBox extends React.Component {
     // }
 
     onSpanClick(event) {
+        //this.saveCurrent(event);
         const span_id = event.target.id;
         const exceprt = this.props.value;
         const infos = (this.state.sel_type === 'quotes') ? this.state.quote_infos : this.state.men_infos;
@@ -373,7 +374,7 @@ class ContentBox extends React.Component {
             }
             else {
                 //this.setState({quote_infos: , span_ids: , ranges: , sel_type: });
-                alert("Changing tab to: " + target_class);
+                //alert("Changing tab to: " + target_class);
                 this.setState({sel_type: target_class});
                 event.preventDefault();
             }
@@ -464,14 +465,16 @@ class ContentBox extends React.Component {
             delete ranges[spanid];
             delete infos[spanid];
         }
-
+        //console.log(span_ids[4]);
+        //console.log(currentSelectedSpans);
+        //console.log(currentSelectedSpans.includes(String(span_ids[4])));
         span_ids = span_ids.filter((x) => {
-            return !currentSelectedSpans.includes(x)
+            return !currentSelectedSpans.includes(String(x))
         });
         console.log("Clearing filter: ");
         //console.log(span_ids);
-        console.log(span_ids[0]);
-        console.log(ranges[span_ids[0]]);
+        //console.log(span_ids[0]);
+        //console.log(ranges[span_ids[0]]);
         if (this.state.sel_type === 'quotes') {
             this.setState({quote_ranges: ranges, quote_infos: infos, quote_span_ids: span_ids, selectedSpanIds: [], current_sel: '', cur_info: {},
                 locked: false, cur_mode: 'normal'
@@ -488,8 +491,8 @@ class ContentBox extends React.Component {
 
     }
 
-    infoSubmit() {
-        alert("Info submitted!");
+    infoSubmit(event) {
+        //tempAlert("Info submitted!", 3000);        //make brief popup
         //this.addToRanges(this.state.cur_info);
         const currentSpanIDs  = this.state.selectedSpanIds;
         let infos = (this.state.sel_type === 'quotes') ? this.state.quote_infos : this.state.men_infos;
@@ -501,12 +504,12 @@ class ContentBox extends React.Component {
         if (this.state.sel_type === 'quotes') {
             this.setState({selectedSpanIds: [], quote_infos: infos, cur_info: {}, confirmed: false,
                 locked: false, cur_mode: 'normal', current_sel: ''
-            });
+            }, () => this.saveCurrent(event));
         }
         else {
             this.setState({selectedSpanIds: [], men_infos: infos, cur_info: {}, confirmed: false,
                 locked: false, cur_mode: 'normal', current_sel: ''
-            });
+            }, () => this.saveCurrent(event));
         }
 
 
@@ -595,7 +598,7 @@ class ContentBox extends React.Component {
         axios.post('http://127.0.0.1:8080/data', data_to_save)
             .then(res => {
                 if (res.status === 200) {
-                    alert('Saved!');
+                       tempAlert("Annotation Saved!", 3000);    //make brief popup
                 }
                 else {
                     alert('Save failed.');
@@ -706,6 +709,17 @@ class ContentBox extends React.Component {
             )
         }
     }
+}
+
+function tempAlert(msg,duration)
+{
+    var el = document.createElement("div");
+    el.setAttribute("style","position:absolute;top:40%;left:20%;background-color:white;font-size:xx-large");
+    el.innerHTML = msg;
+    setTimeout(function(){
+        el.parentNode.removeChild(el);
+    },duration);
+    document.body.appendChild(el);
 }
 
 class Collect extends React.Component{
@@ -1302,8 +1316,8 @@ class CollectInfo extends React.Component {
         this.props.updateMode('done');
     }
 
-    onConfirm() {
-        this.props.infoSubmit();
+    onConfirm(event) {
+        this.props.infoSubmit(event);
     }
 
     onReviewEdit() {
@@ -1390,8 +1404,8 @@ class CollectMentionInfo extends React.Component {
         this.onSubmit = this.onSubmit.bind(this);
     }
 
-    onConfirm() {
-        this.props.infoSubmit();
+    onConfirm(event) {
+        this.props.infoSubmit(event);
     }
 
     onReviewEdit() {
