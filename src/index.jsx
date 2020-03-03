@@ -149,6 +149,22 @@ function TextHeading(props) {
 
 }
 
+function mapOrder (array, order, key) {
+
+    array.sort( function (a, b) {
+        var A = a[key], B = b[key];
+
+        if (order.indexOf(A) > order.indexOf(B)) {
+            return 1;
+        } else {
+            return -1;
+        }
+
+    });
+
+    return array;
+};
+
 class ContentBox extends React.Component {
 
     //The mitochondria of this application.
@@ -199,7 +215,7 @@ class ContentBox extends React.Component {
         this.setSelectionType = this.setSelectionType.bind(this);
         this.handleSelChange = this.handleSelChange.bind(this);
         this.saveCurrent = this.saveCurrent.bind(this);
-
+        this.updateCharList = this.updateCharList.bind(this);
     }
 
 
@@ -491,6 +507,37 @@ class ContentBox extends React.Component {
 
     }
 
+
+    updateCharList() {
+        //collect all annotated
+        console.log("Updating character list: ");
+        let qinfos = Object.values(this.state.quote_infos);
+        console.log(typeof qinfos);
+        //list of speakers
+        let speakers = [];
+        qinfos.forEach((obj, index) => {
+            if ((obj.speaker !== "") && !(speakers.includes(obj.speaker[0]))) {
+                speakers.push(obj.speaker[0]);
+            }
+            if (obj.speakee.length > 0) {
+                obj.speakee.forEach((name, ind) => {
+                    if (!speakers.includes(name)) {
+                        speakers.push(name);
+                    }
+                })
+            }
+        });
+
+        let order = speakers.reverse();
+        console.log("Recent speakers: ", order);
+        //rearrange to most recently used
+        let cur_charlist = this.state.charList;
+
+        //sort
+        let new_charList = mapOrder(cur_charlist, order, 'name');
+        this.setState({charList: new_charList.reverse()});
+    }
+
     infoSubmit(event) {
         //tempAlert("Info submitted!", 3000);        //make brief popup
         //this.addToRanges(this.state.cur_info);
@@ -501,6 +548,11 @@ class ContentBox extends React.Component {
         for (const spanID of currentSpanIDs) {
             infos[spanID] = info;
         }
+
+        //call character-list modification function
+        //TODO
+        let new_char_list = this.updateCharList();
+
         if (this.state.sel_type === 'quotes') {
             this.setState({selectedSpanIds: [], quote_infos: infos, cur_info: {}, confirmed: false,
                 locked: false, cur_mode: 'normal', current_sel: ''
@@ -1519,11 +1571,11 @@ class SpeakerInfo extends React.Component {
 
     render() {
         const display_message = (this.props.value === '') ? "None set." : this.props.value;
-
+        const color = (this.props.mode === "speaker") ? "green" : "black";
         return (
             <div className={'border'}
                 id={'select-speaker'}>
-                <h3>Select Speaker</h3>
+                <h3 style={{ color: color }}>Select Speaker</h3>
                 <div><i>Select the speaker from the character list on the left, and press Submit when done.</i></div>
                 <span><b>Speaker:</b> {display_message} </span>
                 <span>
@@ -1558,10 +1610,11 @@ class SpeakeeInfo extends React.Component {
         // console.log("Speakee: ");
         // console.log(this.props.value);
         const message = (this.props.value === '') ? 'None set' : this.props.value.join('; ');
+        const color = (this.props.mode === 'speakee') ? "green" : "black";
         return (
             <div className={'border'}
                 id={'select-speakee'}>
-                <h3>Select Addressee</h3>
+                <h3 style={{ color: color }}>Select Addressee</h3>
                 <div><i>{this.props.message} from the character list on the left, and press Submit when done. If there are multiple, select all possible ones.</i></div>
                 <span><b>Addressee(s):</b> {message} </span>
                 <span>
@@ -1638,7 +1691,7 @@ class RefExpInfo extends React.Component {
         // console.log("Speakee: ");
         // console.log(this.props.value);
         const message = (this.props.value === '') ? 'None set' : this.props.value;
-
+        const color = (this.props.mode === 'ref_exp') ? "green" : "black";
         if (this.props.active) {
             return null
         }
@@ -1648,7 +1701,7 @@ class RefExpInfo extends React.Component {
                 <div className={'border'}
                     id={'select-ref_exp'}
                 >
-                    <h3>Select Referring Expression</h3>
+                    <h3 style={{ color: color }}>Select Referring Expression</h3>
                     <div><i>Select the referring expression from the text area on the right and click Submit when done.</i></div>
                     <span><b>Referring Expression:</b> {message} </span>
                     <span>
