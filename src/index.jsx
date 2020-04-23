@@ -294,6 +294,9 @@ class ContentBox extends React.Component {
             }
         }
 
+        //to skip steps
+        confirmed = true;
+
         this.setState({selectedSpanIds: selectedIds, current_sel: text, cur_info: last_info, confirmed: confirmed});
 
     }
@@ -1427,7 +1430,8 @@ class CollectInfo extends React.Component {
                         />
 
                         <SubmitInfoButton
-                            onSubmit={this.onSubmit}
+                            //onSubmit={this.onSubmit}
+                            onSubmit={this.onConfirm} //to skip steps
                         />
                     </div>
                 )
@@ -1572,6 +1576,7 @@ class SpeakerInfo extends React.Component {
     render() {
         const display_message = (this.props.value === '') ? "None set." : this.props.value;
         const color = (this.props.mode === "speaker") ? "green" : "black";
+        const disabled = (this.props.mode === "speaker") ? true : false;
         return (
             <div className={'border'}
                 id={'select-speaker'}>
@@ -1579,7 +1584,10 @@ class SpeakerInfo extends React.Component {
                 <div><i>Select the speaker from the character list on the left, and press Submit when done.</i></div>
                 <span><b>Speaker:</b> {display_message} </span>
                 <span>
-                    <button type={'submit'} name={'speaker-edit'} onClick={this.onEdit}>Edit</button>
+                    <button type={'submit'}
+                            name={'speaker-edit'}
+                            onClick={this.onEdit}
+                            disabled={disabled}>Edit</button>
                 </span>
                 <span>
                     <button type={'submit'} name={'speaker-ok'} onClick={this.onSubmit}>Submit</button>
@@ -1611,6 +1619,7 @@ class SpeakeeInfo extends React.Component {
         // console.log(this.props.value);
         const message = (this.props.value === '') ? 'None set' : this.props.value.join('; ');
         const color = (this.props.mode === 'speakee') ? "green" : "black";
+        const disabled = (this.props.mode === "speakee") ? true : false;
         return (
             <div className={'border'}
                 id={'select-speakee'}>
@@ -1618,7 +1627,11 @@ class SpeakeeInfo extends React.Component {
                 <div><i>{this.props.message} from the character list on the left, and press Submit when done. If there are multiple, select all possible ones.</i></div>
                 <span><b>Addressee(s):</b> {message} </span>
                 <span>
-                    <button type={'submit'} name={'speakee-edit'} onClick={this.onEdit}>Edit</button>
+                    <button type={'submit'}
+                            name={'speakee-edit'}
+                            onClick={this.onEdit}
+                            disabled={disabled}
+                    >Edit</button>
                 </span>
                 <span>
                     <button type={'submit'} name={'speakee-ok'} onClick={this.onSubmit}>Submit</button>
@@ -1692,6 +1705,7 @@ class RefExpInfo extends React.Component {
         // console.log(this.props.value);
         const message = (this.props.value === '') ? 'None set' : this.props.value;
         const color = (this.props.mode === 'ref_exp') ? "green" : "black";
+        const disabled = (this.props.mode === "ref_exp") ? true : false;
         if (this.props.active) {
             return null
         }
@@ -1706,7 +1720,9 @@ class RefExpInfo extends React.Component {
                     <span><b>Referring Expression:</b> {message} </span>
                     <span>
                     <button type={'submit'} name={'speakee-edit'}
-                            onClick={this.onEdit}>Edit</button>
+                            onClick={this.onEdit}
+                            disabled={disabled}
+                    >Edit</button>
                 </span>
                     <span>
                     <button type={'submit'} name={'speakee-ok'}
