@@ -58,7 +58,7 @@ class TextLoader extends React.Component {
     }
 
     reloadState(event) {
-        const confirm = window.confirm("Please save before you proceed, otherwise all annotations will be lost!");
+        const confirm = window.confirm("Please save before you proceed!");
 
         if (confirm === true) {
             this.setState({
@@ -1496,7 +1496,8 @@ class CollectMentionInfo extends React.Component {
                         message={"Select Entity being referred to "}
                     />
                     <SubmitInfoButton
-                        onSubmit={this.onSubmit}
+                        //onSubmit={this.onSubmit}
+                        onSubmit={this.onConfirm}
                 />
                 </div>
             )
