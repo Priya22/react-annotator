@@ -119,6 +119,7 @@ class TextLoader extends React.Component {
                         data={this.state.data}
                         charList={this.state.charList}
                         reloadState={this.reloadState}
+                        fileName={this.state.cur_file}
                     />
                 </div>
             )
@@ -515,6 +516,7 @@ class ContentBox extends React.Component {
         //collect all annotated
         console.log("Updating character list: ");
         let qinfos = Object.values(this.state.quote_infos);
+        let minfos = Object.values(this.state.men_infos);
         console.log(typeof qinfos);
         //list of speakers
         let speakers = [];
@@ -531,14 +533,25 @@ class ContentBox extends React.Component {
             }
         });
 
+        minfos.forEach((obj, index) => {
+            if (obj.speakee.length > 0) {
+                obj.speakee.forEach((name, ind) => {
+                    if (!speakers.includes(name)) {
+                        speakers.push(name);
+                    }
+                })
+            }
+        });
+
         let order = speakers.reverse();
         console.log("Recent speakers: ", order);
         //rearrange to most recently used
         let cur_charlist = this.state.charList;
 
         //sort
-        let new_charList = mapOrder(cur_charlist, order, 'name');
-        this.setState({charList: new_charList.reverse()});
+        let new_charList = mapOrder(cur_charlist, order, 'name').reverse();
+        return new_charList
+        //this.setState({charList: new_charList.reverse()});
     }
 
     infoSubmit(event) {
@@ -558,12 +571,12 @@ class ContentBox extends React.Component {
 
         if (this.state.sel_type === 'quotes') {
             this.setState({selectedSpanIds: [], quote_infos: infos, cur_info: {}, confirmed: false,
-                locked: false, cur_mode: 'normal', current_sel: ''
+                locked: false, cur_mode: 'normal', current_sel: '', charList: new_char_list
             }, () => this.saveCurrent(event));
         }
         else {
             this.setState({selectedSpanIds: [], men_infos: infos, cur_info: {}, confirmed: false,
-                locked: false, cur_mode: 'normal', current_sel: ''
+                locked: false, cur_mode: 'normal', current_sel: '', charList: new_char_list
             }, () => this.saveCurrent(event));
         }
 
@@ -641,6 +654,7 @@ class ContentBox extends React.Component {
     saveCurrent(event) {
         //send state to backend and clear state.
         const data_to_save = {
+            file_name: this.props.fileName,
             charList: this.state.charList,
             men_ranges: this.state.men_ranges,
             men_infos: this.state.men_infos,
@@ -1564,6 +1578,16 @@ class SpeakerInfo extends React.Component {
         super(props);
         this.onEdit = this.onEdit.bind(this);
         this.onSubmit = this.onSubmit.bind(this);
+        this.onDivClick = this.onDivClick.bind(this);
+    }
+
+    onDivClick() {
+        if (this.props.mode == 'speaker') {
+            this.onSubmit()
+        }
+        else if (this.props.mode == 'normal') {
+            this.onEdit()
+        }
     }
 
     onEdit() {
@@ -1580,7 +1604,11 @@ class SpeakerInfo extends React.Component {
         const disabled = (this.props.mode === "speaker") ? true : false;
         return (
             <div className={'border'}
-                id={'select-speaker'}>
+                id={'select-speaker'}
+                 onClick={this.onDivClick}
+                 //disabled={disabled}
+                 style={{ cursor: "pointer"}}
+            >
                 <h3 style={{ color: color }}>Select Speaker</h3>
                 <div><i>Select the speaker from the character list on the left, and press Submit when done.</i></div>
                 <span><b>Speaker:</b> {display_message} </span>
@@ -1605,6 +1633,7 @@ class SpeakeeInfo extends React.Component {
         super(props);
         this.onEdit = this.onEdit.bind(this);
         this.onSubmit = this.onSubmit.bind(this);
+        this.onDivClick = this.onDivClick.bind(this);
     }
 
     onEdit() {
@@ -1615,6 +1644,15 @@ class SpeakeeInfo extends React.Component {
         this.props.setField('speakee');
     }
 
+    onDivClick() {
+        if (this.props.mode == 'speakee') {
+            this.onSubmit()
+        }
+        else if (this.props.mode == 'normal') {
+            this.onEdit()
+        }
+    }
+
     render() {
         // console.log("Speakee: ");
         // console.log(this.props.value);
@@ -1623,7 +1661,10 @@ class SpeakeeInfo extends React.Component {
         const disabled = (this.props.mode === "speakee") ? true : false;
         return (
             <div className={'border'}
-                id={'select-speakee'}>
+                id={'select-speakee'}
+                 onClick={this.onDivClick}
+                 style={{ cursor: "pointer"}}
+            >
                 <h3 style={{ color: color }}>Select Addressee</h3>
                 <div><i>{this.props.message} from the character list on the left, and press Submit when done. If there are multiple, select all possible ones.</i></div>
                 <span><b>Addressee(s):</b> {message} </span>
@@ -1691,6 +1732,7 @@ class RefExpInfo extends React.Component {
         super(props);
         this.onEdit = this.onEdit.bind(this);
         this.onSubmit = this.onSubmit.bind(this);
+        this.onDivClick = this.onDivClick.bind(this)
     }
 
     onEdit() {
@@ -1699,6 +1741,15 @@ class RefExpInfo extends React.Component {
 
     onSubmit() {
         this.props.setField('ref_exp');
+    }
+
+    onDivClick() {
+        if (this.props.mode == 'ref_exp') {
+            this.onSubmit()
+        }
+        else if (this.props.mode == 'normal') {
+            this.onEdit()
+        }
     }
 
     render() {
@@ -1715,6 +1766,8 @@ class RefExpInfo extends React.Component {
 
                 <div className={'border'}
                     id={'select-ref_exp'}
+                     onClick={this.onDivClick}
+                     style={{ cursor: "pointer"}}
                 >
                     <h3 style={{ color: color }}>Select Referring Expression</h3>
                     <div><i>Select the referring expression from the text area on the right and click Submit when done.</i></div>

@@ -14,26 +14,22 @@
 
 <body>
 <h1>Quote Annotation Tool</h1>
-<p>(Draft)</p>
+
 <ol>
     <li><a href="#prelim">Introduction</a> </li>
     <li><a href="#components">Tool Components</a> </li>
     <li><a href="#color-codes">Important Color Codes</a> </li>
     <li><a href="#process">Annotation process</a> </li>
+    <li><a href="#annotated-img">A Helpful Image</a> </li>
 </ol>
 
 
 <div id="prelim">
-    <h2>Introduction</h2>
+    <h2>1. Introduction</h2>
     Welcome! The purpose of this tool is to annotate quotations within a text. We are collecting the following data for each quote:
     <ul>
-        <li>Type of quote (implicit, anaphoric or explicit). Examples of each are provided below:
-            <pre>
-                "I hope Mr. Bingley will like it, Lizzy." <b><i>(Implicit)</i></b>
-                "We are not in a way to know _what_ Mr. Bingley likes," said her mother resentfully, "since we are not to visit." <b><i>(Anaphoric)</i></b>
-                "But you forget, mamma," said Elizabeth, "that we shall meet him at the assemblies, and that Mrs. Long promised to introduce him."<b><i>(Explicit)</i></b>
-            </pre>
-
+        <li>
+            Type of quote (implicit, anaphoric or explicit).
         </li>
         <li>
             Speaker of the quote.
@@ -42,6 +38,14 @@
         <li>The referring expression (what indicates the speaker/addressee?). Note that implicit quotes don't have a referring expression.</li>
         <li>Mentions withing the quote, and who it refers to (eg, "<b>She</b> told me <b>Rob</b> was ill."</li>
     </ul>
+    <p>
+        The type of quote can be one of implicit, anaphoric and explicit. Examples of each are provided below:
+    <pre>
+                "I hope Mr. Bingley will like it, Lizzy." <b><i>(Implicit)</i></b>
+                "We are not in a way to know _what_ Mr. Bingley likes," said her mother resentfully, "since we are not to visit." <b><i>(Anaphoric)</i></b>
+                "But you forget, mamma," said Elizabeth, "that we shall meet him at the assemblies, and that Mrs. Long promised to introduce him."<b><i>(Explicit)</i></b>
+            </pre>
+    </p>
     <p>Consider the following snippet: </p>
     <pre>
         "My dear Mr. Bennet," said his lady to him one day, "have you heard that Netherfield Park is let at last?"
@@ -50,6 +54,7 @@
     </pre>
     <p>Suppose we are annotating the second quote of the above snippet. Then the data we wish to obtain is the following: </p>
     <ul>
+        <li><b>Type of Quote: </b> Anaphoric</li>
         <li><b>Speaker: </b> Mrs. Bennet</li>
         <li><b>Addresee: </b>Mr. Bennet</li>
         <li><b>Referring expression: </b>returned she</li>
@@ -63,9 +68,9 @@
 </div>
 
 <div id="components">
-<h2>Annotation Tool Components</h2>
+<h2>2. Annotation Tool Components</h2>
 <ul>
-    <li>From the landing page, click the "Choose files" button. Navigate to the <code>'data/'</code> folder of the root directory and choose "text.txt".</li>
+    <li>From the landing page, click the "Choose files" button. Navigate to the <code>'data/'</code> folder of the root directory and choose the text file that you wish to annotate.</li>
     <li>The selected text, along with a list of initial characters will load on the main page.</li>
     <li>
         The main components of the tool are as follows:
@@ -86,8 +91,8 @@
                 to facilitate the annotation.
             </li>
             <li>
-                <b>Save Progress: </b> Please ensure you are continually saving your annotations to file. <b>If you close the tab or refresh the page withour saving
-            progress, all annotation information will be lost.</b>
+                <b>Save Progress: </b> Please ensure you are continually saving your annotations to file. <b> Annotations, once completed,
+                are automatically saved; and this is just a precautionary measure.</b>
             </li>
             <li>
                 <b>Reload: </b> Click on this button <b>after saving</b> to reload a new file to annotate.
@@ -98,7 +103,7 @@
 </div>
 
 <div id="color-codes">
-<h2>Highlights: Color codes</h2>
+<h2>3. Highlights: Color codes</h2>
 <p>As you progress through the annotation task, the color of the quotations/mentions change to indicate the phase of annotation you are in. The following list
 describes them for quotes, but is equally applicable to mentions.</p>
 <ul>
@@ -109,16 +114,13 @@ describes them for quotes, but is equally applicable to mentions.</p>
         <b>Grey: </b> This is a quote that is currently <i>selected</i> to be annotated.
     </li>
     <li>
-        <b>Green: </b> This is a quote that has been <i>confirmed</i> for current annotation.
-    </li>
-    <li>
         <b>Blue: </b> This quote has been annotated.
     </li>
 </ul>
 </div>
 
 <div id="process">
-<h2>Annotation Process</h2>
+<h2>4. Annotation Process</h2>
 <p>(Replace "quote" with "mention" wherever applicable.)</p>
 <p>A quote needs to be identified before it can be annotated. To identify a portion of the text as a quote, simply select that portion with your cursor. </p>
     <p>To start annotating an identified quote, proceed as follows: </p>
@@ -126,7 +128,6 @@ describes them for quotes, but is equally applicable to mentions.</p>
     <li>Click on the span of text that has been highlighted. It should appear in the middle parition of the tool, under "Current selection".</li>
     <li>Multiple quotes can be annotated at the same time. To add more quotes to the current selection, simply click on them.
         To remove a selected quote, click on it again.</li>
-    <li>Click the "OK" button to confirm the current selection. The annotation fields should appear below.</li>
     <li><b>Quote type: </b> Select the correct option (Implicit, Anaphoric, or Explicit) from the radio-buttons.</li>
     <li><b>Speaker selection: </b> Each quote is assumed to have one speaker. Click the <code>Edit</code> button to select the speaker.
     The character list on the right will change it's appearance to display selectable radio-buttons next to each character. Check the radio button for the
@@ -141,12 +142,21 @@ describes them for quotes, but is equally applicable to mentions.</p>
     <li><b>For mentions: </b>
         The annotation for mentions consists only of selecting the referred entities from the character list on the left. This is similar to the Addressee annotation.
     </li>
-    <li><b>SAVE YOUR PROGRESS! </b> By clicking on the <code>Save Progress</code> button.</li>
+</ol>
+<p><b>Additional Notes</b></p>
+<ol>
     <li>If any part of the text was incorrectly identified by us as being a mention or a quote, please remove it by selecting the text and clicking the
     <code>Clear</code> button instead of <code>OK</code></li>
+    <li>The character list is automatically extracted and has a high probability of being incomplete as well as redundant, and sometimes wrong.
+        Add, delete, and edit characters as well as their aliases to ensure uniformity.
+    </li>
 </ol>
 </div>
 
+<div id="annotated-img">
+    <h2>5. A Helpful Image</h2>
+    <img src="annotated_image.jpeg" alt="Annotated Screenshot" style="width:1600px;height:750px;border:2px solid black">
+</div>
 
 </body>
 </html>

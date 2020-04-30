@@ -3,8 +3,17 @@ import json
 import numpy as np
 from collections import Counter
 import nltk
+import argparse
 
-def parseTxt(text):
+def parseTxt(text, charList):
+
+    charNames = []
+    for c in charList:
+        charNames.append(c['name'])
+        for e in c['expand']:
+            charNames.append(e['name'])
+
+
     quotes = []
     positions = []
 
@@ -37,7 +46,7 @@ def parseTxt(text):
     positions, quote_infos = getJsonObjects(quotes, positions, 'Quote')
 
     for i, q_info in quote_infos.items():
-        q_pos, q_men = getMentions(q_info['text'], positions[i]['start'])
+        q_pos, q_men = getMentions(q_info['text'], positions[i]['start'], charNames)
         mentions.extend(q_men)
         men_positions.extend(q_pos)
 
@@ -54,7 +63,7 @@ def parseTxt(text):
 
 mention_words = ['he', 'she', 'they', 'them', 'her', 'his', 'their', 'him']
 
-def getMentions(str, str_start):
+def getMentions(str, str_start, charNames):
     mentions = []
     positions = []
     #print(str)
@@ -66,7 +75,7 @@ def getMentions(str, str_start):
         if c == ' ' or i==(len(str)-1):
             end = i
             #print(cur_str)
-            if cur_str in mention_words:
+            if (cur_str in mention_words) or (cur_str in charNames):
                 mentions.append(cur_str)
                 positions.append([str_start+start, str_start+end])
             start = i+1
@@ -161,20 +170,35 @@ def getCharacters(root, tree):
 
 
 if __name__ == '__main__':
-    f = open('../data/test.txt')
+
+    parser = argparse.ArgumentParser(description='Extract novel data.')
+    parser.add_argument('--txt', type=str, help='path to the txt file')
+    parser.add_argument('--xml', type=str, help='path to the GutenTag XML file')
+    args = parser.parse_args()
+
+    txt_path = args.txt
+    xml_path = args.xml
+    file_name = txt_path.split("/")[-1].replace(".txt","")
+    f = open(txt_path)
     text = f.read()
-    positions, quote_infos, quote_span_ids, men_pos, men_infos, men_span_ids = parseTxt(text)
+
+    tree = ET.parse(xml_path)
+    root = tree.getroot()
+    charList = getCharacters(root, tree)
+    write_path = "/".join(txt_path.split("/")[:-1]) + "/" + file_name
+
+    with open(write_path + '_chars.json', 'w') as f:
+        json.dump(charList, f)
+
+    positions, quote_infos, quote_span_ids, men_pos, men_infos, men_span_ids = parseTxt(text, charList)
     json_obj = {'quote_ranges': positions, 'quote_infos': quote_infos, 'quote_span_ids': quote_span_ids,
         'men_ranges': men_pos, 'men_infos': men_infos, 'men_span_ids': men_span_ids
                 }
-    with open('../data/quotes.json', 'w') as fp:
+
+    print("Writing quotes to: ", write_path + '_quotes.json')
+    with open(write_path + '_quotes.json', 'w') as fp:
         json.dump(json_obj, fp)
 
-    tree = ET.parse('PrideandPrejudicebyJaneAusten42671.xml')
-    root = tree.getroot()
-    charList = getCharacters(root, tree)
 
-    with open('../data/chars.json', 'w') as f:
-        json.dump(charList, f)
 
 

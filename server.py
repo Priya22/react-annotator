@@ -7,20 +7,22 @@ import sys
 app = Flask(__name__, static_folder="build/static", template_folder="build")
 CORS(app)
 
-def load_json():
-    with open('./data/chars.json', 'r') as f:
+def load_json(file_name):
+    path = './data/' + file_name
+    with open(path + '_chars.json', 'r') as f:
         charList = json.load(f)
 
-    with open('./data/quotes.json', 'r') as f:
+    with open(path + '_quotes.json', 'r') as f:
         data = json.load(f)
 
-    with open('./data/test.txt', 'r') as f:
+    with open(path + '.txt', 'r') as f:
         content = f.read().strip()
 
     return (data, charList, content)
 
-def save_progress(chars, quote_infos, quote_ranges, quote_span_ids, men_infos, men_ranges, men_span_ids):
-    with open('./data/chars.json', 'w') as f:
+def save_progress(file_name, chars, quote_infos, quote_ranges, quote_span_ids, men_infos, men_ranges, men_span_ids):
+    path = './data/' + file_name
+    with open(path + '_chars.json', 'w') as f:
         json.dump(chars, f)
 
     data_ob = {
@@ -32,7 +34,7 @@ def save_progress(chars, quote_infos, quote_ranges, quote_span_ids, men_infos, m
         'men_span_ids': men_span_ids
     }
 
-    with open('./data/quotes.json', 'w') as f:
+    with open(path + '_quotes.json', 'w') as f:
         json.dump(data_ob, f)
         
 
@@ -49,8 +51,9 @@ def get_data():
     #return data extracted from file.
     #print("Get method called.")
     file_name = request.args.get('file_name')
-    #print(file_name)
-    data, charList, content = load_json()
+    file_name = file_name.replace(".txt","")
+    print("Data for: ", file_name)
+    data, charList, content = load_json(file_name)
     return {'title': file_name, 'content': content, 'data': data, 'charList': charList}
     #pass
 
@@ -60,7 +63,7 @@ def save_data():
     print(data.keys())
     sys.stdout.flush()
     chars = data['charList']
-
+    file_name = data['file_name']
     quote_ranges = data['quote_ranges']
     quote_infos = data['quote_infos']
     quote_span_ids = data['quote_span_ids']
@@ -70,7 +73,7 @@ def save_data():
     men_span_ids = data['men_span_ids']
 
     #save the state variables received from react.
-    save_progress(chars, quote_infos, quote_ranges, quote_span_ids, men_infos, men_ranges, men_span_ids)
+    save_progress(file_name, chars, quote_infos, quote_ranges, quote_span_ids, men_infos, men_ranges, men_span_ids)
 
     return {'message': 'Success'}
     #pass
