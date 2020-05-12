@@ -217,6 +217,8 @@ class ContentBox extends React.Component {
         this.handleSelChange = this.handleSelChange.bind(this);
         this.saveCurrent = this.saveCurrent.bind(this);
         this.updateCharList = this.updateCharList.bind(this);
+        this.checkCompatible = this.checkCompatible.bind(this);
+        this.checkArrayEqual = this.checkArrayEqual.bind(this);
     }
 
 
@@ -253,6 +255,53 @@ class ContentBox extends React.Component {
     //
     // }
 
+    checkArrayEqual(a, b) {
+        if (a.length === 0 && b.length === 0){
+            return true;
+        }
+        else if (a.sort() === b.sort()) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
+    checkCompatible(selectedIds, spanId) {
+
+        const infos = (this.state.sel_type === 'quotes') ? this.state.quote_infos : this.state.men_infos;
+
+        if (selectedIds.length === 0) {
+            return true;
+        }
+
+        else {
+            const cur_info = infos[selectedIds[0]];
+            const new_info = infos[spanId];
+            console.log("Compatibility: ");
+            // console.log(cur_info);
+            // console.log(new_info);
+            // console.log(this.checkArrayEqual(cur_info['speakee'], new_info['speakee']));
+            // console.log(this.checkArrayEqual(cur_info['speaker'], new_info['speaker']));
+            // console.log(cur_info['quote_type'] === new_info['quote_type']);
+            // console.log(cur_info['ref_exp'] === new_info['ref_exp']);
+
+           if ((this.checkArrayEqual(cur_info['speakee'], new_info['speakee'])) &&
+                (this.checkArrayEqual(cur_info['speaker'], new_info['speaker'])) &&
+                (cur_info['quote_type'] === new_info['quote_type']) &&
+                (cur_info['ref_exp'] === new_info['ref_exp']))
+            {
+                return true;
+
+            }
+            else {
+                return false;
+            }
+        }
+
+        //cur_info = infos[selectedIds[0]]
+    }
+
     onSpanClick(event) {
         //this.saveCurrent(event);
         const span_id = event.target.id;
@@ -273,8 +322,14 @@ class ContentBox extends React.Component {
             selectedIds = selectedIds.filter((x) => x !== span_id);
         }
         else {
-            console.log("Pushing");
-            selectedIds.push(span_id);
+            if (this.checkCompatible(selectedIds, span_id)) {
+                selectedIds.push(span_id);
+            }
+            //console.log("Pushing");
+            //check if annotations are compatible
+            else {
+                tempAlert("Incompatible Selections!", 3000)
+            }
         }
         //console.log(selectedIds);
         let text = '';
@@ -298,7 +353,7 @@ class ContentBox extends React.Component {
         //to skip steps
         confirmed = true;
 
-        this.setState({selectedSpanIds: selectedIds, current_sel: text, cur_info: last_info, confirmed: confirmed});
+        this.setState({selectedSpanIds: selectedIds, current_sel: text, cur_info: last_info, confirmed: confirmed, locked: true});
 
     }
 
@@ -1041,7 +1096,11 @@ class TextArea extends React.Component {
         const spans = texts.map((value, i) => {
             if (ids[i] !== '') {
                 return (
-                    <span className={classes[i]} id={ids[i]} onMouseUp={this.props.onPrevClick}>{value}</span>
+                    // disable selection for these spans
+                    <span className={classes[i] + ' disable-selection'}
+                          id={ids[i]}
+                          onMouseUp={this.props.onPrevClick}
+                    >{value}</span>
                 )
             }
             else {
@@ -1158,7 +1217,7 @@ class CharacterList extends React.Component {
             console.log(name);
         }
 
-        if (this.props.mode === 'normal' || this.props.mode == 'ref_exp' || this.props.mode == 'done') {
+        if (this.props.mode === 'normal' || this.props.mode === 'ref_exp' || this.props.mode === 'done') {
             disabled = true;
             checked = false;
         }
@@ -1499,7 +1558,7 @@ class CollectMentionInfo extends React.Component {
             )
         }
 
-        else if (this.props.cur_mode != 'done') {
+        else if (this.props.cur_mode !== 'done') {
             return (
                 <div id={'collect-mention'}>
                     <SpeakeeInfo
@@ -1582,10 +1641,10 @@ class SpeakerInfo extends React.Component {
     }
 
     onDivClick() {
-        if (this.props.mode == 'speaker') {
+        if (this.props.mode === 'speaker') {
             this.onSubmit()
         }
-        else if (this.props.mode == 'normal') {
+        else if (this.props.mode === 'normal') {
             this.onEdit()
         }
     }
@@ -1645,10 +1704,10 @@ class SpeakeeInfo extends React.Component {
     }
 
     onDivClick() {
-        if (this.props.mode == 'speakee') {
+        if (this.props.mode === 'speakee') {
             this.onSubmit()
         }
-        else if (this.props.mode == 'normal') {
+        else if (this.props.mode === 'normal') {
             this.onEdit()
         }
     }
@@ -1744,10 +1803,10 @@ class RefExpInfo extends React.Component {
     }
 
     onDivClick() {
-        if (this.props.mode == 'ref_exp') {
+        if (this.props.mode === 'ref_exp') {
             this.onSubmit()
         }
-        else if (this.props.mode == 'normal') {
+        else if (this.props.mode === 'normal') {
             this.onEdit()
         }
     }
