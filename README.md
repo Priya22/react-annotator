@@ -7,7 +7,7 @@ following libraries to run it:
 2. Clone this repo onto your local machine. 
 
 ### Start the application
-3. Open a terminal and navigate to the project root. Run `chmod +x build.sh`, followed by `./build.sh`. This should install all the node and python dependencies,
+3. Open a terminal and navigate to the project root. Run `chmod 777 build.sh public/annotated_image.jpeg`, followed by `./build.sh`. This should install all the node and python dependencies,
 and also start the server. 
 4. The final few lines of the terminal output should indicate that the server is up and running, with a message along the lines of `Running on http://127.0.0.1:8080/ (Press CTRL+C to quit)`.
 2. In your browser (preferably Chrome), navigate to `localhost:8080`. This should display the landing page. 

@@ -11,6 +11,8 @@ import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import axios from 'axios';
+import ErrorBoundary from "./ErrorBoundary";
+
 
 //import myData from './quotes.json';
 //import testChars from './chars.json'
@@ -35,7 +37,9 @@ class Tool extends React.Component {
                     <div className="heading">
                         <h1>Quote Annotation Tool </h1>
                     </div>
-                    <TextLoader />
+                    <ErrorBoundary>
+                        <TextLoader />
+                    </ErrorBoundary>
                 </div>
             </div>
         );
@@ -1940,6 +1944,7 @@ class DisplayInfo extends React.Component {
     }
 
 }
+
 
 ReactDOM.render(
     <Tool />,

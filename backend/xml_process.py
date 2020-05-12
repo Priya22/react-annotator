@@ -70,7 +70,7 @@ def getMentions(str, str_start, charNames):
     cur_str = ''
     start = 0
     end = -1
-
+    #charnames_str = " ".join(charNames)
     for i, c in enumerate(str):
         if c == ' ' or i==(len(str)-1):
             end = i
