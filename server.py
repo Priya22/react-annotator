@@ -37,6 +37,9 @@ def save_progress(file_name, chars, quote_infos, quote_ranges, quote_span_ids, m
     with open(path + '_quotes.json', 'w') as f:
         json.dump(data_ob, f)
         
+@app.route("/annotated_image")
+def serve_image():
+    return send_from_directory('public/', 'annotated_image.png')
 
 @app.route("/")
 def serve_index():
