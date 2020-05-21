@@ -222,6 +222,8 @@ class ContentBox extends React.Component {
         this.updateCharList = this.updateCharList.bind(this);
         this.checkCompatible = this.checkCompatible.bind(this);
         this.checkArrayEqual = this.checkArrayEqual.bind(this);
+        this.mergeChars = this.mergeChars.bind(this);
+        //this.simulateClick = this.simulateClick.bind(this);
     }
 
 
@@ -262,12 +264,23 @@ class ContentBox extends React.Component {
         if (a.length === 0 && b.length === 0){
             return true;
         }
-        else if (a.sort() === b.sort()) {
-            return true;
-        }
-        else {
+
+        else if (a.length !== b.length) {
             return false;
         }
+
+        else  {
+            a.sort();
+            b.sort();
+            for (var i = 0; i < a.length; i++) {
+                if (a[i] !== b[i]) {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
     }
 
     checkCompatible(selectedIds, spanId) {
@@ -282,12 +295,12 @@ class ContentBox extends React.Component {
             const cur_info = infos[selectedIds[0]];
             const new_info = infos[spanId];
             console.log("Compatibility: ");
-            // console.log(cur_info);
-            // console.log(new_info);
-            // console.log(this.checkArrayEqual(cur_info['speakee'], new_info['speakee']));
-            // console.log(this.checkArrayEqual(cur_info['speaker'], new_info['speaker']));
-            // console.log(cur_info['quote_type'] === new_info['quote_type']);
-            // console.log(cur_info['ref_exp'] === new_info['ref_exp']);
+            console.log(cur_info);
+            console.log(new_info);
+            console.log(this.checkArrayEqual(cur_info['speakee'], new_info['speakee']));
+            console.log(this.checkArrayEqual(cur_info['speaker'], new_info['speaker']));
+            console.log(cur_info['quote_type'] === new_info['quote_type']);
+            console.log(cur_info['ref_exp'] === new_info['ref_exp']);
 
            if ((this.checkArrayEqual(cur_info['speakee'], new_info['speakee'])) &&
                 (this.checkArrayEqual(cur_info['speaker'], new_info['speaker'])) &&
@@ -352,11 +365,14 @@ class ContentBox extends React.Component {
                 confirmed = true;
             }
         }
-
+        let locked = true;
         //to skip steps
         confirmed = true;
+        if (selectedIds.length === 0) {
+            locked = false;
+        }
 
-        this.setState({selectedSpanIds: selectedIds, current_sel: text, cur_info: last_info, confirmed: confirmed, locked: true});
+        this.setState({selectedSpanIds: selectedIds, current_sel: text, cur_info: last_info, confirmed: confirmed, locked: locked});
 
     }
 
@@ -411,7 +427,9 @@ class ContentBox extends React.Component {
                     cur_class = 'identified-quote';
                 }
                 else {
-                    cur_class = 'annotated-quote';
+                    // cur_class = 'annotated-quote';
+                    cur_class = infos[cur_span_id].quote_type.toLowerCase() + '-quote';
+
                 }
                 //process mentions here
                 texts.push(substr);
@@ -673,6 +691,12 @@ class ContentBox extends React.Component {
             this.setState({cur_info: cur_info, cur_mode: 'normal'});
         }
 
+        else if (field === 'merge-chars') {
+            let selectedRows = this.state.selectedRows;
+            let newCharList = this.mergeChars(selectedRows);
+            this.setState({charList: newCharList, cur_mode: 'normal', selectedRows: []}, () => this.saveCurrent());
+        }
+
     }
 
     updateMode(mode) {
@@ -685,6 +709,11 @@ class ContentBox extends React.Component {
             selectedRows = this.state.cur_info.speakee;
             this.setState({cur_mode: mode, selectedRows: selectedRows});
         }
+        else if (mode === 'merge') {
+            //let newCharList = this.mergeChars(selectedRows);
+            selectedRows = [];
+            this.setState({cur_mode: mode, selectedRows: selectedRows})
+        }
         else {
             selectedRows = [];
             if (mode === 'ref_exp') {
@@ -696,10 +725,45 @@ class ContentBox extends React.Component {
         }
     }
 
+    mergeChars(selectedRows) {
+
+        let curCharList = this.state.charList;
+        let mergeRows = [];
+
+        let newCharList = curCharList.filter( function(el) {
+            let val = selectedRows.includes(el.name);
+            if (val) {
+                mergeRows.push(el);
+            }
+            return !(val)
+
+        });
+
+        //merge
+        //use longest  name as prime
+        let prime_el_ind = 0;
+        let expand_names = [];
+        for (var i = 0; i < mergeRows.length; i++) {
+            if (mergeRows[i].name.length > mergeRows[prime_el_ind].name.length) {
+                prime_el_ind = i;
+            }
+            expand_names.push({name: mergeRows[i].name});
+        }
+
+        //remove primary name
+        expand_names.splice(prime_el_ind, 1);
+        let newChar = mergeRows[prime_el_ind];
+        newChar.expand = expand_names;
+
+        newCharList.push(newChar);
+
+        return newCharList;
+    }
+
     updateChars(new_chars) {
         console.log("Updating charList in ContentBox.");
         //console.log(new_chars);
-        this.setState({charList: new_chars});
+        this.setState({charList: new_chars}, () => this.saveCurrent());
     }
 
     setSelectionType(event) {
@@ -709,7 +773,7 @@ class ContentBox extends React.Component {
         this.setState({cur_info: cur_info})
     }
 
-    saveCurrent(event) {
+    saveCurrent() {
         //send state to backend and clear state.
         const data_to_save = {
             file_name: this.props.fileName,
@@ -721,7 +785,7 @@ class ContentBox extends React.Component {
             quote_infos: this.state.quote_infos,
             quote_span_ids: this.state.quote_span_ids,
         };
-
+        console.log("SAVING STATE: ");
         axios.post('http://127.0.0.1:8080/data', data_to_save)
             .then(res => {
                 if (res.status === 200) {
@@ -731,9 +795,12 @@ class ContentBox extends React.Component {
                     alert('Save failed.');
                 }
             });
-        event.preventDefault();
+        //event.preventDefault();
     }
 
+    // simulateClick(e) {
+    //     e.click();
+    // }
 
     render() {
 
@@ -814,7 +881,9 @@ class ContentBox extends React.Component {
                     <div id={'save-button'}>
                         <span>
                             <button className={'css-button'}
-                                type={'submit'} name={'save-current'}
+                                    //ref={this.simulateClick}
+                                    type={'submit'}
+                                    name={'save-current'}
                                     disabled={save_dis}
                                     onClick={this.saveCurrent}
                             >
@@ -866,6 +935,8 @@ class Collect extends React.Component{
                                 mode={this.props.cur_mode}
                                 selectedRows={this.props.selectedRows}
                                 updateSelectedRows={this.props.updateSelectedRows}
+                                updateMode={this.props.updateMode}
+                                setField={this.props.setField}
                             />
                         </div>
                         <div id={'middle-disp'}>
@@ -905,6 +976,8 @@ class Collect extends React.Component{
                                 mode={this.props.cur_mode}
                                 selectedRows={this.props.selectedRows}
                                 updateSelectedRows={this.props.updateSelectedRows}
+                                updateMode={this.props.updateMode}
+                                setField={this.props.setField}
                             />
                         </div>
                         <div id={'middle-disp'}>
@@ -944,6 +1017,8 @@ class Collect extends React.Component{
                                 mode={this.props.cur_mode}
                                 selectedRows={this.props.selectedRows}
                                 updateSelectedRows={this.props.updateSelectedRows}
+                                updateMode={this.props.updateMode}
+                                setField={this.props.setField}
                             />
                         </div>
                         <div id={'middle-disp'}>
@@ -981,6 +1056,8 @@ class Collect extends React.Component{
                             mode={this.props.cur_mode}
                             selectedRows={this.props.selectedRows}
                             updateSelectedRows={this.props.updateSelectedRows}
+                            updateMode={this.props.updateMode}
+                            setField={this.props.setField}
                         />
                     </div>
                     <div id={'middle-disp'}>
@@ -1146,6 +1223,7 @@ class CharacterList extends React.Component {
 
         this.state = {
             expandedRows: [],
+            //mergeStatus: 'none';
         };
 
         this.handleRowClick = this.handleRowClick.bind(this);
@@ -1161,7 +1239,19 @@ class CharacterList extends React.Component {
         this.handleDeleteAlias = this.handleDeleteAlias.bind(this);
         this.addAliasButton = this.addAliasButton.bind(this);
         this.handleAddAlias = this.handleAddAlias.bind(this);
+        this.mergeButton = this.mergeButton.bind(this);
+        this.handleMergeClick = this.handleMergeClick.bind(this);
     }
+
+    handleMergeClick() {
+        if (this.props.mode === 'normal') {
+            this.props.updateMode('merge');
+        }
+        else if (this.props.mode === 'merge') {
+            this.props.setField('merge-chars');
+        }
+    }
+
 
     handleRowClick(rowId) {
         const currentExpandedRows = this.state.expandedRows;
@@ -1355,6 +1445,18 @@ class CharacterList extends React.Component {
         )
     }
 
+    mergeButton() {
+        let text = 'Merge';
+        if (this.props.mode === 'merge') {
+            text = 'Submit';
+        }
+        return (
+            <span>
+                <button name={'Merge-char'} onClick={this.handleMergeClick}>{text}</button>
+            </span>
+        )
+    }
+
     render() {
 
         console.log("Rendering character list with: " + this.props.selectedRows);
@@ -1373,8 +1475,11 @@ class CharacterList extends React.Component {
                             <td>
                                 Characters
                             </td>
-                            <td>
+                            <td style={{width: "75%"}}>
                                 {this.addButton()}
+                            </td>
+                            <td style={{width: "75%"}}>
+                                {this.mergeButton()}
                             </td>
                         </tr>
                     </thead>
@@ -1614,13 +1719,13 @@ class QuoteType extends React.Component {
                         <FormControlLabel
                             value="Anaphoric"
                             control={<Radio color="primary" />}
-                            label="Anaphoric"
+                            label="Pronominal"
                             labelPlacement="start"
                         />
                         <FormControlLabel
                             value="Explicit"
                             control={<Radio color="primary" />}
-                            label="Explicit"
+                            label="Named"
                             labelPlacement="start"
                             fontSize={'fontSize'}
                         />

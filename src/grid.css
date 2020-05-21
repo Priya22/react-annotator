@@ -9,7 +9,7 @@
 #annotationareacontainer {
     display: grid;
     overflow: hidden;
-    width: 90%;
+    width: 95%;
     border: 1px solid black;
     margin: 5px;
     grid-template-columns: 5fr 7fr;
@@ -113,6 +113,24 @@ p {
 
 .annotated-quote {
     background-color: lightcyan;
+    cursor: pointer;
+    border: 0.5px dashed red;
+}
+
+.anaphoric-quote {
+    background-color: lightpink;
+    cursor: pointer;
+    border: 0.5px dashed red;
+}
+
+.explicit-quote {
+    background-color: lightcyan;
+    cursor: pointer;
+    border: 0.5px dashed red;
+}
+
+.implicit-quote {
+    background-color: lightgreen;
     cursor: pointer;
     border: 0.5px dashed red;
 }
