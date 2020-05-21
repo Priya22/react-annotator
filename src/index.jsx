@@ -826,7 +826,7 @@ class ContentBox extends React.Component {
 
                     <div id={'context-switch'}>
                         <span id={'instructions'}>
-                            <a style={{display: "table-cell"}} href={"/instructions"} target="_blank">Instructions</a>
+                            <a style={{display: "table-cell"}} href={"https://docs.google.com/document/d/1eBsX2rjdLBkmA-kWB_jHCxC1nmbzinH04WUg9PeN_2A/edit?usp=sharing"} target="_blank">Instructions</a>
                         </span>
 
 
