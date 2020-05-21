@@ -247,6 +247,13 @@ table{
     border-top: 1px dashed black;
 }
 
+.td-left {
+    border-top: 1px dashed black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 .td-alias {
     border: 1px solid black;
 }
@@ -315,4 +322,9 @@ tfoot {
 
 a {
     font-size: 16pt;
+}
+
+.char-top-buttons {
+    width: 90%;
+
 }

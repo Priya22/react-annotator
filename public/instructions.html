@@ -29,50 +29,56 @@
     Welcome! The purpose of this tool is to annotate quotations within a text. We are collecting the following data for each quote:
     <ul>
         <li>
-            Type of quote (implicit, anaphoric or explicit).
+            Type of quotation: named, pronominal, or implicit
         </li>
         <li>
-            Speaker of the quote.
+            Speaker of the quotation.
         </li>
         <li>Addressee (the person or persons to whom the quotation is addressed)
         </li>
-        <li>The referring expression; the phrase, given by the narrator outside of quotation, that indicates the speaker and, sometimes, the addressee. (Note that implicit quotes don't have a referring expression.)
+        <li>The referring expression; the phrase, given by the narrator outside of quotation, that indicates the speaker and, sometimes, the addressee. (Note that implicit quotations don't have a referring expression.)
         </li>
         <li>Mentions within the quotation; characters mentioned in the quotation, whether by name or through a pronoun (e.g., "<b>She</b> told me <b>Rob</b> was ill")
         </li>
     </ul>
     <h4>1.1 Types of quotation</h4>
     <p>
-        The type of quotation can be explicit, anaphoric, or implicit.
+        The type of quotation can be named, pronominal, or implicit.
     </p>
     <p>
-        An explicit quotation will include a referring expression that provides the speaker’s name as a proper noun. For example,
+        Named and pronominal types include referring expressions. A referring expression always indicates 1) who is speaking the quotation;
+        2) provides a very for the action of speaking, such as “said” or “exclaimed.” It sometimes also indicates 3) the addressee of the quotation.
+
+    </p>
+    <p>
+        An <b>named</b> quotation will include a referring expression that provides the speaker’s name as a <i>proper noun</i>. For example,
     <pre>
                 "But you forget, mamma," said <u>Elizabeth</u>, "that we shall meet him at the assemblies, and that Mrs. Long promised to introduce him."
 
             </pre>
     </p>
     <p>
-        An anaphoric quotation employs a pronoun in the referring expression.
+        An <b>pronominal</b> quotation employs a pronoun in the referring expression.
         <pre>
-    "We are not in a way to know what Mr. Bingley likes," said <u>her mother</u> resentfully, "since we are not to visit."
+    "We are not in a way to know <i>what</i> Mr. Bingley likes," said <u>her mother</u> resentfully, "since we are not to visit."
 
         </pre>
     </p>
-    <p>An implicit quotation uses no referring expression at all. The bolded quotation in the following is an example of an implicit quotation (Mr. Bennet is speaking, but no referring expression is given):
+<p>An <b>implicit</b> quotation uses no referring expression at all. The bolded quotation in the following is an example of an implicit quotation (Mr. Bennet is speaking, but no referring expression is given):
     <pre>
         “Do you not want to know who has taken it?” cried his wife impatiently.
-        “You want to tell me, and I have no objection to hearing it.”
+    <b>“<i>You</i> want to tell me, and I have no objection to hearing it.”</b>
         This was invitation enough.
 
     </pre>
     </p>
     <h4>1.2 Additional notes on mentions </h4>
-    <p>Only annotate mentions within quotations.</p>
+<p>Only annotate mentions <i>within</i> quotations.</p>
 
-    <p>Only annotate mentions of specific characters. Do not annotate mentions of abstractions (in “It is the role of a good man to do his duty,” leave “his” un-annotated) or of anything that is not a character.</p>
-    <p>Do not annotate first-person pronouns within quotations. Do annotate second- and third-person pronouns within quotations. For example, in “‘I am so cross with you,’ said Frederic,” only annotate the mention of “you”; not “I.”</p>
-    <p>When a mention is given as a pronoun modifying a noun, annotate the pronoun/noun phrase as one unit. In “I told your sister to leave me alone,” annotate “your sister” as a single entity.</p>
+<p>Only annotate mentions of specific characters. Do not annotate mentions of abstractions (in “It is the role of a good man to do <u>his</u> duty,” leave “his” un-annotated) or of anything that is not a character.</p>
+<p><b>Do not</b> annotate first-person singular pronouns (“I,” “myself,” etc.) within quotations. <b>Do</b> annotate second- and third-person pronouns within quotations.
+    For example, in “‘I am so cross with you,’ said Frederic,” only annotate the mention of “you”; <b>not</b> “I.”</p>
+<p>When a mention is given as a pronoun modifying a noun, annotate the pronoun/noun phrase as one unit. In “I told <b>your sister</b> to leave me alone,” annotate “your sister” as a single entity.</p>
 
 <p> In the case of group entities such as “her sisters,”
     <ul>
@@ -81,13 +87,15 @@
         One test for whether someone is a “major character” is whether they speak in the novel, though there may be cases in which a “major character” never speaks. (Think of Godot!)
     </li>
     <li>
-        In a case like “Mrs. Long’s nieces” near the start of Pride and Prejudice, where the nieces are clearly not major characters, only annotate the mention of Mrs. Long, and leave “nieces” un-annotated
+        In a case like “Mrs. Long’s nieces” near the start of <i>Pride and Prejudice</i>, where the nieces are clearly not major characters, only annotate the mention of Mrs. Long, and leave “nieces” un-annotated
 
     </li>
 </ul>
 
 </p>
 <h4>1.3 Additional notes on quotations</h4>
+<p>Ignore all quotations within quotations. Only annotate the outer level of quotation.
+</p>
 <p>
     Quotations should be evaluated in their full context, and not just on a paragraph-by-paragraph basis. Consider the following example:
     <pre>
@@ -95,10 +103,29 @@
     <b>“I hope Mr. Bingley will like it, Lizzy.”</b>
 
 </pre>
-Even though no referring expression is given in the paragraph in which it appears, the bolded passage should be recorded as “anaphoric,” because it is introduced by a referring expression in the previous paragraph.
+Even though no referring expression is given in the paragraph in which it appears, the bolded passage should be recorded as “pronominal”, because it is introduced by a referring expression in the previous paragraph.
 </p>
 <p>
     Similarly, in multi-paragraph quotations, referring expressions will not appear with each paragraph. Annotate these multi-paragraph quotations by considering them as a single unit.
+</p>
+<p>
+    In some cases, a narrator will introduce a single quotation, sometimes in multiple places. These should nonetheless be treated as a single
+    quotation and annotated in the same manner. If, at any point, the character’s name is given, tag it as a named quotation. If the character’s name
+    is never given, but a pronoun is provided, tag it is as a pronominal quotation. If neither is given, tag it as implicit. For instance, all the
+    passages of quotation in the following (bolded) are to be tagged together as a pronominal quotation, since Elizabeth is only referred to
+    as “she” (underlined):
+
+    <pre>
+    <b>“You are a very strange creature by way of a friend!—always wanting me to play and sing before anybody and everybody!
+    If my vanity had taken a musical turn, you would have been invaluable; but as it is, I would really rather not sit down before
+        those who must be in the habit of hearing the very best performers.”</b> On Miss Lucas’s persevering, however, <u>she</u> added, <b>“Very well,
+    if it must be so, it must.”</b> And gravely glancing at Mr. Darcy, <b>“There is a fine old saying, which everybody here is of course familiar
+    with: ‘Keep your breath to cool your porridge’; and I shall keep mine to swell my song.”</b>
+</pre>
+
+</p>
+
+<p>
     Some paragraphs will contain more than one type of quotation. Each of these should be annotated separately. Consider the following:
     <pre>
     <b>“I am totally fed up with you, Margaret,”</b> she said. <b>“And I’ve had it with you, too, Richard.”</b>

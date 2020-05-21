@@ -729,10 +729,11 @@ class ContentBox extends React.Component {
 
         let curCharList = this.state.charList;
         let mergeRows = [];
-
-        let newCharList = curCharList.filter( function(el) {
+        let insIndex = 0;
+        let newCharList = curCharList.filter( function(el, index) {
             let val = selectedRows.includes(el.name);
             if (val) {
+                insIndex = index;
                 mergeRows.push(el);
             }
             return !(val)
@@ -755,7 +756,7 @@ class ContentBox extends React.Component {
         let newChar = mergeRows[prime_el_ind];
         newChar.expand = expand_names;
 
-        newCharList.push(newChar);
+        newCharList.splice(insIndex, 0, newChar);
 
         return newCharList;
     }
@@ -856,7 +857,7 @@ class ContentBox extends React.Component {
                             updateSelectedRows={this.updateSelectedRows}
 
                             setSelectionType={this.setSelectionType}
-
+                            sel_type={this.state.sel_type}
                             selected_text={this.state.current_sel}
                             clearSel={this.clearSel}
                             confirmSelection={this.confirmSelection}
@@ -958,6 +959,7 @@ class Collect extends React.Component{
                                     updateMode={this.props.updateMode}
                                     setField={this.props.setField}
                                     confirmed={this.props.confirmed}
+
                                 />
                             </div>
                         </div>
@@ -999,6 +1001,7 @@ class Collect extends React.Component{
                                     updateMode={this.props.updateMode}
                                     setField={this.props.setField}
                                     confirmed={this.props.confirmed}
+
                                 />
                             </div>
                         </div>
@@ -1398,7 +1401,7 @@ class CharacterList extends React.Component {
             <tr key={"row-data-" + item.name}>
                 <td className={'td-normal'}>{icon}</td>
                 <td onClick={clickCallback} className={'td-normal row-name'}>{item.name}</td>
-                <td className={'td-normal'}>{deleteIcon}</td>
+                <td className={'td-left'}>{deleteIcon}</td>
             </tr>
         ];
 
@@ -1440,7 +1443,12 @@ class CharacterList extends React.Component {
     addButton() {
         return (
             <span>
-                <button name={'Add-char'} onClick={this.handleAddChar}>Add</button>
+                <button name={'Add-char'}
+                        onClick={this.handleAddChar}
+                        className={'char-top-buttons'}
+                >
+                    Add
+                </button>
             </span>
         )
     }
@@ -1452,7 +1460,10 @@ class CharacterList extends React.Component {
         }
         return (
             <span>
-                <button name={'Merge-char'} onClick={this.handleMergeClick}>{text}</button>
+                <button name={'Merge-char'}
+                        onClick={this.handleMergeClick}
+                        className={'char-top-buttons'}
+                >{text}</button>
             </span>
         )
     }
@@ -1473,9 +1484,9 @@ class CharacterList extends React.Component {
                     <thead>
                         <tr>
                             <td>
-                                Characters
+                                ---
                             </td>
-                            <td style={{width: "75%"}}>
+                            <td style={{width: "50%"}}>
                                 {this.addButton()}
                             </td>
                             <td style={{width: "75%"}}>
@@ -1600,6 +1611,7 @@ class CollectInfo extends React.Component {
                             mode={this.props.cur_mode}
                             setField={this.props.setField}
                             message={"Select Addressee"}
+                            selType={this.props.cur_info.sel_type}
                         />
 
                         <RefExpInfo
@@ -1675,6 +1687,7 @@ class CollectMentionInfo extends React.Component {
                         mode={this.props.cur_mode}
                         setField={this.props.setField}
                         message={"Select Entity being referred to "}
+                        selType={this.props.cur_info.sel_type}
                     />
                     <SubmitInfoButton
                         //onSubmit={this.onSubmit}
@@ -1826,15 +1839,18 @@ class SpeakeeInfo extends React.Component {
         const message = (this.props.value === '') ? 'None set' : this.props.value.join('; ');
         const color = (this.props.mode === 'speakee') ? "green" : "black";
         const disabled = (this.props.mode === "speakee") ? true : false;
+
+        const heading = (this.props.selType == 'Mention') ? "Mention" : "Addressee";
+
         return (
             <div className={'border'}
                 id={'select-speakee'}
                  onClick={this.onDivClick}
                  style={{ cursor: "pointer"}}
             >
-                <h3 style={{ color: color }}>Select Addressee</h3>
+                <h3 style={{ color: color }}>Select {heading}</h3>
                 <div><i>{this.props.message} from the character list on the left, and press Submit when done. If there are multiple, select all possible ones.</i></div>
-                <span><b>Addressee(s):</b> {message} </span>
+                <span><b>{heading}(s):</b> {message} </span>
                 <span>
                     <button type={'submit'}
                             name={'speakee-edit'}

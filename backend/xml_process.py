@@ -4,6 +4,7 @@ import numpy as np
 from collections import Counter
 import nltk
 import argparse
+import string
 
 def parseTxt(text, charList):
 
@@ -61,21 +62,25 @@ def parseTxt(text, charList):
 
     return (positions, quote_infos, quote_span_ids, men_pos, men_infos, men_span_ids)
 
-mention_words = ['he', 'she', 'they', 'them', 'her', 'his', 'their', 'him']
+mention_words = ['he', 'she', 'they', 'them', 'her', 'his', 'their', 'him', 'you', 'us', 'we', 'yourself', 'herself', 'themselves', 'himself']
+mention_words.extend([x.capitalize() for x in mention_words])
+punct = list(string.punctuation)
 
 def getMentions(str, str_start, charNames):
     mentions = []
     positions = []
-    #print(str)
+    #print("INPUT STRING: ", str)
     cur_str = ''
     start = 0
     end = -1
     #charnames_str = " ".join(charNames)
     for i, c in enumerate(str):
-        if c == ' ' or i==(len(str)-1):
+        if (c == ' ') or (c in punct) or i==(len(str)-1):
             end = i
             #print(cur_str)
             if (cur_str in mention_words) or (cur_str in charNames):
+                #print("positive hit. ")
+                #print()
                 mentions.append(cur_str)
                 positions.append([str_start+start, str_start+end])
             start = i+1
