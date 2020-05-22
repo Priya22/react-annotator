@@ -428,7 +428,13 @@ class ContentBox extends React.Component {
                 }
                 else {
                     // cur_class = 'annotated-quote';
-                    cur_class = infos[cur_span_id].quote_type.toLowerCase() + '-quote';
+                    if (infos[cur_span_id].sel_type === 'Mention') {
+                        cur_class = 'annotated-quote';
+                    }
+                    else {
+                        cur_class = infos[cur_span_id].quote_type.toLowerCase() + '-quote';
+                    }
+
 
                 }
                 //process mentions here
