@@ -1246,8 +1246,13 @@ class   TextArea extends React.Component {
 
     getToolSpan(info){
         //console.log(info);
+        const q_map = {
+            'Anaphoric': 'Pronominal',
+            'Implicit': 'Implicit',
+            'Explicit': 'Named'
+        }
         if (info['sel_type'] === 'Quote') {
-            const type = String(info['quote_type'])
+            const type = q_map[info['quote_type']]
             const speaker = info['speaker']
             const ref = info['ref_exp']
             const speakee = info['speakee'].join("; ");
