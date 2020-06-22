@@ -8,16 +8,20 @@
     "bootstrap": "^4.3.1",
     "highlightable": "^1.0.7",
     "material-table": "^1.53.0",
-    "react": "^16.10.1",
+    "react": "^16.13.1",
     "react-bootstrap": "^1.0.0-beta.14",
     "react-bootstrap-table": "^4.3.1",
     "react-bootstrap-table-next": "^3.2.1",
     "react-bootstrap-table2-editor": "^1.4.0",
-    "react-dom": "^16.10.1",
+    "react-dom": "^16.13.1",
     "react-html-parser": "^2.0.2",
     "react-modal": "^3.11.1",
     "react-router-dom": "^5.1.2",
-    "react-scripts": "3.1.2"
+    "react-scripts": "3.1.2",
+    "react-tippy": "^1.4.0",
+    "react-tooltip": "^4.2.7",
+    "reactjs-popup": "^1.5.0",
+    "reactstrap": "^8.4.1"
   },
   "scripts": {
     "start": "react-scripts start",

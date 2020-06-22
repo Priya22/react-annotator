@@ -75,6 +75,11 @@ def getMentions(str, str_start, charNames):
     end = -1
     #charnames_str = " ".join(charNames)
     for i, c in enumerate(str):
+
+        if (cur_str.lower() == 'let' and c == "'"):
+            mentions.append("'s")
+            positions.append([str_start+i, str_start+i+2])
+            
         if (c == ' ') or (c in punct) or i==(len(str)-1):
             end = i
             #print(cur_str)
@@ -85,6 +90,7 @@ def getMentions(str, str_start, charNames):
                 positions.append([str_start+start, str_start+end])
             start = i+1
             cur_str = ''
+
         else:
             cur_str += c
     assert len(mentions) == len(positions)
@@ -184,8 +190,12 @@ if __name__ == '__main__':
     txt_path = args.txt
     xml_path = args.xml
     file_name = txt_path.split("/")[-1].replace(".txt","")
-    f = open(txt_path)
-    text = f.read()
+    with open(txt_path, 'r') as f:
+        text = f.read()
+    text = "".join([x if ord(x) < 128 else '?' for x in text])
+    print(text[:20])
+    with open('../data/'+file_name+'_new.txt', 'w') as f:
+        f.write(text)
 
     tree = ET.parse(xml_path)
     root = tree.getroot()

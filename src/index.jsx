@@ -12,6 +12,7 @@ import RadioGroup from '@material-ui/core/RadioGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import axios from 'axios';
 import ErrorBoundary from "./ErrorBoundary";
+import ReactTooltip from "react-tooltip";
 
 //import myData from './quotes.json';
 //import testChars from './chars.json'
@@ -224,6 +225,7 @@ class ContentBox extends React.Component {
         this.checkArrayEqual = this.checkArrayEqual.bind(this);
         this.mergeChars = this.mergeChars.bind(this);
         //this.simulateClick = this.simulateClick.bind(this);
+        this.getSpanInfo = this.getSpanInfo.bind(this);
     }
 
 
@@ -344,7 +346,8 @@ class ContentBox extends React.Component {
             //console.log("Pushing");
             //check if annotations are compatible
             else {
-                tempAlert("Incompatible Selections!", 3000)
+                tempAlert("Incompatible Selections!", 3000);
+                return;
             }
         }
         //console.log(selectedIds);
@@ -773,6 +776,11 @@ class ContentBox extends React.Component {
         this.setState({charList: new_chars}, () => this.saveCurrent());
     }
 
+    getSpanInfo(spanID){
+        let infos = (this.state.sel_type === 'quotes') ? this.state.quote_infos : this.state.men_infos;
+        return infos[spanID];
+    }
+
     setSelectionType(event) {
         const type = event.target.value;
         let cur_info = this.state.cur_info;
@@ -881,6 +889,7 @@ class ContentBox extends React.Component {
                             setSelection={(start, end) => this.setSelection(start, end)}
                             onPrevClick={this.onSpanClick}
                             clickEnabled = {this.state.confirmed !== true}
+                            getSpanInfo = {this.getSpanInfo}
                         />
 
                     </div>
@@ -923,6 +932,34 @@ function tempAlert(msg,duration)
         el.parentNode.removeChild(el);
     },duration);
     document.body.appendChild(el);
+}
+
+// function hoverBox(info) {
+
+// }
+
+function displaySpanInfo(event, msg) {
+
+    //console.log(event.target.offSets)
+    const left = event.clientX + "px";
+    const top = event.clientY + "px";
+
+    var el = document.createElement("div");
+    el.setAttribute("id", "spanModal")
+    el.setAttribute("style","position:absolute; background-color:LightGray;");
+    el.style.top = top;
+    el.style.left = left;
+    //console.log(msg);
+    el.innerHTML = msg;
+    // setTimeout(function(){
+    //     el.parentNode.removeChild(el);
+    // },duration);
+    document.body.appendChild(el);
+}
+
+function removeModal(event) {
+    var el = document.getElementById('spanModal');
+    el.parentNode.removeChild(el);
 }
 
 class Collect extends React.Component{
@@ -1123,12 +1160,18 @@ class SelectionType extends React.Component {
     }
 }
 
-class TextArea extends React.Component {
+class   TextArea extends React.Component {
 
     constructor(props) {
         super(props);
+        this.state = {
+            show: false,
+        };
         this.onMouseUp = this.onMouseUp.bind(this);
         this.convertToHtml = this.convertToHtml.bind(this);
+        this.getToolSpan = this.getToolSpan.bind(this);
+        this.handleHoverEnter = this.handleHoverEnter.bind(this);
+        this.handleHoverLeave = this.handleHoverLeave.bind(this);
     }
 
     getSelectionCharacterOffsetWithin(element) {
@@ -1163,12 +1206,14 @@ class TextArea extends React.Component {
 
     }
 
+
     onMouseUp(event) {
 
         if (this.props.locked === false && event.currentTarget.className === 'input-text') {
             console.log("Text selected.");
             const target = event.currentTarget;
             const offSets = this.getSelectionCharacterOffsetWithin(target);
+            //console.log(target, offSets);
             if (offSets.start !== offSets.end) {
                 console.log("Offsets: ", offSets.start, offSets.end);
                 this.props.setSelection(offSets.start, offSets.end);
@@ -1177,6 +1222,48 @@ class TextArea extends React.Component {
     }
 
 
+
+    handleHoverEnter(event) {
+        //if (this.state.show === true) {
+            let spanID = event.target.id;
+            let info = this.props.getSpanInfo(spanID);
+            //console.log(event.target);
+            //console.log("Hovering over: ", spanID);
+            //tempAlert(String(spanID), 1000);
+            let msg = this.getToolSpan(info);
+            //console.log(msg);
+            this.setState({show: true}, displaySpanInfo(event, msg));
+            //console.log(info);
+            //tempAlert(info, 2000);
+        //}
+     }
+
+     handleHoverLeave(event) {
+         if (this.state.show === true) {
+             this.setState({show: false}, removeModal(event))
+         }
+     }
+
+    getToolSpan(info){
+        //console.log(info);
+        if (info['sel_type'] === 'Quote') {
+            const type = String(info['quote_type'])
+            const speaker = info['speaker']
+            const ref = info['ref_exp']
+            const speakee = info['speakee'].join("; ");
+            return (
+                "<span> <ul><li>Type: " + type + "</li><li>Speaker: "+ speaker +"</li><li>Addressee(s): "+speakee+"</li><li>Ref Exp: "+ref+"</li></ul></span>"
+                )
+        }
+        else if (info['sel_type'] === 'Mention') {
+            const speakee = info['speakee'].join("; ");
+            return (
+                "<span><ul><li>Mention(s): "+speakee+"</li></ul></span>"
+            )
+        }
+        
+    }
+
     convertToHtml(display_obj) {
         const texts = display_obj.texts;
         const classes = display_obj['classes'];
@@ -1184,17 +1271,32 @@ class TextArea extends React.Component {
 
         const spans = texts.map((value, i) => {
             if (ids[i] !== '') {
+                //let info = this.props.getSpanInfo(ids[i]);
+                //let toolSpan = this.getToolSpan(info);
+                //console.log(toolSpan);
                 return (
                     // disable selection for these spans
-                    <span className={classes[i] + ' disable-selection'}
+                    // <span className="tooltip">
+                        <span className={classes[i] + ' disable-selection'} 
                           id={ids[i]}
                           onMouseUp={this.props.onPrevClick}
-                    >{value}</span>
-                )
+                          onMouseEnter={(event) => this.handleHoverEnter(event)}
+                          onMouseLeave={(event) => this.handleHoverLeave(event)}
+                         >
+                              {value}
+                        </span>
+                        //{/* <span className='tooltiptext'>
+                          //  {toolSpan}
+                        //</span> */}
+                    // </span>
+                )             
             }
             else {
                 return (
-                    <span className={classes[i]}>{value}</span>
+                   
+                        <span className={classes[i]}>{value}</span>
+                  
+                    
                 )
             }
         });
@@ -1777,11 +1879,16 @@ class SpeakerInfo extends React.Component {
     }
 
     onEdit() {
-        this.props.updateMode('speaker');
+        if (this.props.mode === 'normal') {
+            this.props.updateMode('speaker');
+        }  
     }
 
     onSubmit() {
-        this.props.setField('speaker');
+        if (this.props.mode === 'speaker') {
+            this.props.setField('speaker');
+        }
+        
     }
 
     render() {
@@ -1846,7 +1953,7 @@ class SpeakeeInfo extends React.Component {
         const color = (this.props.mode === 'speakee') ? "green" : "black";
         const disabled = (this.props.mode === "speakee") ? true : false;
 
-        const heading = (this.props.selType == 'Mention') ? "Mention" : "Addressee";
+        const heading = (this.props.selType == 'Mention') ? "Mention(s)" : "Addressee(s)";
 
         return (
             <div className={'border'}
