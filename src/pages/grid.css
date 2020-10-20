@@ -354,12 +354,3 @@ a {
 .tooltip:hover .tooltiptext {
     visibility: visible;
   }
-
-#main-navigation {
-    text-align: center;
-}
-
-.navig-button {
-    margin: 10px;
-    align-items: center;
-}

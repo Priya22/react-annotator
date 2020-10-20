@@ -8,6 +8,8 @@ app = Flask(__name__, static_folder="build/static", template_folder="build")
 CORS(app)
 
 def load_json(file_name):
+
+    #check if /annotat
     path = './data/' + file_name
     with open(path + '_chars.json', 'r') as f:
         charList = json.load(f)
@@ -80,6 +82,21 @@ def save_data():
 
     return {'message': 'Success'}
     #pass
+
+@app.route('/disagreements', methods=['GET'])
+def generate_doc():
+    file_a = request.args.get('file_a')
+    file_b = request.args.get('file_b')
+
+    #unzip
+    print(file_a)
+    print(file_b)
+    return 'Success'
+
+#analyze results
+# @app.route('/disagreements')
+# def serve_analysis():
+#     return render_template('analyze.html')
 
 print('Starting Flask!')
 app.debug=True

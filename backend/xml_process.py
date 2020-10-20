@@ -10,11 +10,14 @@ def parseTxt(text, charList):
 
     charNames = []
     for c in charList:
-        charNames.append(c['name'])
+        charNames.extend(c['name'].split(" "))
         for e in c['expand']:
-            charNames.append(e['name'])
-
-
+            charNames.extend(e['name'].split(" "))
+            
+    
+    #charNames
+    charNames = [x for x in charNames if (x.lower()!='the')]
+    print(charNames)
     quotes = []
     positions = []
 
@@ -194,7 +197,7 @@ if __name__ == '__main__':
         text = f.read()
     text = "".join([x if ord(x) < 128 else '?' for x in text])
     print(text[:20])
-    with open('../data/'+file_name+'_new.txt', 'w') as f:
+    with open('../data/'+file_name+'.txt', 'w') as f:
         f.write(text)
 
     tree = ET.parse(xml_path)
