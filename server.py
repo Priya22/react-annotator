@@ -18,6 +18,12 @@ def load_json(file_name):
     with open(path + '.txt', 'r') as f:
         content = f.read().strip()
 
+    #make compatible: change speaker from empty str to list
+    for key, val in data['quote_infos'].items():
+        cur = val['speaker']
+        if isinstance(cur, str):
+            data['quote_infos'][key]['speaker'] = [cur]
+
     return (data, charList, content)
 
 def save_progress(file_name, chars, quote_infos, quote_ranges, quote_span_ids, men_infos, men_ranges, men_span_ids):

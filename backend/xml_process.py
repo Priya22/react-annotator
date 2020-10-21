@@ -107,7 +107,7 @@ def getJsonObjects(quotes, positions, type):
 
     for i, quote in enumerate(quotes):
         quote_infos[i] = {
-            'speaker': '',
+            'speaker': [],
             'speakee': [],
             'quote_type': '',
             'ref_exp': '',
@@ -181,7 +181,7 @@ def getCharacters(root, tree):
 
 
 if __name__ == '__main__':
-
+#def main(txt_path, xml_path):
     parser = argparse.ArgumentParser(description='Extract novel data.')
     parser.add_argument('--txt', type=str, help='path to the txt file')
     parser.add_argument('--xml', type=str, help='path to the GutenTag XML file')
@@ -189,21 +189,30 @@ if __name__ == '__main__':
 
     txt_path = args.txt
     xml_path = args.xml
+
+    if xml_path == "None":
+        charList = []
+    
+    else:
+        tree = ET.parse(xml_path)
+        root = tree.getroot()
+        charList = getCharacters(root, tree)
     file_name = txt_path.split("/")[-1].replace(".txt","")
+    write_path = '../data/'+file_name
+
+    with open(write_path + '_chars.json', 'w') as f:
+        json.dump(charList, f)
+
+    
     with open(txt_path, 'r') as f:
         text = f.read()
     text = "".join([x if ord(x) < 128 else '?' for x in text])
     print(text[:20])
-    with open('../data/'+file_name+'_new.txt', 'w') as f:
+    with open('../data/'+file_name+'.txt', 'w') as f:
         f.write(text)
 
-    tree = ET.parse(xml_path)
-    root = tree.getroot()
-    charList = getCharacters(root, tree)
-    write_path = "/".join(txt_path.split("/")[:-1]) + "/" + file_name
-
-    with open(write_path + '_chars.json', 'w') as f:
-        json.dump(charList, f)
+    
+    
 
     positions, quote_infos, quote_span_ids, men_pos, men_infos, men_span_ids = parseTxt(text, charList)
     json_obj = {'quote_ranges': positions, 'quote_infos': quote_infos, 'quote_span_ids': quote_span_ids,
@@ -213,6 +222,8 @@ if __name__ == '__main__':
     print("Writing quotes to: ", write_path + '_quotes.json')
     with open(write_path + '_quotes.json', 'w') as fp:
         json.dump(json_obj, fp)
+
+   # return charList, json_obj, text
 
 
 

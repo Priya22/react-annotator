@@ -46,6 +46,23 @@ class Tool extends React.Component {
     }
 }
 
+function aliasToChar(charList) {
+    //map alias to character
+    let nameToMain = {}
+
+    charList.forEach((value, index) => {
+        //main name
+        nameToMain[value.name] = value.name;
+
+        value.expand.forEach((alias) => {
+            nameToMain[alias.name] = value.name;
+        })
+
+    });
+
+    return nameToMain;
+}
+
 class TextLoader extends React.Component {
     // Checks if file is selected and loads it into the text box
     constructor(props) {
@@ -69,7 +86,8 @@ class TextLoader extends React.Component {
                 cur_file: '',
                 content: '',
                 data: '',
-                charList: ''
+                charList: '',
+               
             })
         }
     }
@@ -86,7 +104,7 @@ class TextLoader extends React.Component {
                    file_name: file_name,
                }
             }).then(res => {
-                console.log(res.data);
+                //console.log(res.data);
                 this.setState({
                     cur_file: res.data.title,
                     content: res.data.content,
@@ -131,6 +149,7 @@ class TextLoader extends React.Component {
     }
 
 }
+
 
 function LoadButton(props) {
     return (
@@ -179,10 +198,15 @@ class ContentBox extends React.Component {
         //console.log("Constructor called");
         const myData = this.props.data;
         const charList = this.props.charList;
-
+        const charToName = aliasToChar(charList);
+        const content = this.props.value;
 
         this.state = {
+            content: content,
+
             charList: charList,
+            charToMain: charToName,
+
             // ranges: myData.ranges,
             current_sel: '',
             sel_type: 'quotes',
@@ -323,7 +347,7 @@ class ContentBox extends React.Component {
     onSpanClick(event) {
         //this.saveCurrent(event);
         const span_id = event.target.id;
-        const exceprt = this.props.value;
+        const exceprt = this.state.content;
         const infos = (this.state.sel_type === 'quotes') ? this.state.quote_infos : this.state.men_infos;
         const ranges = (this.state.sel_type === 'quotes') ? this.state.quote_ranges : this.state.men_ranges;
 
@@ -363,8 +387,9 @@ class ContentBox extends React.Component {
         let confirmed = this.state.confirmed;
 
         if (selectedIds.length > 0) {
-            last_info = infos[selectedIds[selectedIds.length - 1]];
-            if (last_info.speakee.length !== 0) {
+            //last_info = infos[selectedIds[selectedIds.length - 1]];
+            last_info = this.getSpanInfo(selectedIds[selectedIds.length - 1]);
+            if (last_info.speakee.length !== 0) { //if it has already been annotated.
                 confirmed = true;
             }
         }
@@ -391,7 +416,7 @@ class ContentBox extends React.Component {
 
         const span_ends = Object.keys(ranges).map((key) => ranges[key].end);
         //console.log(span_ends);
-        const text = this.props.value;
+        const text = this.state.content;
 
         const last_end = Math.max.apply(null, span_ends);
 
@@ -505,7 +530,7 @@ class ContentBox extends React.Component {
 
         const type = (this.state.sel_type === 'quotes') ? 'Quote' : 'Mention';
         const info = {
-            speaker: '',
+            speaker: [],
             speakee: [],
             ref_exp: '',
             quote_type: '',
@@ -606,7 +631,7 @@ class ContentBox extends React.Component {
         //list of speakers
         let speakers = [];
         qinfos.forEach((obj, index) => {
-            if ((obj.speaker !== "") && !(speakers.includes(obj.speaker[0]))) {
+            if ((obj.speaker.length !== 0) && !(speakers.includes(obj.speaker[0]))) {
                 speakers.push(obj.speaker[0]);
             }
             if (obj.speakee.length > 0) {
@@ -677,12 +702,18 @@ class ContentBox extends React.Component {
         let cur_info = this.state.cur_info;
 
         if (field === 'speaker') {
-            cur_info.speaker = this.state.selectedRows;
+            //cur_info.speaker = this.state.selectedRows;
+            let selectedROws = this.state.selectedRows;
+            let selectedIds = selectedROws.map((x) => this.state.charToMain[x]);
+            cur_info.speaker = selectedIds;
             this.setState({cur_info: cur_info, cur_mode: 'normal', selectedRows: []});
         }
 
         else if (field === 'speakee') {
-            cur_info.speakee = this.state.selectedRows;
+            //cur_info.speakee = this.state.selectedRows;
+            let selectedROws = this.state.selectedRows;
+            let selectedIds = selectedROws.map((x) => this.state.charToMain[x]);
+            cur_info.speakee = selectedIds;
             this.setState({cur_info: cur_info, cur_mode: 'normal', selectedRows: []});
         }
 
@@ -703,7 +734,8 @@ class ContentBox extends React.Component {
         else if (field === 'merge-chars') {
             let selectedRows = this.state.selectedRows;
             let newCharList = this.mergeChars(selectedRows);
-            this.setState({charList: newCharList, cur_mode: 'normal', selectedRows: []}, () => this.saveCurrent());
+            let newCharToMain = aliasToChar(newCharList);
+            this.setState({charList: newCharList, cur_mode: 'normal', selectedRows: [], charToMain: newCharToMain}, () => this.saveCurrent());
         }
 
     }
@@ -772,13 +804,27 @@ class ContentBox extends React.Component {
 
     updateChars(new_chars) {
         console.log("Updating charList in ContentBox.");
+        let newChartoMain = aliasToChar(new_chars);
         //console.log(new_chars);
-        this.setState({charList: new_chars}, () => this.saveCurrent());
+        this.setState({charList: new_chars, charToMain: newChartoMain}, () => this.saveCurrent());
     }
 
     getSpanInfo(spanID){
         let infos = (this.state.sel_type === 'quotes') ? this.state.quote_infos : this.state.men_infos;
-        return infos[spanID];
+        let spanInfo = infos[spanID];
+        let newVal = [];
+        spanInfo.speaker.forEach((value) => {
+            newVal.push(this.state.charToMain[value]);
+        })
+        spanInfo.speaker = newVal;
+
+        let newSpeakeeVal = [];
+        spanInfo.speakee.forEach((value) => {
+            newSpeakeeVal.push(this.state.charToMain[value]);
+        })
+        spanInfo.speakee = newSpeakeeVal;
+
+        return spanInfo;
     }
 
     setSelectionType(event) {
@@ -867,6 +913,7 @@ class ContentBox extends React.Component {
                         <Collect
                             updateChars={this.updateChars}
                             charList={this.state.charList}
+                            charToMain={this.state.charToMain}
                             selectedRows={this.state.selectedRows}
                             updateSelectedRows={this.updateSelectedRows}
 
@@ -975,6 +1022,7 @@ class Collect extends React.Component{
                             <h3>Characters</h3>
                             <CharacterList
                                 charList={this.props.charList}
+                                charToMain={this.props.charToMain}
                                 updateChars={this.props.updateChars}
                                 mode={this.props.cur_mode}
                                 selectedRows={this.props.selectedRows}
@@ -1017,6 +1065,7 @@ class Collect extends React.Component{
                             <h3>Characters</h3>
                             <CharacterList
                                 charList={this.props.charList}
+                                charToMain={this.props.charToMain}
                                 updateChars={this.props.updateChars}
                                 mode={this.props.cur_mode}
                                 selectedRows={this.props.selectedRows}
@@ -1059,6 +1108,7 @@ class Collect extends React.Component{
                             <h3>Characters</h3>
                             <CharacterList
                                 charList={this.props.charList}
+                                charToMain={this.props.charToMain}
                                 updateChars={this.props.updateChars}
                                 mode={this.props.cur_mode}
                                 selectedRows={this.props.selectedRows}
@@ -1098,6 +1148,7 @@ class Collect extends React.Component{
                         <h3>Characters</h3>
                         <CharacterList
                             charList={this.props.charList}
+                            charToMain={this.props.charToMain}
                             updateChars={this.props.updateChars}
                             mode={this.props.cur_mode}
                             selectedRows={this.props.selectedRows}
