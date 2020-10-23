@@ -813,11 +813,15 @@ class ContentBox extends React.Component {
         let infos = (this.state.sel_type === 'quotes') ? this.state.quote_infos : this.state.men_infos;
         let spanInfo = infos[spanID];
         let newVal = [];
-        spanInfo.speaker.forEach((value) => {
-            newVal.push(this.state.charToMain[value]);
-        })
-        spanInfo.speaker = newVal;
 
+        if (this.state.sel_type === 'quotes') {
+            spanInfo.speaker.forEach((value) => {
+                newVal.push(this.state.charToMain[value]);
+            })
+            spanInfo.speaker = newVal;
+    
+        }
+        
         let newSpeakeeVal = [];
         spanInfo.speakee.forEach((value) => {
             newSpeakeeVal.push(this.state.charToMain[value]);
