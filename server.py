@@ -12,15 +12,22 @@ app = Flask(__name__, static_folder="build/static", template_folder="build")
 CORS(app, support_credentials=True)
 
 def load_json(file_name):
-    path = './data/' + file_name
+    folder_path = os.path.join('./data', file_name)
     #path = './test_results/alice_p2/beck/' + file_name
-    with open(path + '_chars.json', 'r') as f:
+
+    char_file = file_name + '_chars.json'
+    char_path = os.path.join(folder_path, char_file)
+    with open(char_path, 'r') as f:
         charList = json.load(f)
 
-    with open(path + '_quotes.json', 'r') as f:
+    q_file = file_name + '_quotes.json'
+    q_path = os.path.join(folder_path, q_file)
+    with open(q_path, 'r') as f:
         data = json.load(f)
 
-    with open(path + '.txt', 'r') as f:
+    txt_file = file_name + '.txt'
+    txt_path = os.path.join(folder_path, txt_file)
+    with open(txt_path, 'r') as f:
         content = f.read().strip()
 
     #make compatible: change speaker from empty str to list
@@ -32,8 +39,15 @@ def load_json(file_name):
     return (data, charList, content)
 
 def save_progress(file_name, chars, quote_infos, quote_ranges, quote_span_ids, men_infos, men_ranges, men_span_ids):
-    path = './data/' + file_name
-    with open(path + '_chars.json', 'w') as f:
+    folder_path = os.path.join('./data', file_name)
+
+    char_file = file_name + '_chars.json'
+    char_path = os.path.join(folder_path, char_file)
+
+    q_file = file_name + '_quotes.json'
+    q_path = os.path.join(folder_path, q_file)
+
+    with open(char_path, 'w') as f:
         json.dump(chars, f)
 
     data_ob = {
@@ -45,7 +59,7 @@ def save_progress(file_name, chars, quote_infos, quote_ranges, quote_span_ids, m
         'men_span_ids': men_span_ids
     }
 
-    with open(path + '_quotes.json', 'w') as f:
+    with open(q_path, 'w') as f:
         json.dump(data_ob, f)
 
 def pickle_dump(data, name):
