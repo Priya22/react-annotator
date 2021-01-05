@@ -9,7 +9,7 @@ import pickle as pkl
 from backend import char_disagreement, ann_disagreement
 
 app = Flask(__name__, static_folder="build/static", template_folder="build")
-CORS(app, support_credentials=True)
+CORS(app, resources={r"/*": {"origins": "*"}})
 
 def load_json(file_name):
     folder_path = os.path.join('./data', file_name)
@@ -90,11 +90,11 @@ def get_charStatus():
     statusLists, indicator = getCharStatus(charLists)
     return {'statusLists': statusLists, 'indicator': indicator}
 
-@app.route("/getDisDoc", methods=['GET'])
+@app.route("/getDisDoc", methods=['POST'])
 def get_DisDoc():
-    data = request.args.get('data')
-    res, title = getDisagreements(data)
-    return {'content': res, 'title': title}
+    data = request.get_json()
+    content, title = getDisagreements(data)
+    return {'content': content, 'title': title}
     
 @app.route("/annotated_image")
 def serve_image():

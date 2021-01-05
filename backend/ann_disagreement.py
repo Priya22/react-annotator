@@ -4,7 +4,10 @@ from collections import defaultdict
 
 
 def read_data(data):
-	data = eval(data)
+	try:
+		data = eval(data)
+	except:
+		data = data 
 
 	ann_names = data.keys()
 
@@ -15,10 +18,16 @@ def read_data(data):
 
 		for key, val in data[ann].items():
 			if 'quotes.json' in key:
-				ann_data[ann]['quote_data'] = eval(val)
+				try:
+					ann_data[ann]['quote_data'] = eval(val)
+				except:
+					ann_data[ann]['quote_data'] = val
 			
 			elif 'chars.json' in key:
-				ann_data[ann]['char_data'] = eval(val)
+				try:
+					ann_data[ann]['char_data'] = eval(val)
+				except:
+					ann_data[ann]['char_data'] = val
 
 			elif '.txt' in key:
 				title = "".join(key.split(".")[:-1])
@@ -52,26 +61,8 @@ def read_single(data):
 
 	return ann_data, title
 
-def get_disagreements(data):
+def get_char_info(character_anns):
 
-	ann_data, title = read_data(data)
-	
-	if not os.path.isdir('./temp'):
-		os.mkdir('./temp')
-
-	character_anns = {}
-	for ann in ann_data:
-		character_anns[ann] = ann_data[ann]['char_data']
-
-	quote_anns = {}
-	for ann in ann_data:
-		quote_anns[ann] = ann_data[ann]['quote_data']
-
-	texts = {}
-	for ann in ann_data:
-		texts[ann] = ann_data[ann]['text']
-
-	#check primary name match
 	char_id = {}
 	id_ = 0
 	for ann in character_anns:
@@ -108,9 +99,37 @@ def get_disagreements(data):
 		if val not in id_chars:
 			id_chars[val] = []
 		id_chars[val].append(key)
-
+		
 	print("Number of characters: ", len(id_chars))
 	id_chars[-1] = ['None']
+
+	return char_id, id_chars
+
+def get_disagreements(data):
+
+	ann_data, title = read_data(data)
+	
+	if not os.path.isdir('./temp'):
+		os.mkdir('./temp')
+
+	# if not os.path.isdir(os.path.join('./temp', title)):
+	# 	os.mkdir(os.path.join('./temp', title))
+
+	character_anns = {}
+	for ann in ann_data:
+		character_anns[ann] = ann_data[ann]['char_data']
+
+	quote_anns = {}
+	for ann in ann_data:
+		quote_anns[ann] = ann_data[ann]['quote_data']
+
+	texts = {}
+	for ann in ann_data:
+		texts[ann] = ann_data[ann]['text']
+
+	#check primary name match
+
+	char_id, id_chars = get_char_info(character_anns)
 	
 	r_to_text = {}
 	for key in quote_anns:
@@ -318,7 +337,7 @@ def get_disagreements(data):
 	
 	#all disagreements
 	print("Writing disagreements: ")
-	file_name = title + '_AgDoc.txt' 
+	file_name = title + '_disagreements.txt'
 	file_path = os.path.join('./temp', file_name)
 	with open(file_path, 'w') as f:
 		print("\t\t\t DISAGREEMENTS \t\t\t", file=f)
@@ -370,8 +389,10 @@ def get_disagreements(data):
 		content = f.read().strip()
 
 	os.remove(file_path)
+
+	return content, title 
 	
-	return content, title
+	#return os.path.join('./temp', title, file_name)
 
 
 

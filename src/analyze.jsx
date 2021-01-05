@@ -7,6 +7,9 @@ const path = require('path')
 const fs = require('fs')
 
 const ANN_NAMES = ['Beck', 'Jovana','Leah', 'Sanghoon'];
+const AXIOS_HEADER = {  
+    'Content-Type': 'application/json',
+    'Access-Control-Allow-Origin': '*'}
 
 
 function Footer(props) {
@@ -591,18 +594,18 @@ class GenDis extends React.Component {
             //send to server
             //alert("Generating Disagreements.")
             //check character agreements
-            axios.get('http://127.0.0.1:8080/getDisDoc', 
-                {
-                    params: {
-                        'data': data
-                    }
-                }).then(res => {
+            axios.post('http://127.0.0.1:8080/getDisDoc', 
+               data,
+                ).then(res => {
                     //console.log(res.data.statusLists);
                     //return res.data.statusLists;
-                    let text = res.data.content;
+                    // let text = res.data.content;
+                    // let title = res.data.title;
+                    // this.saveAsFile(text, title+'.txt');
+                    let content = res.data.content;
                     let title = res.data.title;
-                    this.saveAsFile(text, title+'.txt');
-                    let msg = 'Processing Complete!'
+                    this.saveAsFile(content, title+'.txt');
+                    let msg = 'Processing Complete!';
                     msg = this.state.message + '\n' + msg;
                     this.setState({message: msg})
                 })
