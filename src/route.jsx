@@ -20,6 +20,9 @@ class App extends React.Component {
                     <span className='nav-el'>
                         <Link to='/analyze'>Analyze</Link>
                     </span>
+                    <span className='nav-el'>
+                    <a href={"https://docs.google.com/document/d/1eBsX2rjdLBkmA-kWB_jHCxC1nmbzinH04WUg9PeN_2A/edit?usp=sharing"} target="_blank">Instructions</a>
+                    </span>
                 </div>
 
 
