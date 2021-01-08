@@ -112,6 +112,13 @@ def get_disagreements(data):
 	if not os.path.isdir('./temp'):
 		os.mkdir('./temp')
 
+	if not os.path.isfile(os.path.join('./temp', 'log.txt')):
+		mode = 'w'
+	else:
+		mode = 'a'
+	
+	log_file = open(os.path.join('./temp', 'log.txt'), mode)
+
 	# if not os.path.isdir(os.path.join('./temp', title)):
 	# 	os.mkdir(os.path.join('./temp', title))
 
@@ -176,7 +183,8 @@ def get_disagreements(data):
 				range_to_id[un] = {}
 			range_to_id[un][ann] = key
 			
-	print("range_starts_to_id, range_ends_to_id, range_to_id: ", len(range_starts_to_id), len(range_ends_to_id), len(range_to_id))
+	print(title, file=log_file)
+	print("range_starts_to_id, range_ends_to_id, range_to_id: ", len(range_starts_to_id), len(range_ends_to_id), len(range_to_id), file=log_file)
 	
 	assert len(r_to_text) == len(range_to_id)
 	
@@ -229,7 +237,7 @@ def get_disagreements(data):
 				
 	r_disagreements = {}
 	
-	print("len(range_to_id), len(r_to_text), len(r_to_qtype), len(r_to_reftext), len(r_to_speakees), len(r_to_speakers): ", len(range_to_id), len(r_to_text), len(r_to_qtype), len(r_to_reftext), len(r_to_speakees), len(r_to_speakers))
+	print("len(range_to_id), len(r_to_text), len(r_to_qtype), len(r_to_reftext), len(r_to_speakees), len(r_to_speakers): ", len(range_to_id), len(r_to_text), len(r_to_qtype), len(r_to_reftext), len(r_to_speakees), len(r_to_speakers), file=log_file)
 	
 	mapping = {
 	'quote_type': r_to_qtype,
@@ -238,7 +246,7 @@ def get_disagreements(data):
 	'speakee': r_to_speakees
 	}
 
-	print("Disagreements: Quote Type")
+	print("Disagreements: Quote Type", file=log_file)
 	for r, text in r_to_text.items():
 		#quote type
 		if (len(r_to_qtype[r]) <2) or len(set(r_to_qtype[r])) > 1:
@@ -252,9 +260,9 @@ def get_disagreements(data):
 			#print()
 
 
-	print("Count: ", len(r_disagreements))
+	print("Count: ", len(r_disagreements), file=log_file)
 
-	print("Disagreements: ref Exp")
+	print("Disagreements: ref Exp", file=log_file)
 	for r, text in r_to_text.items():
 		#ref exp
 		exps = []
@@ -274,11 +282,11 @@ def get_disagreements(data):
 			#print()
 
 
-	print("Count: ", len(r_disagreements))
+	print("Count: ", len(r_disagreements), file=log_file)
 
 
 	#speaker
-	print("Disagreements: Speaker")
+	print("Disagreements: Speaker", file=log_file)
 	for r, text in r_to_text.items():
 		#try:
 			speaker_ids = []
@@ -302,10 +310,10 @@ def get_disagreements(data):
 		# except Exception as e:
 		# 		print("ERROR: ", r)
 
-	print("Count: ", len(r_disagreements))
+	print("Count: ", len(r_disagreements), file=log_file)
 
 	#speakee
-	print("Disagreements: Speakee")
+	print("Disagreements: Speakee", file=log_file)
 	for r, text in r_to_text.items():
 		speakee_str = []
 		for s in r_to_speakees[r]:
@@ -322,9 +330,9 @@ def get_disagreements(data):
 			#print()
 
 			
-	print("Count: ", len(r_disagreements))
+	print("Count: ", len(r_disagreements), file=log_file)
 	
-	print("Total ratio: ", len(r_disagreements)/len(r_to_text))
+	print("Total ratio: ", len(r_disagreements)/len(r_to_text), file=log_file)
 
 	field_mapping = {
 		'SPEAKEE': 'ADDRESSEE'
@@ -384,6 +392,8 @@ def get_disagreements(data):
 			print("-"*50, file=f)
 
 	#read and return 
+	print("--"*50, file=log_file)
+	log_file.close()
 
 	with open(file_path, 'r') as f:
 		content = f.read().strip()

@@ -11,6 +11,17 @@ from backend import char_disagreement, ann_disagreement
 app = Flask(__name__, static_folder="build/static", template_folder="build")
 CORS(app, resources={r"/*": {"origins": "*"}})
 
+
+@app.route('/', defaults={'path': ''})
+@app.route('/<path:path>')
+def catch_all(path):
+    #return 'You want path: %s' % path
+    path_dir = os.path.abspath("build") #path react build
+    if path != "" and os.path.exists(os.path.join(path_dir, path)):
+        return send_from_directory(os.path.join(path_dir), path)
+    else:
+        return send_from_directory(os.path.join(path_dir),'index.html')
+
 def load_json(file_name):
     folder_path = os.path.join('./data', file_name)
     #path = './test_results/alice_p2/beck/' + file_name
