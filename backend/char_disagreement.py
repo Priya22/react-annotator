@@ -1,12 +1,12 @@
 import os, re, sys, json
 
 def get_char_info(character_anns):
-    #note: returns separate dicts for each annotator. 
+	#note: returns separate dicts for each annotator. 
 
 	char_ids = {}
 	id_ = 0
 	for ann in character_anns:
-        char_id = {}
+		char_id = {}
 		for char in character_anns[ann]:
 			cur_names = [char['name']]
 			for alias in char['expand']:
@@ -34,77 +34,77 @@ def get_char_info(character_anns):
 				for name in cur_names:
 					char_id[name] = id_
 				id_ = id_ + 1
-        char_ids[ann] = char_id
+		char_ids[ann] = char_id
 
 	id_chars = {}
-    for ann, char_id in char_ids.items():
-        for key, val in char_id.items():
-            id_char = {}
-            if val not in id_char:
-                id_char[val] = []
-            id_char[val].append(key)
-        id_chars[ann] = id_char
-        
+	for ann, char_id in char_ids.items():
+		id_char = {}
+		for key, val in char_id.items():
+			if val not in id_char:
+				id_char[val] = []
+			id_char[val].append(key)
+		id_chars[ann] = id_char
+		
 	return char_ids, id_chars
 
 def get_status(charLists):
-    '''
-    returns an id2status dictionary that has 0 if a character an aliases
-    match up for both lists, and 1 otherwise. 
-    '''
-    ann_names = sorted(charLists.keys())
-    #char_ids, id_chars = get_char_info(charLists)
+	'''
+	returns an id2status dictionary that has 0 if a character an aliases
+	match up for both lists, and 1 otherwise. 
+	'''
+	ann_names = sorted(charLists.keys())
+	char_ids, id_chars = get_char_info(charLists)
 
-    name_dicts = {}
+	name_dicts = {}
 
-    for ann in ann_names:
-        name_dicts[ann] = {}
-        chars = charLists[ann]
+	for ann in ann_names:
+		name_dicts[ann] = {}
+		chars = charLists[ann]
 
-        for char in chars:
-            main = char['name']
-            name_dicts[ann][main] = char['expand']
+		for char in chars:
+			main = char['name']
+			name_dicts[ann][main] = char['expand']
 
-    statusLists = {}
+	statusLists = {}
 
-    indicator = 1
-    
-    for ann in ann_names:
-        statusLists[ann] = []
+	indicator = 1
+	
+	for ann in ann_names:
+		statusLists[ann] = []
 
-        other_ann = [x for x in ann_names if x!=ann]
+		other_ann = [x for x in ann_names if x!=ann]
 
-        for i, _ in enumerate(charLists[ann]):
-            char = charLists[ann][i]
+		for i, _ in enumerate(charLists[ann]):
+			char = charLists[ann][i]
 
-            cname = char['name']
-            #og_list = id_chars[ann][char_ids[ann][cname]]
-            status = 0
+			cname = char['name']
+			# print(cname)
+			# print(char_ids[ann][cname])
+			og_list = id_chars[ann][char_ids[ann][cname]]
+			status = 0
 
-            for oa in other_ann:
-                # for n in og_list:
-                #     if n in char_ids[ann]:
-                # oa_list = id_chars[ann][char_ids[ann][cname]]
-                if cname in name_dicts[oa]:
-                    status = 1
-            
-            char['status'] = status
+			for oa in other_ann:
+				for n in og_list:
+					if n in char_ids[oa]:
+						#oa_list = id_chars[oa][char_ids[oa][n]]
+						status = 1
+						break 
 
-            if status == 0:
-                indicator = 0
-            
-            statusLists[ann].append(char)
-    
-    #aliases
-    #maybe later
-    #sort by fist name
+				# if cname in name_dicts[oa]:
+				# 	status = 1
+			
+			char['status'] = status
 
-    for ann in ann_names:
-        statusLists[ann] = sorted(statusLists[ann], key=lambda k: k['name'])
+			if status == 0:
+				indicator = 0
+			
+			statusLists[ann].append(char)
+	
+	#aliases
+	#maybe later
+	#sort by fist name
 
-    return statusLists, indicator
+	for ann in ann_names:
+		statusLists[ann] = sorted(statusLists[ann], key=lambda k: k['name'])
 
-
-
-
-
+	return statusLists, indicator
