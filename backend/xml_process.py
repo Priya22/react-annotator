@@ -1,5 +1,5 @@
 import xml.etree.ElementTree as ET
-import json
+import json, os
 import numpy as np
 from collections import Counter
 import nltk
@@ -198,9 +198,13 @@ if __name__ == '__main__':
         root = tree.getroot()
         charList = getCharacters(root, tree)
     file_name = txt_path.split("/")[-1].replace(".txt","")
-    write_path = '../data/'+file_name
+    write_path = os.path.join('../data', file_name)
+    if not os.path.isdir(write_path):
+        os.mkdir(write_path)
+    print("Writing to: ", write_path)
 
-    with open(write_path + '_chars.json', 'w') as f:
+    char_file = file_name + '_chars.json'
+    with open(os.path.join(write_path, char_file), 'w') as f:
         json.dump(charList, f)
 
     
@@ -208,7 +212,9 @@ if __name__ == '__main__':
         text = f.read()
     text = "".join([x if ord(x) < 128 else '?' for x in text])
     print(text[:20])
-    with open('../data/'+file_name+'.txt', 'w') as f:
+
+    txt_file = file_name + '.txt'
+    with open(os.path.join(write_path, txt_file), 'w') as f:
         f.write(text)
 
     
@@ -219,8 +225,9 @@ if __name__ == '__main__':
         'men_ranges': men_pos, 'men_infos': men_infos, 'men_span_ids': men_span_ids
                 }
 
-    print("Writing quotes to: ", write_path + '_quotes.json')
-    with open(write_path + '_quotes.json', 'w') as fp:
+    #print("Writing quotes to: ", write_path + '_quotes.json')
+    q_file = file_name + '_quotes.json'
+    with open(os.path.join(write_path, q_file), 'w') as fp:
         json.dump(json_obj, fp)
 
    # return charList, json_obj, text
