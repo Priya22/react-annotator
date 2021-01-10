@@ -26,3 +26,5 @@ temp/*
 test.txt
 results/*
 data_old/*
+disagreements/*
+*.zip

@@ -5,6 +5,7 @@ from collections import Counter
 import nltk
 import argparse
 import string
+import re
 
 def parseTxt(text, charList):
 
@@ -185,6 +186,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Extract novel data.')
     parser.add_argument('--txt', type=str, help='path to the txt file')
     parser.add_argument('--xml', type=str, help='path to the GutenTag XML file')
+    #parser.add_argument('--out', type=str, help='path to the output folder')
     args = parser.parse_args()
 
     txt_path = args.txt
@@ -210,15 +212,22 @@ if __name__ == '__main__':
     
     with open(txt_path, 'r') as f:
         text = f.read()
-    text = "".join([x if ord(x) < 128 else '?' for x in text])
+    
+    #replace quotes
+    text = text.replace("“", '"')
+    text = text.replace('”', '"')
+
+    #text = "".join([x if ord(x) < 128 else '?' for x in text])
+    text = re.sub(r'[^\x00-\x7f]',r' ',text)
     print(text[:20])
 
     txt_file = file_name + '.txt'
     with open(os.path.join(write_path, txt_file), 'w') as f:
-        f.write(text)
+        f.write(text.strip())
 
     
-    
+    with open(os.path.join(write_path, txt_file), 'r') as f:
+        text = f.read().strip()
 
     positions, quote_infos, quote_span_ids, men_pos, men_infos, men_span_ids = parseTxt(text, charList)
     json_obj = {'quote_ranges': positions, 'quote_infos': quote_infos, 'quote_span_ids': quote_span_ids,
