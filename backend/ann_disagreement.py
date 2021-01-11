@@ -94,6 +94,8 @@ def get_char_info(character_anns):
 					char_id[name] = id_
 				id_ = id_ + 1
 
+	char_id['None'] = -1
+	char_id[''] = -1
 	id_chars = {}
 	for key, val in char_id.items():
 		if val not in id_chars:
@@ -101,7 +103,7 @@ def get_char_info(character_anns):
 		id_chars[val].append(key)
 		
 	print("Number of characters: ", len(id_chars))
-	id_chars[-1] = ['None']
+	#id_chars[-1] = ['None']
 
 	return char_id, id_chars
 
