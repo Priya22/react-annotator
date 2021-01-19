@@ -269,6 +269,7 @@ class ContentBox extends React.Component {
         this.mergeChars = this.mergeChars.bind(this);
         //this.simulateClick = this.simulateClick.bind(this);
         this.getSpanInfo = this.getSpanInfo.bind(this);
+        this.getCharValue = this.getCharValue.bind(this);
     }
 
 
@@ -304,6 +305,16 @@ class ContentBox extends React.Component {
     //     }
     //
     // }
+    getCharValue(x) {
+        let name = this.state.charToMain[x];
+
+        if (name === undefined || name === null){
+            return ""
+        }
+        else {
+            return name;
+        }
+    }
 
     checkArrayEqual(a, b) {
         if (a.length === 0 && b.length === 0){
@@ -470,13 +481,16 @@ class ContentBox extends React.Component {
                 if (this.state.selectedSpanIds.includes(String(cur_span_id))) {
                     this.state.confirmed ? cur_class = 'confirmed-quote' : cur_class = 'selected-quote';
                 }
-                else if (infos[cur_span_id].quote_type === "") {
+                else if (infos[cur_span_id].quote_type && infos[cur_span_id].quote_type === "") {
                     cur_class = 'identified-quote';
                 }
                 else {
                     // cur_class = 'annotated-quote';
                     if (infos[cur_span_id].sel_type === 'Mention') {
-                        cur_class = 'annotated-quote';
+                        cur_class = 'identified-quote';
+                        if (infos[cur_span_id].speakee.length > 0) {
+                            cur_class = 'annotated-quote';
+                        }
                     }
                     else {
                         cur_class = infos[cur_span_id].quote_type.toLowerCase() + '-quote';
@@ -723,7 +737,7 @@ class ContentBox extends React.Component {
         if (field === 'speaker') {
             //cur_info.speaker = this.state.selectedRows;
             let selectedROws = this.state.selectedRows;
-            let selectedIds = selectedROws.map((x) => this.state.charToMain[x]);
+            let selectedIds = selectedROws.map((x) => this.getCharValue(x)); //check for undefined.
             cur_info.speaker = selectedIds;
             this.setState({cur_info: cur_info, cur_mode: 'normal', selectedRows: []});
         }
@@ -731,7 +745,7 @@ class ContentBox extends React.Component {
         else if (field === 'speakee') {
             //cur_info.speakee = this.state.selectedRows;
             let selectedROws = this.state.selectedRows;
-            let selectedIds = selectedROws.map((x) => this.state.charToMain[x]);
+            let selectedIds = selectedROws.map((x) => this.getCharValue(x)); //check for undefined.
             cur_info.speakee = selectedIds;
             this.setState({cur_info: cur_info, cur_mode: 'normal', selectedRows: []});
         }

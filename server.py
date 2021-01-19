@@ -104,6 +104,7 @@ def get_charStatus():
 @app.route("/getDisDoc", methods=['POST'])
 def get_DisDoc():
     data = request.get_json()
+    #pkl.dump(data, open('./temp/temp.pkl', 'wb'))
     content, title = getDisagreements(data)
     return {'content': content, 'title': title}
     

@@ -1,7 +1,7 @@
 import os, csv, json, re, sys 
 import string 
 from collections import defaultdict
-
+import pickle as pkl
 
 def read_data(data):
 	try:
@@ -19,13 +19,13 @@ def read_data(data):
 		for key, val in data[ann].items():
 			if 'quotes.json' in key:
 				try:
-					ann_data[ann]['quote_data'] = eval(val)
+					ann_data[ann]['quote_data'] = eval(val.replace("null", "''"))
 				except:
 					ann_data[ann]['quote_data'] = val
 			
 			elif 'chars.json' in key:
 				try:
-					ann_data[ann]['char_data'] = eval(val)
+					ann_data[ann]['char_data'] = eval(val.replace("null", "''"))
 				except:
 					ann_data[ann]['char_data'] = val
 
@@ -120,6 +120,7 @@ def get_disagreements(data):
 		mode = 'a'
 	
 	log_file = open(os.path.join('./temp', 'log.txt'), mode)
+	pkl.dump(ann_data, open('./temp/'+title+'_data.pkl', 'wb'))
 
 	# if not os.path.isdir(os.path.join('./temp', title)):
 	# 	os.mkdir(os.path.join('./temp', title))
