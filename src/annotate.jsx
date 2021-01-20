@@ -481,7 +481,7 @@ class ContentBox extends React.Component {
                 if (this.state.selectedSpanIds.includes(String(cur_span_id))) {
                     this.state.confirmed ? cur_class = 'confirmed-quote' : cur_class = 'selected-quote';
                 }
-                else if (infos[cur_span_id].quote_type && infos[cur_span_id].quote_type === "") {
+                else if (infos[cur_span_id].sel_type === 'Quote' && infos[cur_span_id].quote_type === "") {
                     cur_class = 'identified-quote';
                 }
                 else {
