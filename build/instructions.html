@@ -1,0 +1,297 @@
+<!doctype html>
+
+<p lang="en">
+<head>
+    <meta charset="utf-8">
+
+    <title>Quote Annotator: Instructions</title>
+    <meta name="description" content="The HTML5 Herald">
+    <meta name="author" content="SitePoint">
+
+    <link rel="stylesheet" href="css/styles.css?v=1.0">
+
+</head>
+
+<p>
+<h1>Quote Annotation Tool</h1>
+
+<ol>
+    <li><a href="#prelim">Introduction</a> </li>
+    <li><a href="#components">Tool Components</a> </li>
+    <li><a href="#color-codes">Important Color Codes</a> </li>
+    <li><a href="#process">Annotation process</a> </li>
+    <li><a href="#annotated-img">A Helpful Image</a> </li>
+</ol>
+
+
+<p id="prelim">
+    <h2>1. Introduction</h2>
+    Welcome! The purpose of this tool is to annotate quotations within a text. We are collecting the following data for each quote:
+    <ul>
+        <li>
+            Type of quotation: named, pronominal, or implicit
+        </li>
+        <li>
+            Speaker of the quotation.
+        </li>
+        <li>Addressee (the person or persons to whom the quotation is addressed)
+        </li>
+        <li>The referring expression; the phrase, given by the narrator outside of quotation, that indicates the speaker and, sometimes, the addressee. (Note that implicit quotations don't have a referring expression.)
+        </li>
+        <li>Mentions within the quotation; characters mentioned in the quotation, whether by name or through a pronoun (e.g., "<b>She</b> told me <b>Rob</b> was ill")
+        </li>
+    </ul>
+    <h4>1.1 Types of quotation</h4>
+    <p>
+        The type of quotation can be named, pronominal, or implicit.
+    </p>
+    <p>
+        Named and pronominal types include referring expressions. A referring expression always indicates 1) who is speaking the quotation;
+        2) provides a very for the action of speaking, such as “said” or “exclaimed.” It sometimes also indicates 3) the addressee of the quotation.
+
+    </p>
+    <p>
+        An <b>named</b> quotation will include a referring expression that provides the speaker’s name as a <i>proper noun</i>. For example,
+    <pre>
+                "But you forget, mamma," said <u>Elizabeth</u>, "that we shall meet him at the assemblies, and that Mrs. Long promised to introduce him."
+
+            </pre>
+    </p>
+    <p>
+        An <b>pronominal</b> quotation employs a pronoun in the referring expression.
+        <pre>
+    "We are not in a way to know <i>what</i> Mr. Bingley likes," said <u>her mother</u> resentfully, "since we are not to visit."
+
+        </pre>
+    </p>
+<p>An <b>implicit</b> quotation uses no referring expression at all. The bolded quotation in the following is an example of an implicit quotation (Mr. Bennet is speaking, but no referring expression is given):
+    <pre>
+        “Do you not want to know who has taken it?” cried his wife impatiently.
+    <b>“<i>You</i> want to tell me, and I have no objection to hearing it.”</b>
+        This was invitation enough.
+
+    </pre>
+    </p>
+    <h4>1.2 Additional notes on mentions </h4>
+<p>Only annotate mentions <i>within</i> quotations.</p>
+
+<p>Only annotate mentions of specific characters. Do not annotate mentions of abstractions (in “It is the role of a good man to do <u>his</u> duty,” leave “his” un-annotated) or of anything that is not a character.</p>
+<p><b>Do not</b> annotate first-person singular pronouns (“I,” “myself,” etc.) within quotations. <b>Do</b> annotate second- and third-person pronouns within quotations.
+    For example, in “‘I am so cross with you,’ said Frederic,” only annotate the mention of “you”; <b>not</b> “I.”</p>
+<p>When a mention is given as a pronoun modifying a noun, annotate the pronoun/noun phrase as one unit. In “I told <b>your sister</b> to leave me alone,” annotate “your sister” as a single entity.</p>
+
+<p> In the case of group entities such as “her sisters,”
+    <ul>
+    <li>
+        When each of the characters to whom this expression refers is what you could consider a major character, provide annotate all of these characters.
+        One test for whether someone is a “major character” is whether they speak in the novel, though there may be cases in which a “major character” never speaks. (Think of Godot!)
+    </li>
+    <li>
+        In a case like “Mrs. Long’s nieces” near the start of <i>Pride and Prejudice</i>, where the nieces are clearly not major characters, only annotate the mention of Mrs. Long, and leave “nieces” un-annotated
+
+    </li>
+</ul>
+
+</p>
+<h4>1.3 Additional notes on quotations</h4>
+<p>Ignore all quotations within quotations. Only annotate the outer level of quotation.
+</p>
+<p>
+    Quotations should be evaluated in their full context, and not just on a paragraph-by-paragraph basis. Consider the following example:
+    <pre>
+    Observing his second daughter employed in trimming a hat, he suddenly addressed her with:
+    <b>“I hope Mr. Bingley will like it, Lizzy.”</b>
+
+</pre>
+Even though no referring expression is given in the paragraph in which it appears, the bolded passage should be recorded as “pronominal”, because it is introduced by a referring expression in the previous paragraph.
+</p>
+<p>
+    Similarly, in multi-paragraph quotations, referring expressions will not appear with each paragraph. Annotate these multi-paragraph quotations by considering them as a single unit.
+</p>
+<p>
+    In some cases, a narrator will introduce a single quotation, sometimes in multiple places. These should nonetheless be treated as a single
+    quotation and annotated in the same manner. If, at any point, the character’s name is given, tag it as a named quotation. If the character’s name
+    is never given, but a pronoun is provided, tag it is as a pronominal quotation. If neither is given, tag it as implicit. For instance, all the
+    passages of quotation in the following (bolded) are to be tagged together as a pronominal quotation, since Elizabeth is only referred to
+    as “she” (underlined):
+
+    <pre>
+    <b>“You are a very strange creature by way of a friend!—always wanting me to play and sing before anybody and everybody!
+    If my vanity had taken a musical turn, you would have been invaluable; but as it is, I would really rather not sit down before
+        those who must be in the habit of hearing the very best performers.”</b> On Miss Lucas’s persevering, however, <u>she</u> added, <b>“Very well,
+    if it must be so, it must.”</b> And gravely glancing at Mr. Darcy, <b>“There is a fine old saying, which everybody here is of course familiar
+    with: ‘Keep your breath to cool your porridge’; and I shall keep mine to swell my song.”</b>
+</pre>
+
+</p>
+
+<p>
+    Some paragraphs will contain more than one type of quotation. Each of these should be annotated separately. Consider the following:
+    <pre>
+    <b>“I am totally fed up with you, Margaret,”</b> she said. <b>“And I’ve had it with you, too, Richard.”</b>
+
+</pre>
+Although they share the same referring expression, the two bolded phrases should be annotated separately, since they have different addressees.
+</p>
+<p>
+    By contrast, in the following example, both bolded passages can be annotated together:
+    <pre>
+    <b>“I am totally fed up with the both of you,”</b> she said angrily. <b>“You’re both driving me absolutely crazy.”</b>
+
+</pre>
+</p>
+<p>
+    Do not include adverbs when marking referring expressions. In the above quotation, do not include “angrily.” However, when an adverb is wedged into the centre of a referring expression, include it. In the following example, include the full bolded passage as the referring expression
+<pre>
+    “I’m fed up with the both of you,” <b>she said angrily to Margaret and Richard.</b>
+</pre>
+</p>
+<p>
+    Do not annotate apparent referring expressions that come in the quotation itself (for instance, “Listen, Richard, I’ve had it with you”). Referring expressions as we understand them can only be given by the narrator and so can only come outside of quotations.
+</p>
+<h4>1.4 Character names and aliases</h4>
+<p>
+    Some characters will be referred to by many names. For instance, Kitty Bennet in Pride and Prejudice is called “Kitty,” “Catherine,” “Miss Bennet,” and so on.
+    <br>
+    For our purposes, it does not matter which of these names you consider the principal name and which an alias. The important thing is that there is only one entry in the character list for each character and that you record all of their aliases.
+
+</p>
+<h4>1.5 Sample passage and annotation</h4>
+<p>
+    Consider the following passage:
+    <pre>
+    "My dear Mr. Bennet," said his lady to him one day, "have you heard that Netherfield Park is let at last?"
+    Mr. Bennet replied that he had not.
+    <b>"But it is,"</b> returned she <b>"for Mrs. Long has just been here, and she told me all about it."</b>
+</pre>
+Suppose we are annotating the bolded quotation. The data we wish to obtain is the following:
+<ul>
+    <li>
+        <b>Type of Quote: </b>Anaphoric
+    </li>
+    <li>
+        <b>Speaker: </b>Mrs. Bennet
+    </li>
+    <li>
+        <b>Addressee: </b>Mr. Bennet
+    </li>
+    <li>
+        <b>Referring expression: </b>returned she
+    </li>
+    <li>
+        <b>Mentions: </b>
+        <ul>
+            <li>
+                <i>Mrs. Long: </i> Mrs. Long
+            </li>
+            <li>
+                <i>she: </i> Mrs. Long
+            </li>
+        </ul>
+    </li>
+</ul>
+
+</p>
+
+
+</div>
+
+
+
+<div id="components">
+<h2>2. Annotation Tool Components</h2>
+<ul>
+    <li>From the landing page, click the "Choose files" button. Navigate to the <code>'data/'</code> folder of the root directory and choose the text file that you wish to annotate.</li>
+    <li>The selected text, along with a list of initial characters will load on the main page.</li>
+    <li>
+        The main components of the tool are as follows:
+        <ul>
+            <li><b>Tabs: </b> There are two tabs, Quotes and Mentions, on the top right of the text area. You can click on each of them to switch between
+                annotating quote information (i.e, type, speaker, addressee and referring expression) and mention information (referred entity).
+            </li>
+            <li>
+                <b>Highlighted text: </b> An initial set of quotes and mentions have been automatically extracted and highlighted in the text area. <i>Note that
+            these may not be accurate or complete.</i> Please ensure you are annotating the correct portion of the text.
+            </li>
+            <li>
+                <b>Character List: </b> The leftmost partition contains a list of characters and their aliases that have also been automatically extracted. <i>Note that
+                these may not be accurate or complete.</i> You can add/delete both character names as well as their aliases.
+            </li>
+            <li>
+                <b>Information collection: </b> When you click on a highlighted quote or mention, the middle partition will display information and instructions
+                to facilitate the annotation.
+            </li>
+            <li>
+                <b>Save Progress: </b> Please ensure you are continually saving your annotations to file. <b> Annotations, once completed,
+                are automatically saved; and this is just a precautionary measure.</b>
+            </li>
+            <li>
+                <b>Reload: </b> Click on this button <b>after saving</b> to reload a new file to annotate.
+            </li>
+        </ul>
+    </li>
+</ul>
+</div>
+
+<div id="color-codes">
+<h2>3. Highlights: Color codes</h2>
+<p>As you progress through the annotation task, the color of the quotations/mentions change to indicate the phase of annotation you are in. The following list
+describes them for quotes, but is equally applicable to mentions.</p>
+<ul>
+    <li>
+        <b>Yellow:</b> This is an identified quote. It has not yet been annotated.
+    </li>
+    <li>
+        <b>Grey: </b> This is a quote that is currently <i>selected</i> to be annotated.
+    </li>
+    <li>
+        <b>Blue: </b> This quote has been annotated.
+    </li>
+</ul>
+</div>
+
+<div id="process">
+<h2>4. Annotation Process</h2>
+<p>(Replace "quote" with "mention" wherever applicable.)</p>
+<p>A quote needs to be identified before it can be annotated. To identify a portion of the text as a quote, simply select that portion with your cursor. </p>
+    <p>To start annotating an identified quote, proceed as follows: </p>
+<ol>
+    <li>Click on the span of text that has been highlighted. It should appear in the middle partition of the tool, under "Current selection".</li>
+    <li>Multiple quotes can be annotated at the same time. To add more quotes to the current selection, simply click on them.
+        To remove a selected quote, click on it again.</li>
+    <li><b>Quote type: </b> Select the correct option (Implicit, Anaphoric, or Explicit) from the radio-buttons.</li>
+    <li><b>Speaker selection: </b> Each quote is assumed to have one speaker. Click the <code>Edit</code> button to select the speaker.
+    The character list on the right will change it's appearance to display selectable radio-buttons next to each character. Check the radio button for the
+    correct speaker, and click on the <code>Submit</code> button for Speaker. You will see the selected character has been identified as the speaker. </li>
+    <li><b>Addressee selection: </b> Each quote may have multiple addressees. Click the <code>Edit</code> button to select them.
+        The character list on the right will change it's appearance to display selectable checkboxes next to each character. Check the checkbox for the
+        correct addressee(s), and click on the <code>Submit</code> button. You will see the selected character(s) displayed as addressee(s). </li>
+    <li><b>Referring expression: </b> This field will only appear for Anaphoric and Explicit quotes. To select the expression, first click on the <code>Edit</code> button.
+        Then select the correct portion of the text from the text-area on the right, and click <code>Submit</code>. The selected text will be displayed as the referring
+        expression.
+    </li>
+    <li><b>For mentions: </b>
+        The annotation for mentions consists only of selecting the referred entities from the character list on the left. This is similar to the Addressee annotation.
+    </li>
+    <li>
+        <b>Be sure to click “Submit Info” when you are done annotating a particular quotation or group of quotations.</b> If you don’t, it/they will remain selected, and havoc will ensue.
+
+    </li>
+</ol>
+<p><b>Additional Notes</b></p>
+<ol>
+    <li>If any part of the text was incorrectly identified by us as being a mention or a quote, please remove it by selecting the text and clicking the
+    <code>Clear</code> button instead of <code>OK</code></li>
+    <li>The character list is automatically extracted and has a high probability of being incomplete as well as redundant, and sometimes wrong.
+        Add, delete, and edit characters as well as their aliases to ensure uniformity.
+    </li>
+</ol>
+</div>
+
+<div id="annotated-img">
+    <h2>5. A Helpful Image</h2>
+    <img src="/annotated_image" alt="Annotated Screenshot" style="width:1600px;height:750px;border:2px solid black">
+</div>
+
+</body>
+</html>

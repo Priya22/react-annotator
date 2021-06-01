@@ -1,0 +1,24 @@
+.nav-el {
+    margin:10px;
+}
+
+.normal-p {
+    background-color: white;
+    margin: auto;
+    height: fit-content;
+    width: fit-content;
+    padding: 20px;
+}
+
+.main-options {
+    margin: auto;
+    margin-top: 20px;
+    height: fit-content;
+    width: fit-content;
+
+}
+
+.main-option {
+    margin: 25px;
+    text-shadow: tomato;
+}

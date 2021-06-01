@@ -1,0 +1,357 @@
+#input-text {
+    width: 100%;
+    height: 100%;
+    -webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
+    -moz-box-sizing: border-box;    /* Firefox, other Gecko */
+}
+
+
+#annotationareacontainer {
+    display: grid;
+    overflow: hidden;
+    width: 95%;
+    border: 1px solid black;
+    margin: 5px;
+    grid-template-columns: 5fr 7fr;
+    height: 600px;
+    /*grid-template-columns: 1fr;*/
+}
+
+#collect {
+    display: grid;
+    resize: horizontal;
+    overflow: hidden;
+    border: 1px solid red;
+    margin: 2px;
+    grid-template-columns: 2fr 3fr;
+}
+
+#middle-disp {
+    display: inline-grid;
+    overflow: scroll;
+    -webkit-overflow-scrolling: touch;
+    grid-template-rows: 1fr 3fr;
+    border: 1px solid green;
+}
+
+.mention {
+    background-color: dodgerblue;
+}
+.mention-resolved {
+    background-color: dodgerblue;
+    border: 1px dashed red;
+    cursor: pointer;
+}
+
+
+.quote-options {
+    display: grid;
+    grid-template-columns: 1fr;
+    border: 1px solid red;
+    margin: 1px;
+}
+
+#submit-info-button {
+    margin: 5px;
+    padding: 10px;
+}
+
+#current-selection {
+    border: 1px solid red;
+    padding: 2px;
+}
+
+#annotationarea {
+    float: right;
+    overflow-y: scroll;
+   /* width: calc(100% - 70px);   experimental - can do calc in javascript */
+    /*padding-left: 5px;*/
+    border: 1px solid green;
+}
+
+/*#linenums, #annotationarea {*/
+/*    height: 600px ;*/
+
+/*}*/
+
+.selection-type {
+    display: inline;
+    margin: 5px;
+}
+
+.heading {
+    margin: auto;
+}
+
+h1 {
+    text-align: center;
+}
+
+ul {
+    /*list-style-type: none;*/
+}
+
+p {
+    border: 1px solid black;
+    background-color: lightgray;
+}
+
+.selected-quote {
+    background-color: lightgray;
+    cursor: pointer;
+}
+
+.identified-quote {
+    background-color: yellow;
+    cursor: pointer;
+}
+
+.confirmed-quote {
+    background-color: lightgray;
+    border: 0.5px dashed red;
+    cursor: pointer;
+}
+
+.annotated-quote {
+    background-color: lightcyan;
+    cursor: pointer;
+    border: 0.5px dashed red;
+}
+
+.anaphoric-quote {
+    background-color: lightpink;
+    cursor: pointer;
+    border: 0.5px dashed red;
+}
+
+.explicit-quote {
+    background-color: lightcyan;
+    cursor: pointer;
+    border: 0.5px dashed red;
+}
+
+.implicit-quote {
+    background-color: lightgreen;
+    cursor: pointer;
+    border: 0.5px dashed red;
+}
+
+.input-text {
+    font-family: "DejaVu Serif";
+    white-space: pre;
+}
+
+div {
+    margin: 5px;
+}
+
+.init-heading {
+    display: inline;
+    font-family: "Droid Sans Mono";
+}
+
+#load {
+    text-align: center;
+}
+span {
+    margin: 2px;
+}
+
+.disable-selection {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+
+
+#charnames {
+    height: 600px;
+    position: relative;
+    overflow: scroll;
+    font-family: "DejaVu Serif";
+}
+
+.char-btn {
+    border: 1px solid black;
+}
+
+.bts-table {
+    font-size: 10px;
+    font-family: "DejaVu Serif";
+    display: none;
+}
+
+.clickable {
+    cursor: pointer;
+}
+
+.modal {
+    position: fixed;
+    top: 30%;
+    left: 30%;
+    width:20%;
+    height: 20%;
+    background: white;
+    border: 1px solid black;
+    border-radius: 10%;
+}
+
+.modal-main {
+    background: white;
+    width: 100%;
+    height: 100%;
+    border: 1px solid black;
+    /*opacity: 0.5 !important;*/
+}
+
+#add-char-modal {
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.input-label {
+    position: relative;
+    width: 150px;
+    height: 90%;
+}
+
+.display-block {
+    display: block;
+}
+
+.display-none {
+    display: none;
+}
+
+.close-button {
+    float: right;
+}
+
+.quote-type {
+    margin-top: 2px;
+}
+
+#save-button {
+    margin-top: 10px;
+    text-align: center;
+}
+
+table{
+    border: 1px solid #333;
+}
+
+.td-normal {
+    border-top: 1px dashed black;
+}
+
+.td-left {
+    border-top: 1px dashed black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.td-alias {
+    border: 1px solid black;
+}
+
+.row-name {
+    cursor: pointer;
+}
+
+thead,
+tfoot {
+    background-color: #333;
+    color: #fff;
+}
+
+#context-switch {
+    margin: 5px;
+
+    width: 90%;
+}
+.side-button {
+    background-color: white;
+    border: 1px solid black;
+    color: black;
+    padding: 16px 32px;
+    text-align: center;
+
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    -webkit-transition-duration: 0.4s; /* Safari */
+    transition-duration: 0.4s;
+    cursor: pointer;
+    float: right;
+}
+
+.side-button-selected {
+    background-color: lightgreen;
+    border: 1px solid black;
+    color: black;
+    padding: 16px 32px;
+    text-align: center;
+
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    -webkit-transition-duration: 0.4s; /* Safari */
+    transition-duration: 0.4s;
+    cursor: pointer;
+    float: right;
+}
+
+.css-button {
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 10px;
+    cursor: pointer;
+}
+
+.border {
+    /*border: 1px solid black;*/
+    border-bottom: 1px solid black;
+}
+
+a {
+    font-size: 16pt;
+}
+
+.char-top-buttons {
+    width: 90%;
+
+}
+
+.tooltip {
+    position: relative;
+    display: inline-block;
+    border-bottom: 1px dotted black;
+  }
+  
+.tooltip .tooltiptext {
+    visibility: hidden;
+    background-color: black;
+    color: #fff;
+    text-align: left;
+    border-radius: 6px;
+    padding: 3px;
+    
+    /* Position the tooltip */
+    position: absolute;
+    z-index: 1;
+    bottom: 100%;
+    left: 50%;
+    margin-left: -60px;
+  }
+  
+.tooltip:hover .tooltiptext {
+    visibility: visible;
+  }

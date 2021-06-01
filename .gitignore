@@ -1,0 +1,6 @@
+data/
+data_old/
+*.ipynb
+node_modules/
+old_data/
+temp/
