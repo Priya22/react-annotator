@@ -7,28 +7,28 @@ following libraries to run it:
 2. Clone this repo onto your local machine. 
 
 ### Start the application
-3. This step should install all the node and python dependencies,
+1. This step should install all the node and python dependencies,
    and also start the server. \
 Open a terminal and navigate to the project root. \
 OS X and Linux machines: Run `chmod 777 build.sh`, followed by `./build.sh`. \
 Windows users: Run the `cmd` program as administrator, navigate to project root, type in `install.bat` and press Enter. (NOTE: the Windows installation currently has some problems. Open the `build.sh` file and run each command individually on your terminal instead.)
 
-4. The final few lines of the terminal output should indicate that the server is up and running, with a message along the lines of `Running on http://127.0.0.1:8080/ (Press CTRL+C to quit)`.
-2. In your browser (preferably Chrome), navigate to `localhost:8080`. This should display the landing page.   
+2. The final few lines of the terminal output should indicate that the server is up and running, with a message along the lines of `Running on http://127.0.0.1:8080/ (Press CTRL+C to quit)`.
+3. In your browser (preferably Chrome), navigate to `localhost:8080`. This should display the landing page.   
 
 ### Annotate
-3. Click on the `Load Files` button
+1. Click on the `Load Files` button
  and navigate to the `data/` folder from the project root. Select the `.txt` file you want to annotate from the apprpriate subfolder.
-4. The tool should display the current status of the file!
-5. Click on the `Instructions` link to learn how to 
+2. The tool should display the current status of the file!
+3. Click on the `Instructions` link to learn how to 
 use the tool. 
 
 ### Analyze Disagreements
-6. Go to the Analyze tab 
-7. **Step 1:** Select the relevant annotator names. 
-8. **Step 2:** Upload the `<novel_name>_chars.json` files of each annotator to see disagreements in character lists. 
+1. Go to the Analyze tab 
+2. **Step 1:** Select the relevant annotator names. 
+3. **Step 2:** Upload the `<novel_name>_chars.json` files of each annotator to see disagreements in character lists. 
     - Resolve these by reloading the text in the `Annotate` tab, and modifying your character list.
-9. **Step 3:** Upload the two annotation folders between which disagreements need to be identified. 
+4. **Step 3:** Upload the two annotation folders between which disagreements need to be identified. 
     - This will generate a `<novel_name>.txt` file with the disagreements. 
     - Resolve these by revising your annotations, and re-check for disagreements.
 
