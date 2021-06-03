@@ -1428,7 +1428,8 @@ class   TextArea extends React.Component {
         this.getToolSpan = this.getToolSpan.bind(this);
         this.handleHoverEnter = this.handleHoverEnter.bind(this);
         this.handleHoverLeave = this.handleHoverLeave.bind(this);
-        this.getDetailedInfo = this.getDetailedInfo.bind(this);
+        this.getDetailedQuoteInfo = this.getDetailedQuoteInfo.bind(this);
+        this.getDetailedMentionInfo = this.getDetailedMentionInfo.bind(this);
     }
 
     getSelectionCharacterOffsetWithin(element) {
@@ -1501,7 +1502,7 @@ class   TextArea extends React.Component {
         }
      };
     
-    getDetailedInfo(cur_info) {
+    getDetailedQuoteInfo(cur_info) {
         const q_map = {
             'Anaphoric': 'Pronominal',
             'Implicit': 'Implicit',
@@ -1523,11 +1524,34 @@ class   TextArea extends React.Component {
 
     }
 
+    getDetailedMentionInfo(cur_info) {
+        // const q_map = {
+        //     'Anaphoric': 'Pronominal',
+        //     'Implicit': 'Implicit',
+        //     'Explicit': 'Named'
+        // }
+
+        let type = cur_info.quote_type;
+        let speaker = cur_info.speaker;
+        let speakee = cur_info.speakee.map((el) => {return this.props.id2char[el]});
+        let ref_exp = cur_info['ref_exp'];
+
+        return {
+            'sel_type': cur_info['sel_type'],
+            'quote_type': type,
+            'speaker': speaker,
+            'speakee': speakee,
+            'ref_exp': ref_exp
+            }
+
+    }
+
     getToolSpan(cur_info){
         //console.log(info);
-        let info = this.getDetailedInfo(cur_info);
+        
 
-        if (info['sel_type'] === 'Quote') {
+        if (cur_info['sel_type'] === 'Quote') {
+            let info = this.getDetailedQuoteInfo(cur_info);
             const type = info['quote_type']
             const speaker = info['speaker']
             const ref = info['ref_exp']
@@ -1536,7 +1560,8 @@ class   TextArea extends React.Component {
                 "<span> <ul><li>Type: " + type + "</li><li>Speaker: "+ speaker +"</li><li>Addressee(s): "+speakee+"</li><li>Ref Exp: "+ref+"</li></ul></span>"
                 )
         }
-        else if (info['sel_type'] === 'Mention') {
+        else if (cur_info['sel_type'] === 'Mention') {
+            let info = this.getDetailedMentionInfo(cur_info);
             const speakee = info['speakee'].join("; ");
             return (
                 "<span><ul><li>Mention(s): "+speakee+"</li></ul></span>"
@@ -2072,18 +2097,36 @@ class CollectInfo extends React.Component {
     }
 
     getDetailedInfo(cur_info) {
-        let type = cur_info.quote_type;
-        let speaker = cur_info.speaker.map((el) => {return this.props.id2char[el]});
-        let speakee = cur_info.speakee.map((el) => {return this.props.id2char[el]});
-        let ref_exp = cur_info['ref_exp'];
+        if (cur_info.sel_type === 'Quote') {
+            let type = cur_info.quote_type;
+            let speaker = cur_info.speaker.map((el) => {return this.props.id2char[el]});
+            let speakee = cur_info.speakee.map((el) => {return this.props.id2char[el]});
+            let ref_exp = cur_info['ref_exp'];
 
-        return {
-            'sel_type': cur_info['sel_type'],
-            'quote_type': type,
-            'speaker': speaker,
-            'speakee': speakee,
-            'ref_exp': ref_exp
+            return {
+                'sel_type': cur_info['sel_type'],
+                'quote_type': type,
+                'speaker': speaker,
+                'speakee': speakee,
+                'ref_exp': ref_exp
+                }
             }
+        else {
+
+            let type = cur_info.quote_type;
+            let speaker = cur_info.speaker;
+            let speakee = cur_info.speakee.map((el) => {return this.props.id2char[el]});
+            let ref_exp = cur_info['ref_exp'];
+
+            return {
+                'sel_type': cur_info['sel_type'],
+                'quote_type': type,
+                'speaker': speaker,
+                'speakee': speakee,
+                'ref_exp': ref_exp
+                }
+
+        }
     }
 
     render() {
@@ -2181,18 +2224,36 @@ class CollectMentionInfo extends React.Component {
     }
 
     getDetailedInfo(cur_info) {
-        let type = cur_info.quote_type  ;
-        let speaker = cur_info.speaker.map((el) => {return this.props.id2char[el]});
-        let speakee = cur_info.speakee.map((el) => {return this.props.id2char[el]});
-        let ref_exp = cur_info['ref_exp'];
+        if (cur_info.sel_type === 'Quote') {
+            let type = cur_info.quote_type;
+            let speaker = cur_info.speaker.map((el) => {return this.props.id2char[el]});
+            let speakee = cur_info.speakee.map((el) => {return this.props.id2char[el]});
+            let ref_exp = cur_info['ref_exp'];
 
-        return {
-            'sel_type': cur_info['sel_type'],
-            'quote_type': type,
-            'speaker': speaker,
-            'speakee': speakee,
-            'ref_exp': ref_exp
+            return {
+                'sel_type': cur_info['sel_type'],
+                'quote_type': type,
+                'speaker': speaker,
+                'speakee': speakee,
+                'ref_exp': ref_exp
+                }
             }
+        else {
+
+            let type = cur_info.quote_type;
+            let speaker = cur_info.speaker;
+            let speakee = cur_info.speakee.map((el) => {return this.props.id2char[el]});
+            let ref_exp = cur_info['ref_exp'];
+
+            return {
+                'sel_type': cur_info['sel_type'],
+                'quote_type': type,
+                'speaker': speaker,
+                'speakee': speakee,
+                'ref_exp': ref_exp
+                }
+
+        }
     }
 
 
