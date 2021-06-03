@@ -339,7 +339,7 @@ class DisplayCharStatus extends React.Component {
 
 
     renderItem(item) {
-        const clickCallback = () => this.handleRowClick(item.id);
+        const clickCallback = () => this.handleRowClick(item.name);
         let cName = 'td-green';
         if (item.status === 0) {
             
@@ -351,14 +351,14 @@ class DisplayCharStatus extends React.Component {
 
         cName = cName + ' row-name';
         const itemRows = [
-            <tr key={"row-data-" + item.id}>
+            <tr key={"row-data-" + item.name}>
                 {/* <td className={'td-normal'}>{icon}</td> */}
                 <td onClick={clickCallback} className={cName}>{item.name}</td>
                 {/* <td className={'td-left'}>{deleteIcon}</td> */}
             </tr>
         ];
 
-        if (this.state.expandedRows.includes(item.id)) {
+        if (this.state.expandedRows.includes(item.name)) {
             itemRows.push(
                 <tr>
                     <td><b>Aliases</b></td>

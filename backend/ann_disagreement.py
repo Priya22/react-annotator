@@ -86,7 +86,7 @@ def check_character_equivalent(id1, id2, name2id, annotator_names):
 	for ann in annotator_names:
 		id2names[ann] = defaultdict(list)
 		for name,id_ in name2id[ann].items():
-			id2names[id_].append(name)
+			id2names[ann][id_].append(name)
 	
 	names1 = set(id2names[annotator_names[0]][id1])
 	names2 = set(id2names[annotator_names[1]][id2])
@@ -96,6 +96,42 @@ def check_character_equivalent(id1, id2, name2id, annotator_names):
 		return True, list(common)[0]
 	else:
 		return False, ''
+
+def check_group_equivalent(speakees1, speakees2, name2id, annotator_names):
+	id2names = {}
+	ids1 = set(speakees1[:])
+	ids2 = set(speakees2[:])
+
+	for ann in annotator_names:
+		id2names[ann] = defaultdict(list)
+		for name,id_ in name2id[ann].items():
+			id2names[ann][id_].append(name)
+	
+	if len(ids1) != len(ids2):
+		return False
+	
+	s2id1 = {}
+	s2id2 = {}
+	for a_name, slist, s2id in zip(annotator_names, [ids1, ids2], [s2id1, s2id2]):
+		for s in slist:
+			for n in id2names[a_name][s]:
+				s2id[n] = s 
+	
+	common_names = set(s2id1.keys()).intersection(set(s2id2.keys()))
+
+	for com in common_names:
+		id1 = s2id1[com]
+		id2 = s2id2[com]
+
+		if id1 in ids1:
+			ids1.remove(id1)
+		if id2 in ids2:
+			ids2.remove(id2)
+	
+	if len(ids1) == 0 and len(ids2) == 0:
+		return True 
+	
+	return False
 
 def strip_punct(s):
 	return ''.join([x for x in s if x not in string.punctuation])
@@ -204,17 +240,21 @@ def get_disagreements(data):
 		texts[ann] = ann_data[ann]['text']
 
 	#check primary name match
+	annotator_names = sorted(list(quote_anns.keys()))
 
 	id2char, char2id = get_char_info(character_anns)
-	id2char[-1] = "None"
-	char2id["None"] = -1
-	
+	for ann in annotator_names:
+		id2char[ann][-1] = "None"
+		char2id[ann]["None"] = -1
+		
 	r_to_text = {}
 	for key in quote_anns:
-		for _, ranges in quote_anns[key]['quote_ranges'].items():
+		for span_id, ranges in quote_anns[key]['quote_ranges'].items():
 			start, end = ranges['start'], ranges['end']
 
 			u = str(start) + "_" + str(end)
+
+			# if span_id in quote_anns[key]['quote_infos']:
 
 			#if u not in r_to_text:
 			q_text = texts[key][start:end]
@@ -224,6 +264,7 @@ def get_disagreements(data):
 			
 			r_to_text[u][key] = q_text          
 
+	print(len(r_to_text))
 
 	lone_wolfs = {k: {} for k in quote_anns.keys()}
 	for key in r_to_text:
@@ -266,6 +307,7 @@ def get_disagreements(data):
 			
 			un = str(start) + "_" + str(end)
 			
+			# if key in quote_inf['quote_infos']:
 			
 			if start not in range_starts_to_id:
 				range_starts_to_id[start] = {}
@@ -278,18 +320,18 @@ def get_disagreements(data):
 			if un not in range_to_id:
 				range_to_id[un] = {}
 			range_to_id[un][ann] = key
-			
+	
+	print(len(range_to_id))
 	print(title, file=log_file)
 	print("range_starts_to_id, range_ends_to_id, range_to_id: ", len(range_starts_to_id), len(range_ends_to_id), len(range_to_id), file=log_file)
 	
-	assert len(r_to_text) == len(range_to_id)
+	# assert len(r_to_text) == len(range_to_id), print("Len mismatch: ", len(r_to_text), len(range_to_id))
 	
 	r_to_speakers = {} #character ids
 	r_to_speakees = {}
 	r_to_qtype = {}
 	r_to_reftext = {}
 	
-	annotator_names = sorted(list(quote_anns.keys()))
 	
 	for r in range_to_id:
 		if r not in r_to_speakers:
@@ -312,6 +354,7 @@ def get_disagreements(data):
 				for speaker in qinfo['speaker']:
 					# cur_info.append(id2char[ann][speaker])  
 					cur_info.append(speaker)
+				assert len(cur_info) == 1, print(ann, r)
 				r_to_speakers[r].append(cur_info)
 
 				#speakee
@@ -319,6 +362,7 @@ def get_disagreements(data):
 				for speakee in qinfo['speakee']:
 					# cur_info.append(id2char[ann][speakee])
 					cur_info.append(speakee)
+				assert len(cur_info) > 0, print(ann, r)
 				r_to_speakees[r].append(cur_info)
 
 				#quote type
@@ -327,8 +371,8 @@ def get_disagreements(data):
 				#ref exp
 				r_to_reftext[r].append(qinfo['ref_exp'])
 			else:
-				r_to_speakers[r].append([])
-				r_to_speakees[r].append([])
+				r_to_speakers[r].append([-1])
+				r_to_speakees[r].append([-1])
 				r_to_qtype[r].append('')
 				r_to_reftext[r].append('')
 				
@@ -387,65 +431,34 @@ def get_disagreements(data):
 	print("Disagreements: Speaker", file=log_file)
 	for r, text in r_to_text.items():
 		#try:
-			speaker_str = []
-			s1, s2 = r_to_speakers[0][0], r_to_speakers[1][0]
-			is_eq, _ = check_character_equivalent(s1, s2, char2id, annotator_names)
+			is_eq = True
+			if len(r_to_speakers[r]) <2 :
+				is_eq = False
+			else:
+				speaker_str = []
+				s1, s2 = r_to_speakers[r][0][0], r_to_speakers[r][1][0]
+				is_eq, _ = check_character_equivalent(s1, s2, char2id, annotator_names)
 			if not is_eq:
 				if r not in r_disagreements:
 					r_disagreements[r] = {}
 				r_disagreements[r]['speaker'] = [id2char[annotator_names[0]][s1], id2char[annotator_names[1]][s2]]
 
-			# for s in r_to_speakers[r]:
-			# 	if len(s) == 0:
-			# 		speaker_str.append("None")
-			# 	else:
-			# 		speaker_str.append(s[0])
-			# speaker_str = []
-			# for a,s in zip(annotator_names, speaker_ids):
-			# 	speaker_str.append(id2char[a][s])
-
-	# 		if len(set(speaker_str)) > 1:
-	# #             print(r, text)
-
-	# #             for i, q in enumerate(speaker_ids):
-	# #                 print(annotator_names[i],  id_chars[q][0], sep='\t')
-	# 			if r not in r_disagreements:
-	# 				r_disagreements[r] = {}
-	# 			r_disagreements[r]['speaker'] = speaker_str
-				#print()
-
-		# except Exception as e:
-		# 		print("ERROR: ", r)
 
 	print("Count: ", len(r_disagreements), file=log_file)
 
 	#speakee
 	print("Disagreements: Speakee", file=log_file)
 	for r, text in r_to_text.items():
-
-		if len(r_to_speakees[r][0])!=len(r_to_speakees[r][1]):
+		is_eq = True
+		if len(r_to_speakees[r]) <2 :
+			is_eq = False
+		else:
+			speakees1, speakees2 = r_to_speakees[r][0], r_to_speakees[r][1]
+			is_eq = check_group_equivalent(speakees1, speakees2, char2id, annotator_names)
+		if not is_eq:
 			if r not in r_disagreements:
 				r_disagreements[r] = {}
-			r_disagreements[r]['speakee'] = []
-			for a, s in zip(annotator_names, r_to_speakees[r]):
-				r_disagreements[r]['speakee'].append(sorted([id2char[a][s_] for s_ in s]))
-
-		#else:
-		#match individual characters?
-
-		speakee_str = []
-		for s in r_to_speakees[r]:
-			# print(s)
-			speakee_str.append('_'.join(x for x in sorted(s)))
-		# print(speakee_str)
-		if len(set(speakee_str)) > 1:
-			#print(r, text)
-
-	#         for i, q in enumerate(speakee_str):
-	#             print(annotator_names[i],  speakee_str[i].split("_"), sep='\t')
-			if r not in r_disagreements:
-				r_disagreements[r] = {}
-			r_disagreements[r]['speakee'] = speakee_str
+			r_disagreements[r]['speakee'] = [[id2char[annotator_names[0]][s] for s in speakees1], [id2char[annotator_names[1]][s] for s in speakees2]]
 			#print()
 
 			
