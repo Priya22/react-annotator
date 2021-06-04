@@ -442,9 +442,11 @@ def get_disagreements(data):
 
 			elif len(r_to_speakers[r][0]) == len(r_to_speakers[r][1]) == 0:
 				is_eq = True
+			elif len(r_to_speakers[r][0]) != len(r_to_speakers[r][1]):
+				is_eq = False
 			else:
 				speaker_str = []
-				s1, s2 = r_to_speakers[r][0], r_to_speakers[r][1]
+				s1, s2 = r_to_speakers[r][0][0], r_to_speakers[r][1][0]
 				is_eq, _ = check_character_equivalent(s1, s2, char2id, annotator_names)
 			if not is_eq:
 				if r not in r_disagreements:
