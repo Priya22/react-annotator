@@ -216,7 +216,7 @@ if __name__ == '__main__':
         root = tree.getroot()
         charList = getCharacters(root, tree)
     file_name = txt_path.split("/")[-1].replace(".txt","")
-    write_path = os.path.join('../data', file_name)
+    write_path = os.path.join('../starter_data', file_name)
     if not os.path.isdir(write_path):
         os.mkdir(write_path)
     print("Writing to: ", write_path)

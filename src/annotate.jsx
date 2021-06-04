@@ -1816,24 +1816,27 @@ class CharacterList extends React.Component {
         // const next_id = Math.max(ids) + 1
 
         let aliasName = window.prompt("Enter new alias name for "+el.name+" : ");
-        aliasName = toTitleCase(aliasName);
+        if (aliasName.length > 0) {
 
-        if (aliasName in this.props.char2id) {
-            alert("Name already exists in character list.")
-        }
+            aliasName = toTitleCase(aliasName);
 
-        else{
+            if (aliasName in this.props.char2id) {
+                alert("Name already exists in character list.")
+            }
 
-            old_chars.forEach((c) => {
-                if (c.id === el.id) {
-                    c.expand.push({
-                        name: aliasName,
-                        parent: el.id
-                    });
-                }
-            });
+            else{
 
-            this.props.updateChars(old_chars);
+                old_chars.forEach((c) => {
+                    if (c.id === el.id) {
+                        c.expand.push({
+                            name: aliasName,
+                            parent: el.id
+                        });
+                    }
+                });
+
+                this.props.updateChars(old_chars);
+            }
         }
     }
 
@@ -1915,33 +1918,33 @@ class CharacterList extends React.Component {
 
     handleAddChar() {
         let name = window.prompt("Enter character name: ");
-        name = toTitleCase(name);
-        
-        const old_chars = this.props.charList;
+        if (name.length > 0) {
+            name = toTitleCase(name);
+            if (name in this.props.char2id) {
+                alert("Name already exists in character list.")
+            }
+            else {
+                const old_chars = this.props.charList;
 
-        let ids = []
+                let ids = []
 
-        old_chars.forEach((value, index) => {
-            //main name
-            ids.push(value.id);
-        })
+                old_chars.forEach((value, index) => {
+                    //main name
+                    ids.push(value.id);
+                })
 
-        const next_id = Math.max(...ids) + 1
+                const next_id = Math.max(...ids) + 1
 
-        if (name in this.props.char2id) {
-            alert("Name already exists in character list.")
-        }
+                old_chars.push({
+                    name: name,
+                    id: next_id,
+                    parent: next_id,
+                    expand: []
+                });
+                //this.setState({charList: old_chars}); //is this needed?? Just use props.
+                this.props.updateChars(old_chars);
+            }
 
-        else {
-
-            old_chars.push({
-                name: name,
-                id: next_id,
-                parent: next_id,
-                expand: []
-            });
-            //this.setState({charList: old_chars}); //is this needed?? Just use props.
-            this.props.updateChars(old_chars);
         }
     }
 

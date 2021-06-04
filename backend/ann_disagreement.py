@@ -82,6 +82,7 @@ def get_char_info(nameLists):
 	return id2name, name2id
 
 def check_character_equivalent(id1, id2, name2id, annotator_names):
+
 	id2names = {}
 	for ann in annotator_names:
 		id2names[ann] = defaultdict(list)
@@ -98,6 +99,10 @@ def check_character_equivalent(id1, id2, name2id, annotator_names):
 		return False, ''
 
 def check_group_equivalent(speakees1, speakees2, name2id, annotator_names):
+
+	if len(speakees1) == len(speakees2) == 0:
+		return True
+
 	id2names = {}
 	ids1 = set(speakees1[:])
 	ids2 = set(speakees2[:])
@@ -243,9 +248,9 @@ def get_disagreements(data):
 	annotator_names = sorted(list(quote_anns.keys()))
 
 	id2char, char2id = get_char_info(character_anns)
-	for ann in annotator_names:
-		id2char[ann][-1] = "None"
-		char2id[ann]["None"] = -1
+	# for ann in annotator_names:
+	# 	id2char[ann][-1] = "None"
+	# 	char2id[ann]["None"] = -1
 		
 	r_to_text = {}
 	for key in quote_anns:
@@ -350,19 +355,19 @@ def get_disagreements(data):
 				qinfo = quote_anns[ann]['quote_infos'][qid]
 
 				#speaker
-				cur_info = []
-				for speaker in qinfo['speaker']:
-					# cur_info.append(id2char[ann][speaker])  
-					cur_info.append(speaker)
-				assert len(cur_info) == 1, print(ann, r)
+				cur_info = [s for s in qinfo['speaker'] if s in id2char[ann]]
+				# for speaker in qinfo['speaker']:
+				# 	# cur_info.append(id2char[ann][speaker])  
+				# 	cur_info.append(speaker)
+				# assert len(cur_info) == 1, print(ann, r)
 				r_to_speakers[r].append(cur_info)
 
 				#speakee
-				cur_info = []
-				for speakee in qinfo['speakee']:
-					# cur_info.append(id2char[ann][speakee])
-					cur_info.append(speakee)
-				assert len(cur_info) > 0, print(ann, r)
+				cur_info = [s for s in qinfo['speakee'] if s in id2char[ann]]
+				# for speakee in qinfo['speakee']:
+				# 	# cur_info.append(id2char[ann][speakee])
+				# 	cur_info.append(speakee)
+				# assert len(cur_info) > 0, print(ann, r)
 				r_to_speakees[r].append(cur_info)
 
 				#quote type
@@ -371,8 +376,8 @@ def get_disagreements(data):
 				#ref exp
 				r_to_reftext[r].append(qinfo['ref_exp'])
 			else:
-				r_to_speakers[r].append([-1])
-				r_to_speakees[r].append([-1])
+				r_to_speakers[r].append([])
+				r_to_speakees[r].append([])
 				r_to_qtype[r].append('')
 				r_to_reftext[r].append('')
 				
@@ -434,9 +439,12 @@ def get_disagreements(data):
 			is_eq = True
 			if len(r_to_speakers[r]) <2 :
 				is_eq = False
+
+			elif len(r_to_speakers[r][0]) == len(r_to_speakers[r][1]) == 0:
+				is_eq = True
 			else:
 				speaker_str = []
-				s1, s2 = r_to_speakers[r][0][0], r_to_speakers[r][1][0]
+				s1, s2 = r_to_speakers[r][0], r_to_speakers[r][1]
 				is_eq, _ = check_character_equivalent(s1, s2, char2id, annotator_names)
 			if not is_eq:
 				if r not in r_disagreements:
