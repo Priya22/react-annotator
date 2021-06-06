@@ -2448,7 +2448,7 @@ class SpeakeeInfo extends React.Component {
             >
                 <h3 style={{ color: color }}>Select {heading}</h3>
                 <div><i>{this.props.message} from the character list on the left, and press Submit when done. If there are multiple, select all possible ones.</i></div>
-                <span><b>{heading}(s):</b> {message} </span>
+                <span><b>{heading}:</b> {message} </span>
                 <span>
                     <button type={'submit'}
                             name={'speakee-edit'}
