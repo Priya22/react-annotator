@@ -437,21 +437,28 @@ def get_disagreements(data):
 	for r, text in r_to_text.items():
 		#try:
 			is_eq = True
-			if len(r_to_speakers[r]) <2 :
-				is_eq = False
+			speakers = []
 
-			elif len(r_to_speakers[r][0]) == len(r_to_speakers[r][1]) == 0:
+			assert len(r_to_speakers[r])==2, print("Less than 2 annotations:", r)
+
+			s1, s2 = r_to_speakers[r][0], r_to_speakers[r][1]
+
+			assert len(s1) <=1, print("More than one speaker: ", r)
+			assert len(s2) <=1, print("More than one speaker: ", r)
+
+			if len(r_to_speakers[r][0]) == len(r_to_speakers[r][1]) == 0:
 				is_eq = True
+
 			elif len(r_to_speakers[r][0]) != len(r_to_speakers[r][1]):
 				is_eq = False
+
 			else:
-				speaker_str = []
-				s1, s2 = r_to_speakers[r][0][0], r_to_speakers[r][1][0]
-				is_eq, _ = check_character_equivalent(s1, s2, char2id, annotator_names)
+				is_eq, _ = check_character_equivalent(s1[0], s2[0], char2id, annotator_names)
+
 			if not is_eq:
 				if r not in r_disagreements:
 					r_disagreements[r] = {}
-				r_disagreements[r]['speaker'] = [id2char[annotator_names[0]][s1], id2char[annotator_names[1]][s2]]
+				r_disagreements[r]['speaker'] = [[id2char[annotator_names[0]][s] for s in s1], [id2char[annotator_names[1]][s] for s in s2]]
 
 
 	print("Count: ", len(r_disagreements), file=log_file)
@@ -460,11 +467,13 @@ def get_disagreements(data):
 	print("Disagreements: Speakee", file=log_file)
 	for r, text in r_to_text.items():
 		is_eq = True
-		if len(r_to_speakees[r]) <2 :
-			is_eq = False
-		else:
-			speakees1, speakees2 = r_to_speakees[r][0], r_to_speakees[r][1]
-			is_eq = check_group_equivalent(speakees1, speakees2, char2id, annotator_names)
+
+		assert len(r_to_speakees[r])==2, print("Less than 2 speakee annotations:", r)
+		# if len(r_to_speakees[r]) <2 :
+		# 	is_eq = False
+		# else:
+		speakees1, speakees2 = r_to_speakees[r][0], r_to_speakees[r][1]
+		is_eq = check_group_equivalent(speakees1, speakees2, char2id, annotator_names)
 		if not is_eq:
 			if r not in r_disagreements:
 				r_disagreements[r] = {}

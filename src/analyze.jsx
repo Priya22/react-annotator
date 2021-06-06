@@ -420,16 +420,17 @@ class DisplayCharStatus extends React.Component {
         </div>
             )
         }
-
-        else if (this.props.indicator === 1) {
-            return (
-                <div>
-                    <h4 style={{color: 'darkgreen'}}>
-                        All names match!
-                    </h4>
-                </div>
-            )
-        }
+        // if (this.props.indicator === 1)
+        // else {
+            
+        //     return (
+        //         <div>
+        //             <h4 style={{color: 'darkgreen'}}>
+        //                 All names match!
+        //             </h4>
+        //         </div>
+        //     )
+        // }
 
         else {
             let res = this.getAnnRows()
@@ -445,6 +446,16 @@ class DisplayCharStatus extends React.Component {
             if (this.state.hidden === true) {
                 buttonText = "show";
             }
+            let color = 'red'
+            let statusText = '';
+            if (this.props.indicator === 1) {
+                color='green'
+                statusText = 'All Names Match!'
+
+            }
+            else {
+                statusText = 'Unmatched names found.'
+            }
             
             return (
                 <div>
@@ -457,12 +468,14 @@ class DisplayCharStatus extends React.Component {
                     </div>
                     <div>
                             <p style={{'background': 'white', 'border':'none'}}>
-                            <span style={{'color': 'darkred'}}>Red: Main name Mismatch&nbsp;&nbsp;</span><span style={{'color': 'orange'}}>Orange: Alias Mismatch&nbsp;&nbsp;</span>
+                            <span style={{'color': 'darkred'}}>Red: Match not found&nbsp;&nbsp;</span><span style={{'color': 'orange'}}>Orange: Main Name Mismatch&nbsp;&nbsp;</span>
                             <span style={{'color': 'green'}}>Green: All good!&nbsp;&nbsp;</span>
                             </p>
-                        </div>
+                    </div>
+                    <div>
+                        <span style={{'background': 'white', 'border': '1px solid black', 'color':{color}}}>{statusText}</span>
+                    </div>
                     <div className={divClassName}>
-                        
                     <div >
                         <div><h4 style={{'color': 'purple', 'height': '20px'}}>{ann_names[0]}</h4></div>
                         <div  className='char-table'>
