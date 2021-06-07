@@ -6,7 +6,7 @@ import os, csv, re
 import sys
 import pickle as pkl
 #from backend import xml_process
-from backend import char_disagreement, ann_disagreement
+from backend import char_disagreement, ann_disagreement, men_disagreement
 
 app = Flask(__name__, static_folder="build/static", template_folder="build")
 CORS(app, resources={r"/*": {"origins": "*"}})

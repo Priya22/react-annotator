@@ -2,6 +2,7 @@ import os, csv, json, re, sys
 import string 
 from collections import defaultdict
 import pickle as pkl
+from backend import men_disagreement
 
 def read_data(data):
 	try:
@@ -80,6 +81,38 @@ def get_char_info(nameLists):
 				name2id[key][alias['name']] = id_
 
 	return id2name, name2id
+
+def match_quote_mentions(qr, mr):
+
+	ordered_quotes = sorted(list(qr.keys()), key=lambda x: int(x.split("_")[0]))
+	ordered_mentions = sorted(list(mr.keys()), key=lambda x: int(x.split("_")[0]))
+
+	mentions = defaultdict(list)
+
+	i = 0
+	j = 0
+    
+	while i<len(ordered_quotes) and j<len(ordered_mentions):
+		m_start, m_end = ordered_mentions[j].split("_")
+		q_start, q_end = ordered_quotes[i].split("_")
+		
+	#         print(m_start, m_end, q_start, q_end)
+		
+		if (int(m_start) >= int(q_start)) and (int(m_end)<= int(q_end)):
+			#add to array at index
+			qind = ordered_quotes[i]
+			mind = ordered_mentions[j]
+			
+			# if qind not in mentions:
+			# 	mentions[qind] = []
+
+			mentions[qind].append(mind)
+			j += 1
+		else:
+			i += 1
+
+	return mentions
+
 
 def check_character_equivalent(id1, id2, name2id, annotator_names):
 
@@ -216,6 +249,8 @@ def match_lones(wolfs, texts):
 
 def get_disagreements(data):
 
+	mr_to_text, mr_to_speakee, mr_unmatched, mr_disagreements = men_disagreement.get_disagreements(data)
+
 	ann_data, title = read_data(data)
 	
 	if not os.path.isdir('./temp'):
@@ -253,6 +288,8 @@ def get_disagreements(data):
 	# 	char2id[ann]["None"] = -1
 		
 	r_to_text = {}
+	r_to_spanids = {}
+
 	for key in quote_anns:
 		for span_id, ranges in quote_anns[key]['quote_ranges'].items():
 			start, end = ranges['start'], ranges['end']
@@ -266,8 +303,10 @@ def get_disagreements(data):
 			
 			if u not in r_to_text:
 				r_to_text[u] = {}
+				r_to_spanids[u] = {}
 			
-			r_to_text[u][key] = q_text          
+			r_to_text[u][key] = q_text    
+			r_to_spanids[u][key] = span_id      
 
 	print(len(r_to_text))
 
@@ -300,7 +339,7 @@ def get_disagreements(data):
 			if k not in w2nw[ann]:
 				unmatched[k] = 1
 
-	
+	qr2mr = match_quote_mentions(r_to_text, mr_to_text)
 
 	range_starts_to_id = {}
 	range_ends_to_id = {}
@@ -331,7 +370,20 @@ def get_disagreements(data):
 	print("range_starts_to_id, range_ends_to_id, range_to_id: ", len(range_starts_to_id), len(range_ends_to_id), len(range_to_id), file=log_file)
 	
 	# assert len(r_to_text) == len(range_to_id), print("Len mismatch: ", len(r_to_text), len(range_to_id))
-	
+	for ann in w2nw:
+		for k, k_ in w2nw[ann].items():
+			ann_id = range_to_id[k][ann]
+			range_to_id[k_][ann] = ann_id
+			del range_to_id[k]
+
+	# for k_, t in new_wolfs.items():
+	# 	if k_ not in r_to_text:
+	# 		r_to_text[k_] = {}
+	# 	for ann in w2nw:
+	# 		r_to_text[k_][ann] = new_wolfs[k_]
+
+
+
 	r_to_speakers = {} #character ids
 	r_to_speakees = {}
 	r_to_qtype = {}
@@ -502,43 +554,80 @@ def get_disagreements(data):
 	file_path = os.path.join('./temp', file_name)
 	with open(file_path, 'w') as f:
 		print("\t\t\t DISAGREEMENTS \t\t\t", file=f)
-		print("--"*100, file=f)
+		print("--"*20, file=f)
 		print("\n", file=f)
-		for r in r_disagreements:
+		for r in r_to_text:
+			quote_dis = 0
+			men_dis = 0
 			r_text = ''
 			if r in unmatched:
 				k = list(r_to_text[r].keys())[0]
 				r_text = r_to_text[r][k]
-				if r_to_qtype[r][0] == '':
-					continue 
-				else:
-					print("[UNMATCHED]", end='  ', file=f)
 			else:
 				#pick any annotator
 				k = annotator_names[0]
 				r_text = r_to_text[r][k]
+			if r in r_disagreements:
+				quote_dis = 1
+				if r in unmatched:
+					if (r_to_qtype[r][0] == '') and (r_to_qtype[r][1] == ''):
+						continue 
+					else:
+						print("[UNMATCHED]", end='  ', file=f)
 
-			print('"' + r_text + '"', file=f)
-			for field in r_disagreements[r]:
-				if field.upper() in field_mapping:
-					field_print = field_mapping[field.upper()]
+				print('"' + r_text + '"', file=f)
+				for field in r_disagreements[r]:
+					if field.upper() in field_mapping:
+						field_print = field_mapping[field.upper()]
+					else:
+						field_print = field
+					print(field_print.upper(), file=f)
+					info = r_disagreements[r][field]
+					if field == 'ref_exp':
+						info = [inf.replace("\n", " ") for inf in info]
+					elif field == 'speaker':
+						info = info 
+					elif field == 'speakee':
+						info = info
+
+					elif field == 'quote_type':
+						info = [value_mapping[s] for s in info]
+
+					assert len(info) == len(annotator_names), print(info)
+					for ann, ainf in zip(annotator_names, info):
+						print(ann + ": " + str(ainf), file=f)
+				print("\n", file=f)
+
+			#mentions
+			r_m_ids = qr2mr[r]
+			r_m_ids = [x for x in r_m_ids if x in mr_disagreements]
+			if len(r_m_ids) > 0:
+				men_dis = 1
+				if quote_dis == 0:
+					print(r_text, file=f)
+
+				print("---MENTIONS---", file=f)
+			for mr in r_m_ids:
+				mr_text = ''
+				if mr in mr_unmatched:
+					k = list(mr_to_text[mr].keys())[0]
+					mr_text = mr_to_text[mr][k]
+					if (mr_to_speakee[mr][0] == []) and (mr_to_speakee[mr][1] == []):
+						continue 
+					else:
+						print("[UNMATCHED]", end='  ', file=f)
 				else:
-					field_print = field
-				print(field_print.upper(), file=f)
-				info = r_disagreements[r][field]
-				if field == 'ref_exp':
-					info = [inf.replace("\n", " ") for inf in info]
-				elif field == 'speaker':
-					info = info 
-				elif field == 'speakee':
-					info = info
-
-				elif field == 'quote_type':
-					info = [value_mapping[s] for s in info]
-
+					#pick any annotator
+					k = annotator_names[0]
+					mr_text = mr_to_text[mr][k]
+				print('"' + mr_text + '"', file=f)
+				info = mr_disagreements[mr]['speakee']
 				assert len(info) == len(annotator_names), print(info)
 				for ann, ainf in zip(annotator_names, info):
 					print(ann + ": " + str(ainf), file=f)
+				print("\n", file=f)
+
+
 
 				#print("\t", end='')
 				# info = mapping[field]
@@ -560,7 +649,8 @@ def get_disagreements(data):
 				# 		print("\t", ann.capitalize()+": ", ann_info, file=f)
 					# except:
 					# 	pass
-			print("-"*50, file=f)
+			if quote_dis + men_dis > 0:
+				print("-"*15, file=f)
 
 	#read and return 
 	print("--"*50, file=log_file)
