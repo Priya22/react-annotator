@@ -372,9 +372,10 @@ def get_disagreements(data):
 	# assert len(r_to_text) == len(range_to_id), print("Len mismatch: ", len(r_to_text), len(range_to_id))
 	for ann in w2nw:
 		for k, k_ in w2nw[ann].items():
-			ann_id = range_to_id[k][ann]
-			range_to_id[k_][ann] = ann_id
-			del range_to_id[k]
+			if k_!=k:
+				ann_id = range_to_id[k][ann]
+				range_to_id[k_][ann] = ann_id
+				del range_to_id[k]
 
 	# for k_, t in new_wolfs.items():
 	# 	if k_ not in r_to_text:
