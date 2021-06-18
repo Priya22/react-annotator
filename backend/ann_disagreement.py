@@ -249,7 +249,7 @@ def match_lones(wolfs, texts):
 
 def get_disagreements(data):
 
-	mr_to_text, mr_to_speakee, mr_unmatched, mr_disagreements = men_disagreement.get_disagreements(data)
+	# mr_to_text, mr_to_speakee, mr_unmatched, mr_disagreements = men_disagreement.get_disagreements(data)
 
 	ann_data, title = read_data(data)
 	
@@ -339,7 +339,7 @@ def get_disagreements(data):
 			if k not in w2nw[ann]:
 				unmatched[k] = 1
 
-	qr2mr = match_quote_mentions(r_to_text, mr_to_text)
+	# qr2mr = match_quote_mentions(r_to_text, mr_to_text)
 
 	range_starts_to_id = {}
 	range_ends_to_id = {}
@@ -559,7 +559,7 @@ def get_disagreements(data):
 		print("\n", file=f)
 		for r in r_to_text:
 			quote_dis = 0
-			men_dis = 0
+			# men_dis = 0
 			r_text = ''
 			if r in unmatched:
 				k = list(r_to_text[r].keys())[0]
@@ -600,33 +600,33 @@ def get_disagreements(data):
 				print("\n", file=f)
 
 			#mentions
-			r_m_ids = qr2mr[r]
-			r_m_ids = [x for x in r_m_ids if x in mr_disagreements]
-			if len(r_m_ids) > 0:
-				men_dis = 1
-				if quote_dis == 0:
-					print(r_text, file=f)
+			# r_m_ids = qr2mr[r]
+			# r_m_ids = [x for x in r_m_ids if x in mr_disagreements]
+			# if len(r_m_ids) > 0:
+			# 	men_dis = 1
+			# 	if quote_dis == 0:
+			# 		print(r_text, file=f)
 
-				print("---MENTIONS---", file=f)
-			for mr in r_m_ids:
-				mr_text = ''
-				if mr in mr_unmatched:
-					k = list(mr_to_text[mr].keys())[0]
-					mr_text = mr_to_text[mr][k]
-					if (mr_to_speakee[mr][0] == []) and (mr_to_speakee[mr][1] == []):
-						continue 
-					else:
-						print("[UNMATCHED]", end='  ', file=f)
-				else:
-					#pick any annotator
-					k = annotator_names[0]
-					mr_text = mr_to_text[mr][k]
-				print('"' + mr_text + '"', file=f)
-				info = mr_disagreements[mr]['speakee']
-				assert len(info) == len(annotator_names), print(info)
-				for ann, ainf in zip(annotator_names, info):
-					print(ann + ": " + str(ainf), file=f)
-				print("\n", file=f)
+			# 	print("---MENTIONS---", file=f)
+			# for mr in r_m_ids:
+			# 	mr_text = ''
+			# 	if mr in mr_unmatched:
+			# 		k = list(mr_to_text[mr].keys())[0]
+			# 		mr_text = mr_to_text[mr][k]
+			# 		if (mr_to_speakee[mr][0] == []) and (mr_to_speakee[mr][1] == []):
+			# 			continue 
+			# 		else:
+			# 			print("[UNMATCHED]", end='  ', file=f)
+			# 	else:
+			# 		#pick any annotator
+			# 		k = annotator_names[0]
+			# 		mr_text = mr_to_text[mr][k]
+			# 	print('"' + mr_text + '"', file=f)
+			# 	info = mr_disagreements[mr]['speakee']
+			# 	assert len(info) == len(annotator_names), print(info)
+			# 	for ann, ainf in zip(annotator_names, info):
+			# 		print(ann + ": " + str(ainf), file=f)
+			# 	print("\n", file=f)
 
 
 
@@ -650,7 +650,7 @@ def get_disagreements(data):
 				# 		print("\t", ann.capitalize()+": ", ann_info, file=f)
 					# except:
 					# 	pass
-			if quote_dis + men_dis > 0:
+			if quote_dis > 0:
 				print("-"*15, file=f)
 
 	#read and return 
