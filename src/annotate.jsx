@@ -898,6 +898,8 @@ class ContentBox extends React.Component {
 
     mergeChars(selectedRows) {
 
+        console.log("selected rows: ", selectedRows);
+
         let qinfos = JSON.parse(JSON.stringify(this.state.quote_infos));
         let minfos = JSON.parse(JSON.stringify(this.state.men_infos));
 
@@ -908,6 +910,12 @@ class ContentBox extends React.Component {
         let mc = 0;
 
         let curCharList = this.state.charList;
+
+        if ((selectedRows.length===0) || (selectedRows.length===1)) {
+            return [curCharList, this.state.qinfos, this.state.minfos];
+            
+        }
+
         let mergeRows = [];
         let insIndex = [];
         let newCharList = curCharList.filter( function(el, index) {
@@ -919,6 +927,8 @@ class ContentBox extends React.Component {
             return !(val)
 
         });
+
+        console.log("Merge rows: ", mergeRows);
         
         insIndex = insIndex[0];
         //merge
@@ -935,12 +945,13 @@ class ContentBox extends React.Component {
                 'parent': main_char.id
             };
             main_char.expand.push(alias);
-            for (var j=0; i<cur_char.expand.length; j++) {
-                let cur_alias = cur_char.expand[j]
+            for (var j=0; j<cur_char.expand.length; j++) {
+                let cur_alias = cur_char.expand[j];
+                console.log("Cur alias: ", cur_alias);
                 alias = {
                     'name': cur_alias.name, 
                     'parent': main_char.id
-                }
+                };
                 main_char.expand.push(alias);
             }
         }
