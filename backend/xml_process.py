@@ -7,6 +7,11 @@ import argparse
 import string
 import re
 
+parser = argparse.ArgumentParser(description='Extract novel data.')
+parser.add_argument('--txt', type=str, help='path to the txt file')
+parser.add_argument('--xml', type=str, help='path to the GutenTag XML file')
+#parser.add_argument('--out', type=str, help='path to the output folder')
+
 def parseTxt(text, charList):
 
     charNames = []
@@ -63,11 +68,14 @@ def parseTxt(text, charList):
 
     return (positions, quote_infos, quote_span_ids, men_pos, men_infos, men_span_ids)
 
-mention_words = ['he', 'she', 'they', 'them', 'her', 'his', 'their', 'him', 'you', 'us', 'we', 'yourself', 'herself', 'themselves', 'himself']
+mention_words = ['he', 'she', 'they', 'them', 'her', 'his', 'their', 'him', 'you', 'us', 'we', \
+    'yourself', 'herself', 'themselves', 'himself', 'your',\
+        'mr.', 'miss', 'mrs.', 'sir']
 mention_words.extend([x.capitalize() for x in mention_words])
 punct = list(string.punctuation)
 
 def getMentions(str, str_start, charNames):
+    whitespace = string.whitespace
     mentions = []
     positions = []
     #print("INPUT STRING: ", str)
@@ -77,13 +85,8 @@ def getMentions(str, str_start, charNames):
     #charnames_str = " ".join(charNames)
     for i, c in enumerate(str):
 
-        if (cur_str.lower() == 'let' and c == "'"):
-            mentions.append("'s")
-            positions.append([str_start+i, str_start+i+2])
-            
-        if (c == ' ') or (c in punct) or i==(len(str)-1):
+        if i==(len(str)-1):
             end = i
-            #print(cur_str)
             if (cur_str in mention_words) or (cur_str in charNames):
                 #print("positive hit. ")
                 #print()
@@ -91,6 +94,26 @@ def getMentions(str, str_start, charNames):
                 positions.append([str_start+start, str_start+end])
             start = i+1
             cur_str = ''
+
+        elif (cur_str.lower() == 'let' and c == "'"):
+            mentions.append("'s")
+            positions.append([str_start+i, str_start+i+2])
+
+
+        elif (c in whitespace) or (c in punct):
+            # print(cur_str)
+            if (cur_str.lower() in ['mr', 'mrs', 'mr.', 'mrs.']):
+                cur_str += c
+
+            else:
+                end = i
+                if (cur_str in mention_words) or (cur_str in charNames):
+                    #print("positive hit. ")
+                    #print()
+                    mentions.append(cur_str)
+                    positions.append([str_start+start, str_start+end])
+                start = i+1
+                cur_str = ''
 
         else:
             cur_str += c
@@ -196,15 +219,7 @@ def getCharacters(root, tree):
 
     return charList
 
-
-if __name__ == '__main__':
-#def main(txt_path, xml_path):
-    parser = argparse.ArgumentParser(description='Extract novel data.')
-    parser.add_argument('--txt', type=str, help='path to the txt file')
-    parser.add_argument('--xml', type=str, help='path to the GutenTag XML file')
-    #parser.add_argument('--out', type=str, help='path to the output folder')
-    args = parser.parse_args()
-
+def main(args):
     txt_path = args.txt
     xml_path = args.xml
 
@@ -216,7 +231,7 @@ if __name__ == '__main__':
         root = tree.getroot()
         charList = getCharacters(root, tree)
     file_name = txt_path.split("/")[-1].replace(".txt","")
-    write_path = os.path.join('../starter_data', file_name)
+    write_path = os.path.join('/home/krishnapriya/annotator_react/annotator_v1//starter_data', file_name)
     if not os.path.isdir(write_path):
         os.mkdir(write_path)
     print("Writing to: ", write_path)
@@ -254,6 +269,13 @@ if __name__ == '__main__':
     q_file = file_name + '_quotes.json'
     with open(os.path.join(write_path, q_file), 'w') as fp:
         json.dump(json_obj, fp)
+
+if __name__ == '__main__':
+#def main(txt_path, xml_path):
+    args = parser.parse_args()
+    main(args)
+
+    
 
    # return charList, json_obj, text
 
