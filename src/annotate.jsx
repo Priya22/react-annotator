@@ -1944,7 +1944,11 @@ class CharacterList extends React.Component {
                     ids.push(value.id);
                 })
 
-                const next_id = Math.max(...ids) + 1
+                let next_id = Math.max(...ids) + 1
+
+                if (ids.length === 0) {
+                    next_id = 1;
+                }
 
                 old_chars.push({
                     name: name,
