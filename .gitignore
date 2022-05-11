@@ -1,4 +1,4 @@
-data/
+proxy_data/
 data_old/
 *.ipynb
 node_modules/
