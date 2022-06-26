@@ -8,8 +8,8 @@ import string
 import re
 
 parser = argparse.ArgumentParser(description='Extract novel data.')
-parser.add_argument('--txt', type=str, help='path to the txt file')
-parser.add_argument('--xml', type=str, help='path to the GutenTag XML file')
+parser.add_argument('--txt', type=str, help='path to the txt file', required=True)
+parser.add_argument('--xml', type=str, help='path to the GutenTag XML file', required=True)
 #parser.add_argument('--out', type=str, help='path to the output folder')
 
 def parseTxt(text, charList):

@@ -6,7 +6,7 @@ import './analyze.css'
 // const path = require('path')
 // const fs = require('fs')
 
-const ANN_NAMES = ['Alanna', 'Beck', 'Bisman', 'Jovana','Leah', 'Sanghoon', 'Sofia', 'Sol']; //ADD
+const ANN_NAMES = ['Alanna', 'Beck', 'Bisman', 'Jovana','Leah', 'Sanghoon', 'Sofia', 'Sol', 'Diana', 'Alex']; //ADD
 const AXIOS_HEADER = {  
     'Content-Type': 'application/json',
     'Access-Control-Allow-Origin': '*'}

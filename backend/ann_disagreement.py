@@ -530,7 +530,11 @@ def get_disagreements(data):
 		if not is_eq:
 			if r not in r_disagreements:
 				r_disagreements[r] = {}
-			r_disagreements[r]['speakee'] = [[id2char[annotator_names[0]][s] for s in speakees1], [id2char[annotator_names[1]][s] for s in speakees2]]
+			
+			l1 = set([id2char[annotator_names[0]][s] for s in speakees1])
+			l2 = set([id2char[annotator_names[1]][s] for s in speakees2])
+			# ldiff = (l1 - l2).union(l2 - l1)
+			r_disagreements[r]['speakee'] = [list(l1 - l2), list(l2 - l1)]
 			#print()
 
 			
@@ -597,6 +601,7 @@ def get_disagreements(data):
 					assert len(info) == len(annotator_names), print(info)
 					for ann, ainf in zip(annotator_names, info):
 						print(ann + ": " + str(ainf), file=f)
+
 				print("\n", file=f)
 
 			#mentions
