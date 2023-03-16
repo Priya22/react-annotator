@@ -276,6 +276,7 @@ class ContentBox extends React.Component {
             selectedSpanIds: [],
             cur_mode: 'normal',
             cur_ref_exp: '',
+            cur_ref_exp_span: [],
 
             men_ranges: myData.men_ranges,
             men_infos: myData.men_infos,
@@ -611,7 +612,8 @@ class ContentBox extends React.Component {
             ref_exp: '',
             quote_type: '',
             sel_type: type,
-            text: susbtr
+            text: susbtr,
+            ref_exp_span: []
         };
 
         cur_infos[String(new_span_id)] = info;
@@ -655,7 +657,7 @@ class ContentBox extends React.Component {
         }
 
         else {
-            this.setState({cur_ref_exp: cur_sel});
+            this.setState({cur_ref_exp: cur_sel, cur_ref_exp_span: [start, end]});
         }
 
 
@@ -797,7 +799,8 @@ class ContentBox extends React.Component {
 
         else if (field === 'ref_exp') {
             cur_info.ref_exp = this.state.cur_ref_exp;
-            this.setState({locked: true, cur_mode: 'normal', cur_info: cur_info, cur_ref_exp: ''});
+            cur_info.ref_exp_span = this.state.cur_ref_exp_span;
+            this.setState({locked: true, cur_mode: 'normal', cur_info: cur_info, cur_ref_exp: '', cur_ref_exp_span:''});
             window.getSelection().empty();
         }
 
@@ -836,7 +839,7 @@ class ContentBox extends React.Component {
         else {
             selectedRows = [];
             if (mode === 'ref_exp') {
-                this.setState({cur_mode: mode, selectedRows: selectedRows, locked: false, cur_ref_exp: ''});
+                this.setState({cur_mode: mode, selectedRows: selectedRows, locked: false, cur_ref_exp: '', cur_ref_exp_span:''});
             }
             else {
                 this.setState({cur_mode: mode, selectedRows: selectedRows});
